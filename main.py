@@ -1,6 +1,6 @@
+import utilities
 import pandas as pd
-import numpy as np
-from scipy.optimize import linear_sum_assignment
+
 
 mPref = {}
 wPref = {}
@@ -16,10 +16,8 @@ with open("women.txt") as f:
        (key, val) = line.split(':')
        wPref[key.strip()] = [i.strip() for i in val.split(',')]
 
-
 women = sorted(list(wPref.keys()))
 men = sorted(list(mPref.keys()))
-
 
 hungarian = pd.DataFrame(0,index=men,columns=women)
 the_max = -float('inf')
@@ -38,27 +36,15 @@ hungarian = the_max - hungarian
 # the value in the hungarian matrix represents the cost/preference for each other
 
 
+print("Original Preference :")
+for m,pref in mPref.items():
+    print("{:>10} :: {}".format(m,",".join(pref)))
 
-def hung_method(df: pd.DataFrame) -> list:
-    """Applies hungarian method to minimize the overall cost
-    
-    Args:
-        df (pd.DataFrame): cells contain the cost at cell(r,c), lower the cost, higher the preference for the pair(r,c)
-    
-    Returns:
-        list: a list of tuples (pairs) of (man,woman)
-    """
 
-    # phase 1: row reduction
+print("From hungarian")
+for m,w in utilities.hung_method(hungarian):
+    print("{:>30}<->{:<30}".format(m,w))
 
-    matrix = df.values
-    result = []
-    m,w = linear_sum_assignment(matrix)
-    for m_indx,w_indx in zip(m,w):
-        man = df.index[m_indx]
-        woman = df.columns[w_indx]
-        result.append((man,woman))
-    
-    return result
-
-print(hung_method(hungarian))
+print("From Gale-Shapely")
+for m,w in utilities.stable(mPref,wPref):
+    print("{:>30}<->{:<30}".format(m,w))
