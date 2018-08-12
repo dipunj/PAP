@@ -53,15 +53,32 @@ def hung_method(df: pd.DataFrame) -> list:
 
     # phase 1: row reduction
     df = df.subtract(df.min(axis=1),axis=0)
+    matrix = df.values    
 
     # now df has atleast one zero per row
+
+
+    marked_zeros = 0
+    marked_cols = set()
+    # row scanning
+    for row_num,row in enumerate(matrix):
+        zero_cols = np.where(np.delete(row,list(marked_cols)) == 0)[0]
+        # print(row_num,np.delete(row,marked_cols))
+        if len(zero_cols) == 1:
+            original_row_zeros = np.where(row == 0)[0]
+            marked_cols.update(original_row_zeros)
+            
+            marked_zeros += 1
+
+    if len(marked_cols) == num_rows:
+        return matrix
+
 
     # column reduction
     df = df.subtract(df.min(axis=0),axis=1)
 
 
     # phase 2: optimisation
-    matrix = df.values    
     num_rows = len(df.index)
 
     # iterations,result_matrix,pairs = phase2(matrix,num_rows)
@@ -112,14 +129,14 @@ def hung_method(df: pd.DataFrame) -> list:
         
         unmarked_matrix = matrix[unassigned_rows].T[unassigned_cols].T
 
-        print("\n\n==========")
-        print(marked_rows,marked_cols)
-        print(iteration_count,marked_zeros)
-        print(unmarked_matrix)
-        print("\n\n---------")
-        print(matrix)
-        print("\n\n==========")
-        assert(np.sum(unmarked_matrix == 0) == 0)
+        # print("\n\n==========")
+        # print(marked_rows,marked_cols)
+        # print(iteration_count,marked_zeros)
+        # print(unmarked_matrix)
+        # print("\n\n---------")
+        # print(matrix)
+        # print("\n\n==========")
+        # assert(np.sum(unmarked_matrix == 0) == 0)
         # diagonal rule
         # if np.sum(unmarked_matrix == 0) != 0:
             
