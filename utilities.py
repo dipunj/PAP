@@ -51,3 +51,42 @@ def stable(mPref,wPref):
                     else:
                         is_paired = True
     return sorted((m, w) for (m, (w, n)) in partners.items())
+
+
+def getPreference(men_file,women_file):
+    
+    mPref = {}
+    wPref = {}
+
+    with open(men_file) as f:
+        for line in f:
+           (key, val) = line.split(':')
+           mPref[key.strip()] = [i.strip() for i in val.split(',')]
+
+
+    with open(women_file) as f:
+        for line in f:
+           (key, val) = line.split(':')
+           wPref[key.strip()] = [i.strip() for i in val.split(',')]
+    
+    return mPref,wPref
+
+def getHungarian(mPref,wPref):
+
+    women = sorted(list(wPref.keys()))
+    men = sorted(list(mPref.keys()))
+
+    hungarian = pd.DataFrame(0,index=men,columns=women)
+    the_max = -float('inf')
+
+    for m in men:
+        for w in women:
+            men_rank = 10 - mPref[m].index(w)
+            wom_rank = 10 - wPref[w].index(m)
+            val = men_rank**2 + wom_rank**2
+            the_max = max(the_max,val)
+            hungarian.loc[m,w] = val
+
+    hungarian = the_max - hungarian
+
+    return hungarian
