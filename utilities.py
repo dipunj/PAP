@@ -27,6 +27,15 @@ def hung_method(df: pd.DataFrame) -> list:
     return result
 
 def stable(mPref,wPref):
+    """returns a stable set of marriages for given preference between men and women
+    
+    Args:
+        mPref (dict): list of preferences of women for each man
+        wPref (dict): list of preferences of men for each woman
+    
+    Returns:
+        list: list of tuples, where each tuple represents a pair
+    """
 
     men = mPref.keys()
     women = wPref.keys()
