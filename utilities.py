@@ -99,3 +99,29 @@ def getHungarian(mPref,wPref):
     hungarian = the_max - hungarian
 
     return hungarian
+
+def isStable(couples,mPref,wPref) -> bool:
+    """checks if a given configuration is stable
+    
+    Args:
+        couples (list): contains the list of couples(tuples)
+        mPref (dict): preference list of each man
+        wPref (dict): preference list of each woman
+    
+    Returns:
+        bool: True, if the given configuration is stable
+    """
+    couples_dict = {woman:man for man,woman in couples}
+    for m,w in couples:
+        w_rank = mPref[m].index(w)
+        preferred_over_w = mPref[m][:w_rank]
+        
+        for hotter in preferred_over_w:
+            hotters_man = couples_dict[hotter]
+            if wPref[hotter].index(m) < wPref[hotter].index(hotters_man):  
+                msg = "{}'s marriage to {} is unstable:\n\t" + \
+                      "{} prefers {} > {} (his current wife)\n\t" +\
+                      "{} prefers {} > {} (her current husband)"
+                print(msg.format(m, w, m, hotter, w, hotter, m, hotters_man) )
+                return False
+    return True

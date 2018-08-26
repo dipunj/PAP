@@ -1,7 +1,6 @@
 from utilities import *
 
-
-def main():
+def main(verbose):
     mPref,wPref = getPreference("men.txt","women.txt")
     hungarian = getHungarian(mPref,wPref)
 
@@ -10,27 +9,32 @@ def main():
 
     # lower the value, lower the cost of marriage
 
-    print("Original Preference for men:")
-    for m,pref in mPref.items():
-        print("{:>10} :: {}".format(m,",".join(pref)))
-    
-    print("Original Preference for women:")
-    for w,pref in wPref.items():
-        print("{:>10} :: {}".format(w,",".join(pref)))
-    
-
-    print("From hungarian")
     hungarian_method_result = hung_method(hungarian)
-    for m,w in hungarian_method_result:
-        print("{:>30} <-> {:<30}".format(m,w))
-
-    print("From Gale-Shapely")
     gale_Shapely_result = stable(mPref,wPref)
-    for m,w in gale_Shapely_result:
-        print("{:>30} <-> {:<30}".format(m,w))
 
-    print("Matched results")
-    for m,w in [x for x in hungarian_method_result if x in gale_Shapely_result]:
-        print("{:>30} <-> {:<30}".format(m,w))
+    if verbose == True:
+        print("Original Preference for men:")
+        for m,pref in mPref.items():
+            print("{:>10} :: {}".format(m,",".join(pref)))
+
+        print("Original Preference for women:")
+        for w,pref in wPref.items():
+            print("{:>10} :: {}".format(w,",".join(pref)))
+
+        print("\nFrom hungarian                                From Gale-Shapely")
+        for (m_h,w_h),(m_gs,w_gs) in zip(hungarian_method_result,gale_Shapely_result):
+            print("{:>10} <-> {:<10}                {:>10} <-> {:<10}".format(m_h,w_h,m_gs,w_gs))
+
+        # print("Matched results")
+        # for m,w in [x for x in hungarian_method_result if x in gale_Shapely_result]:
+        #     print("{:>30} <-> {:<30}".format(m,w))
+    else:
+        print("The result obtained from hungarian algorithm is ")
+    
+    if isStable(hungarian_method_result,mPref,wPref):
+        print("STABLE")
+    else:
+        print("NOT STABLE")
+
 if __name__ == '__main__':
-    main()
+    main(True)
