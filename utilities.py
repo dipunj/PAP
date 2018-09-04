@@ -97,7 +97,7 @@ def getHungarian(mPref,wPref):
             hungarian.loc[m,w] = val
 
     hungarian = the_max - hungarian
-
+    
     return hungarian
 
 def isStable(couples,mPref,wPref) -> bool:
@@ -112,12 +112,22 @@ def isStable(couples,mPref,wPref) -> bool:
         bool: True, if the given configuration is stable
     """
     couples_dict = {woman:man for man,woman in couples}
+    
     for m,w in couples:
+
+        # w's (m's partner) rank in m's preference list
         w_rank = mPref[m].index(w)
+        
+        # list of all women that m prefers over w
         preferred_over_w = mPref[m][:w_rank]
         
+
         for hotter in preferred_over_w:
+
+            # get each woman's current partner (in preferred list)
             hotters_man = couples_dict[hotter]
+
+            # if she prefers m over her current partner then marriage is not stable
             if wPref[hotter].index(m) < wPref[hotter].index(hotters_man):  
                 msg = "{}'s marriage to {} is unstable:\n\t" + \
                       "{} prefers {} > {} (his current wife)\n\t" +\
@@ -125,3 +135,12 @@ def isStable(couples,mPref,wPref) -> bool:
                 print(msg.format(m, w, m, hotter, w, hotter, m, hotters_man) )
                 return False
     return True
+
+
+def getCost(matrix,preference):
+    
+    cost = 0
+    for m,w in preference:
+        cost += matrix.loc[m,w]
+
+    return cost

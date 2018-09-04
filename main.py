@@ -36,5 +36,10 @@ def main(verbose):
     else:
         print("NOT STABLE")
 
+    print("The cost is :")
+    print("HUNGARIAN METHOD : ",getCost(hungarian,hungarian_method_result))
+    print("GALE SHAPELY METHOD : ",getCost(hungarian,gale_Shapely_result))
+
+
 if __name__ == '__main__':
     main(True)
