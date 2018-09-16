@@ -5,6 +5,9 @@ import os
 
 app = Flask(__name__)
 
+UPLOAD_FOLDER = os.path.join(app.root_path, 'db/')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 @app.route('/')
 def home():
     return render_template('submit.html')
@@ -15,12 +18,14 @@ def doComputation():
     if request.files['teacher'] and request.files['student']:
         
         f = request.files['teacher']
-        f.save('men.json')
+        target_men = os.path.join(app.config['UPLOAD_FOLDER'],'men.json')
+        f.save(target_men)
         
         f = request.files['student']
-        f.save('women.json')
+        target_women = os.path.join(app.config['UPLOAD_FOLDER'],'women.json')
+        f.save(target_women)
 
-        result = getStableRelations('men.json','women.json')
+        result = getStableRelations(target_men,target_women)
         return render_template('result.html', result=result)
     else:
         return '<script>alert("Invalid Submission, Please Try Again")</script>'
