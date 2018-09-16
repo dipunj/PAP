@@ -1,13 +1,35 @@
-<!doctype html>
-<html>
-   <body>
-      <table border = 1>
-         {% for key, value in result.items() %}
-            <tr>
-               <th> {{ key }} </th>
-               <td> {{ value }} </td>
-            </tr>
-         {% endfor %}
-      </table>
-   </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible">
+    <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Result</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col -12 col-md-7">
+                <table class="table table-hover table-bordered table-light">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Student Name</th>
+                            <th scope="col">Project Assigned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, value in result.items() %}
+                        <tr>
+                            <th scope="row"> {{ key }} </th>
+                            <td> {{ value }} </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
 </html>

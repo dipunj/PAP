@@ -1,5 +1,4 @@
-from utilities import *
-from flask import *
+from flask import Flask, request, render_template
 from main import getStableRelations
 import os
 
@@ -18,12 +17,12 @@ def doComputation():
     if request.files['teacher'] and request.files['student']:
         
         f = request.files['teacher']
-        target_men = os.path.join(app.config['UPLOAD_FOLDER'],'men.json')
-        f.save(target_men)
-        
-        f = request.files['student']
         target_women = os.path.join(app.config['UPLOAD_FOLDER'],'women.json')
         f.save(target_women)
+        
+        f = request.files['student']
+        target_men = os.path.join(app.config['UPLOAD_FOLDER'],'men.json')
+        f.save(target_men)
 
         result = getStableRelations(target_men,target_women)
         return render_template('result.html', result=result)
