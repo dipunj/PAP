@@ -1,0 +1,12 @@
+{
+    "alan" : [ "alice" , "emily" , "claire" , "ivanka" , "jenny" , "diana" , "fatima" , "britney" , "helen" , "gloria" ],
+    "bob" : [ "claire" , "helen" , "alice" , "diana" , "emily" , "fatima" , "britney" , "jenny" , "ivanka" , "gloria" ],
+    "charlie" : [ "helen" , "emily" , "alice" , "diana" , "britney" , "fatima" , "ivanka" , "gloria" , "claire" , "jenny" ],
+    "david" : [ "ivanka" , "fatima" , "diana" , "gloria" , "helen" , "emily" , "jenny" , "britney" , "claire" , "alice" ],
+    "ethan" : [ "jenny" , "diana" , "britney" , "claire" , "fatima" , "emily" , "alice" , "ivanka" , "helen" , "gloria" ],
+    "frank" : [ "britney" , "alice" , "diana" , "gloria" , "emily" , "ivanka" , "claire" , "jenny" , "helen" , "fatima" ],
+    "george" : [ "gloria" , "emily" , "ivanka" , "britney" , "claire" , "alice" , "diana" , "helen" , "jenny" , "fatima" ],
+    "harry" : [ "alice" , "emily" , "helen" , "fatima" , "ivanka" , "claire" , "jenny" , "britney" , "gloria" , "diana" ],
+    "isaac" : [ "helen" , "claire" , "diana" , "gloria" , "britney" , "alice" , "fatima" , "ivanka" , "jenny" , "emily" ],
+    "james" : [ "alice" , "fatima" , "jenny" , "gloria" , "emily" , "britney" , "diana" , "claire" , "ivanka" , "helen" ]
+}
