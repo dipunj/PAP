@@ -1,50 +1,59 @@
 <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
 
 <body>
-	<header class="jumbotron">
+	<header class="jumbotron" style="background: url(/static/images/jumbo_back.jpg); background-size: 100%; background-position-y:bottom; border-radius: 0">
 		<div class="container">
 			<div class="row row-header">
-				<div class="col-12 col-sm-6">
-					<h1>Project Allotment Portal</h1>
-					<p>We use the concept of stable marriage problem to assign projects to students, such that the assignment is stable</p>
+				<div class="col-12 col-sm-8" style="background-color: rgba(255,255,255,0.6); border-radius:10px;">
+					<div style="padding: 10%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+						<h1>Project Allotment Portal</h1>
+						<p>We use the concept behind stable marriage problem to assign projects to students, such that the assignment is stable between students and teachers</p>
+					</div>
 				</div>
 			</div>
 		</div>
 	</header>
 	
-	<div class="container">
-		<div class="row row-content justify-content-center">
-			<div class="col-12">
-				<p>Submit the preference of students and project mentors</p>
-			</div>
-			
-			<div class="col-12 col-md-9">
-				<form action="/submit" method="POST" enctype="multipart/form-data">
-					
-					<div class="form-row form-group">
-						<label for="student" class="col-md-2 col-form-label">Student : </label>
-						<div class="col-md-10">
-							<input type="file" accept=".json" name="student">
-						</div>
-					</div>
+	<div class="container mt-5">
+		<div class="row justify-content-center">
+			<div class="col-10">
+				<div class="card">
+					<h4 class="card-header">Preferences</h4>
+					<div class="card-body">
+						<form action="/submit" method="POST" enctype="multipart/form-data">			
+							<div class="form-row form-group">
+								<label for="student" class="col-md-2 col-form-label">Student : </label>
+								<div class="col-md-10">
+									<input type="file" accept=".json" name="student">
+								</div>
+							</div>
+							
+							<div class="form-row form-group">
+								<label for="teacher" class="col-md-2 col-form-label">Teacher : </label>
+								<div class="col-md-10">
+									<input type="file" accept=".json" name="teacher">
+								</div>
+							</div>
+							
+							<div class="form-row form-group">
+									<label for="members" class="col-md-2 col-form-label">Group Members : </label>
+									<div class="col-md-10">
+										<input type="file" accept=".json" name="members">
+									</div>
+							</div>
 
-					<div class="form-row form-group">
-						<label for="teacher" class="col-md-2 col-form-label">Teacher : </label>
-						<div class="col-md-10">
-							<input type="file" accept=".json" name="teacher">
-						</div>
+							<div class="form-group row">
+								<div class="offset-md-2 col-md-10">
+									<button type="submit" class="btn btn-primary">Send Preferences</button>
+								</div>
+							</div>
+						</form>
 					</div>
-					
-					<div class="form-group row">
-						<div class="offset-md-2 col-md-10">
-							<button type="submit" class="btn btn-primary">Send Preferences</button>
-						</div>
-					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	</div>
-
+	
 </body>
 
 <script src="../static/bootstrap/dist/js/bootstrap.min.js"></script>

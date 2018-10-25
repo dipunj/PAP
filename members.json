@@ -1,0 +1,12 @@
+{
+    "alan" : ["alan_p1", "alan_p2", "alan_p3"],
+    "bob" : ["bob_p1", "bob_p2", "bob_p3"],
+    "charlie" : ["charlie_p1", "charlie_p2", "charlie_p3"],
+    "david" : ["david_p1", "david_p2", "david_p3"],
+    "ethan" : ["ethan_p1", "ethan_p2", "ethan_p3"],
+    "frank" : ["frank_p1", "frank_p2", "frank_p3"],
+    "george" : ["george_p1", "george_p2", "george_p3"],
+    "harry" : ["harry_p1", "harry_p2", "harry_p3"],
+    "isaac" : ["isaac_p1", "isaac_p2", "isaac_p3"],
+    "james" : ["james_p1", "james_p2", "james_p3"]
+}

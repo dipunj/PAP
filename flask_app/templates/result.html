@@ -5,31 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible">
     <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/style.css">
     <title>Result</title>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col -12 col-md-7">
-                <table class="table table-hover table-bordered table-light">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th scope="col">Student Name</th>
-                            <th scope="col">Project Assigned</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for key, value in result.items() %}
-                        <tr>
-                            <th scope="row"> {{ key }} </th>
-                            <td> {{ value }} </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <header class="jumbotron" style="background: url(/static/images/jumbo_back.jpg); background-size: 100%; background-position-y:bottom; border-radius: 0">
+        <div class="container">
+            <div class="row row-header">
+                <div class="col-12 col-sm-8" style="background-color: rgba(255,255,255,0.6); border-radius:10px;">
+                    <div style="padding: 10%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+                        <h1>Project Allotment Portal</h1>
+                        <p>We use the concept behind stable marriage problem to assign projects to students, such that the assignment is stable between students and teachers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="row justify-content-center" id="printThis">
+            <div class="col-12">
+                <div class="card">
+                    <h4 class="card-header">Results</h4>
+                    <div class="card-body">
+                        <table class="table table-hover table-bordered table-light">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Student Name</th>
+                                    <th scope="col">Project Assigned</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, value in result.items() %}
+                                <tr data-target="#{{ key }}id" data-toggle="collapse">
+                                    <th scope="row"> {{ key }} </th>
+                                    <td> {{ value }} </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"> 
+                                        {% for mem in students[key] %}
+                                            <p>{{ mem }}</p>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center align-content-center">
+            <div class="mt-5 mb-5" style="align-content: center">
+                <button class="btn btn-primary" onclick="printDiv('printThis')" style="align-self: center">Print</button>
             </div>
         </div>
     </div>
 </body>
+<script type="text/javascript">
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        w=window.open();
+        w.document.write(printContents);
+        w.print();
+        w.close();
+    }
+</script>
 </html>

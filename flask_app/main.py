@@ -7,8 +7,6 @@ def getStableRelations(men_file,women_file):
 
     return dict(gale_Shapely_result)
 
-
-
 # for debugging purposes
 if __name__ == '__main__':
     print(getStableRelations("men.json","women.json"))
