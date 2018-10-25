@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login V15</title>
+	<title>Project Allotment Portal</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
@@ -28,7 +28,6 @@
 <!--===============================================================================================-->
 </head>
 <body>
-	
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100">
@@ -37,6 +36,17 @@
 						Sign In
 					</span>
 				</div>
+				
+				{% with messages = get_flashed_messages() %}
+	  				{% if messages %}
+	    				{% for message in messages %}
+		  					<div class="alert alert-danger alert-dismissible" role="alert">
+		  					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+								{{message}}
+		  					</div>
+						{% endfor %}
+	  				{% endif %}
+				{% endwith %}
 
 				<form class="login100-form validate-form" action="/login" method="POST">
 					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
@@ -60,7 +70,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 <!--===============================================================================================-->
 	<script src="/static/vendor/jquery/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->

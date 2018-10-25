@@ -8,3 +8,7 @@ padding: 50px;
 .form-group {
 margin-bottom: 10px;
 }
+
+header {
+    transition: 0.4s;
+}
