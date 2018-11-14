@@ -1,0 +1,76 @@
+body {
+    padding-top: 80px;
+}
+
+.scrolled {
+    -webkit-box-shadow: 0 8px 6px -6px #999;
+    -moz-box-shadow: 0 8px 6px -6px #999;
+    box-shadow: 0 8px 6px -6px #999;
+}
+
+.navbar {
+    height: 80px;
+}
+
+.__title {
+    font-family: 'Exo', sans-serif;
+}
+
+
+.btn-logout {
+    color: #fff;
+    background-color: black;
+    border-color: black;
+    /*set the color you want here*/
+}
+
+.btn-logout:hover {
+    color: #fff;
+    background-color: #DB4437;
+    border-color: #DB4437;
+    box-shadow: 0 2px 5px 0 gray;
+}
+
+.btn-cart {
+    color: #4285F4;
+    border-color: rgba(199, 199, 199, 0.363) !important;
+    border-radius: 25px !important;
+}
+
+.btn-cart:hover {
+    background: rgba(66, 134, 244, 0.100);
+    border-color: #4285F4 !important;
+}
+
+.jumbotron {
+    height: 380px;
+    color: white;
+    text-shadow: #444 0 1px 1px;
+    background: transparent;
+    border-radius: 0 0;
+}
+
+.nav-pills .nav-link:hover {
+    background-color: rgb(66, 133, 244,0.1);
+}
+
+.nav-pills .nav-link.active {
+    background-color: #4285F4;
+}
+
+.card {
+    margin-top: 60px;
+    margin-bottom: 40px;
+}
+
+.form-group.row {
+    margin-top: 20px;
+}
+
+div#chargeDeck >div.col-md-4>div.card>div.card-body {
+    padding-bottom: 0px;
+}
+
+#chargeDeck {
+    margin-bottom: 300px;
+}

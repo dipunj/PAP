@@ -1,53 +1,21 @@
-from flask import Flask, request, render_template, session, flash
-from flask_sqlalchemy import SQLAlchemy
-from main import getStableRelations
 import os, json
+from flask import Flask, request, render_template, session, flash
+from main import getStableRelations
+from database import db, User
 
 
 app = Flask(__name__)
+db.create_all()
+
+admin = User(username="admin",password="mnnit123", name="admin")
+student = User(username="20154061", password="20154061",name="Dipunj")
+db.session.add(admin)
+db.session.add(student)
+db.session.commit()
 
 # project_dir   = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(app.root_path, 'db/')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-database_file = "sqlite:///{}".format(os.path.join(UPLOAD_FOLDER, "users.db"))
-app.config["SQLALCHEMY_DATABASE_URI"] = database_file
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-
-print(database_file)
-db = SQLAlchemy(app)
-
-class user(db.Model):
-    # __tablename__ = 'users'
-
-    username = db.Column(db.String(8),unique=True, primary_key=True, nullable=False)
-    password = db.Column(db.String(80))
-    name = db.Column(db.String)
-    group_position = db.Column(db.Integer,nullable=False)
-
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
-
-    def __repr__(self):
-         return "<Reg. {}><Username: {}><Group : Position {}>".format(self.username,self.username,self.group_position)
-        
-
-db.create_all()
-
-admin = user('admin', 'mnnit123')
-db.session.add(admin)
-db.session.commit()
-guest = user('20154061', '20154061')
-db.session.add(guest)
-db.session.commit()
-
-
-
-
-
-
 
 
 
@@ -55,21 +23,21 @@ db.session.commit()
 
 
 @app.route('/', methods=['POST','GET'])
-def home(user_row=None):
+def home(userObj=None):
 
-    if user_row is None or session['logged_in'] == False:
+    if userObj is None or session['logged_in'] == False:
         return render_template('login.html')
     else:
-        if user_row.username == "admin":
+        if userObj.username == "admin":
             return render_template("admin.html")
         else:
-            return render_template("student.html", name=user_row.name)
+            return render_template("student.html", name=userObj.name)
 
 
 @app.route('/login',methods=["POST"])
 def do_login():
 
-    this_user = UserModel.query.filter_by(username=int(request.form['username'])).first()
+    this_user = User.query.filter_by(username=request.form['username']).first()
 
     if this_user is not None:
         if this_user.password == request.form["password"]:
@@ -79,7 +47,7 @@ def do_login():
     else:
         flash("Invalid Username, Please Try Again")
     
-    return home(user_row)
+    return home(this_user)
 
 
 @app.route('/logout', methods=['POST'])
@@ -93,6 +61,8 @@ def do_admin_logout():
 
 @app.route('/submit', methods=['POST'])
 def doComputation():
+
+    
     if request.files['teacher'] and request.files['student'] and request.files['members']:
     
         f = request.files['teacher']
@@ -123,4 +93,4 @@ def result():
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run(debug=False, host='0.0.0.0', port=4001)
+    app.run(debug=False, host='127.0.0.1', port=4000)

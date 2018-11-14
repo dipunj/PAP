@@ -1,24 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>MNNIT Allahabad, P.A.P</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="/static/css/main.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible">
+    <title>Project Allotment Portal, MNNIT</title>
+
+    <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
-    <script src="/static/js/main.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo:100,300,400">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/jquery-ui.css">
+
+    <style>
+        #sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+        #sortable li { margin: 0 5px 5px 5px; padding: 5px; font-size: 1.2em; height: 1.5em; }
+        #sortable li { height: 1.5em; line-height: 1.2em; }
+        .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+    </style>
+
+    <!-- for debugging css / ghost code -->
+    <!-- <style>
+        * { background: #000 !important; color: #0f0 !important; outline: solid #f00 1px !important; }
+    </style> -->
 </head>
 
 <body>
 
-</body>
-
-</html>
-
-
-<body>
+    <!-- fixed navbar -->
     <nav class="navbar navbar-expand-sm navbar-light bg-white fixed-top" id="mainNav">
         <div class="container">
             <!-- hamburger button for smaller screens -->
@@ -28,23 +38,13 @@
             </button>
 
             <a href="#" class="navbar-brand __title mr-auto">
-                <strong>Welcome</strong>, Manmeet
+                <strong>Welcome</strong>, {{ name }}
             </a>
 
             <!-- navbar buttons -->
             <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
                 <ul class="nav nav-pills row">
-                    <li class="nav-item mr-5">
-                        <a class="nav-link active" data-toggle="pill" href="#newReq">New Request</a>
-                    </li>
-                    <li class="nav-item mr-5">
-                        <!-- nav bar content here -->
-                        <a class="nav-link" data-toggle="pill" href="#status">Status</a>
-                    </li>
-                    <li class="nav-item mr-5">
-                        <!-- nav bar content here -->
-                        <a class="nav-link" data-toggle="pill" href="#charges">Pricing</a>
-                    </li>
+                    <li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#newReq">Preference</a></li>
                 </ul>
             </div>
 
@@ -54,71 +54,58 @@
     </nav>
 
     <!-- portal image and name -->
-    <header class="jumbotron" style="background-image: url('/img/jumbo.jpg'); background-size: 100%;">
+    <header class="jumbotron" style="background-image: url('/static/images/jumbo.jpg'); background-size: 100%;">
         <div class="container p-5">
             <h1>MNNIT Allahabad</h1>
-            <p>Portal for College documents</p>
+            <p>Portal for Project Allotment</p>
         </div>
     </header>
 
 
+
+
+    <!-- MAIN CONTENT BEGINS -->
+    <!-- MAIN CONTENT BEGINS -->
+    <!-- MAIN CONTENT BEGINS -->
+    <!-- MAIN CONTENT BEGINS -->
+    <!-- MAIN CONTENT BEGINS -->
+    <!-- MAIN CONTENT BEGINS -->
+    <!-- MAIN CONTENT BEGINS -->
+
+
+
+
+
+
+
     <div class="tab-content">
-    <div id="newReq" class="container mt-5 tab-pane active">
-        <div class="row justify-content-center">
-            <div class="col-10">
-                <div class="card">
-                    <h4 class="card-header">Preferences</h4>
-                    <div class="card-body">
-                        <form action="/submit" method="POST" enctype="multipart/form-data">
-                            <div class="form-row form-group">
-                                <label for="student" class="col-md-2 col-form-label">Student : </label>
-                                <div class="col-md-10">
-                                    <input type="file" accept=".json" name="student">
-                                </div>
-                            </div>
 
-                            <div class="form-row form-group">
-                                <label for="teacher" class="col-md-2 col-form-label">Teacher : </label>
-                                <div class="col-md-10">
-                                    <input type="file" accept=".json" name="teacher">
-                                </div>
-                            </div>
-
-                            <div class="form-row form-group">
-                                <label for="members" class="col-md-2 col-form-label">Group Members : </label>
-                                <div class="col-md-10">
-                                    <input type="file" accept=".json" name="members">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <div class="offset-md-2 col-md-10">
-                                    <button type="submit" class="btn btn-primary">Send Preferences</button>
-                                </div>
-                            </div>
-                        </form>
+        <div id="newReq" class="container mt-5 tab-pane active">
+            <div class="row justify-content-center">
+                <div class="col-10">
+                    <div class="card">
+                        <h4 class="card-header">Project Preference</h4>
+                        <div class="card-body">
+                            <ul id="sortable" class="ui-widget ui-helper-clearfix">
+                                <!-- {% for pj in projects %} -->
+                                <li class="ui-state-default ui-corner-all">item name</li>
+                                <li class="ui-state-default ui-corner-all">item name</li>
+                                <li class="ui-state-default ui-corner-all">item name</li>
+                                <li class="ui-state-default ui-corner-all">item name</li>
+                                <!-- {% endfor %} -->
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 
 </body>
 
-<script src="../static/bootstrap/dist/js/bootstrap.min.js"></script>
-<script>
-    // When the user scrolls down 80px from the top of the document, resize the navbar's padding and the logo's font size
-    window.onscroll = function () {
-        scrollFunction()
-    };
+<script src="/static/js/jquery.slim.min.js"></script>
+<script src="/static/js/jquery-ui.js"></script>
+<script src="/static/js/main.js"></script>
 
-    function scrollFunction() {
-        if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
-            document.getElementsByClassName("header").style.padding = "30px 10px";
-            document.getElementById("logo").style.fontSize = "25px";
-        } else {
-            document.getElementById("navbar").style.padding = "80px 10px";
-            document.getElementById("logo").style.fontSize = "35px";
-        }
-    }
-</script>
+</html>
