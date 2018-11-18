@@ -12,14 +12,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo:100,300,400">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/jquery-ui.css">
-
-    <style>
-        #sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
-        #sortable li { margin: 0 5px 5px 5px; padding: 5px; font-size: 1.2em; height: 1.5em; }
-        #sortable li { height: 1.5em; line-height: 1.2em; }
-        .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
-    </style>
-
+    <link rel="stylesheet" href="/static/css/jquery-ui.min.css">
     <!-- for debugging css / ghost code -->
     <!-- <style>
         * { background: #000 !important; color: #0f0 !important; outline: solid #f00 1px !important; }
@@ -44,7 +37,7 @@
             <!-- navbar buttons -->
             <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
                 <ul class="nav nav-pills row">
-                    <li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#newReq">Preference</a></li>
+                    <li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#pref">Preference</a></li>
                 </ul>
             </div>
 
@@ -80,19 +73,27 @@
 
     <div class="tab-content">
 
-        <div id="newReq" class="container mt-5 tab-pane active">
+        <div id="pref" class="container mt-5 tab-pane active">
             <div class="row justify-content-center">
                 <div class="col-10">
                     <div class="card">
                         <h4 class="card-header">Project Preference</h4>
                         <div class="card-body">
-                            <ul id="sortable" class="ui-widget ui-helper-clearfix">
-                                <!-- {% for pj in projects %} -->
-                                <li class="ui-state-default ui-corner-all">item name</li>
-                                <li class="ui-state-default ui-corner-all">item name</li>
-                                <li class="ui-state-default ui-corner-all">item name</li>
-                                <li class="ui-state-default ui-corner-all">item name</li>
-                                <!-- {% endfor %} -->
+                            <ul id="sortable">
+                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
+                                    1</li>
+                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
+                                    2</li>
+                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
+                                    3</li>
+                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
+                                    4</li>
+                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
+                                    5</li>
+                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
+                                    6</li>
+                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
+                                    7</li>
                             </ul>
                         </div>
                     </div>
@@ -105,7 +106,9 @@
 </body>
 
 <script src="/static/js/jquery.slim.min.js"></script>
-<script src="/static/js/jquery-ui.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="/static/js/main.js"></script>
+
 
 </html>
