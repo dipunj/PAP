@@ -79,22 +79,18 @@
                     <div class="card">
                         <h4 class="card-header">Project Preference</h4>
                         <div class="card-body">
-                            <ul id="sortable">
-                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
-                                    1</li>
-                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
-                                    2</li>
-                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
-                                    3</li>
-                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
-                                    4</li>
-                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
-                                    5</li>
-                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
-                                    6</li>
-                                <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item
-                                    7</li>
-                            </ul>
+                            <form id="preferenceForm">
+                                <div class="row">
+                                    <ul id="sortable">
+                                        {% for idx, project_name in project_list.items() %}
+                                        <li id="r_{{idx}}" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>{{project_name}}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="row">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

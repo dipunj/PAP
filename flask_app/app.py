@@ -1,10 +1,24 @@
 import os, json
 from flask import Flask, request, render_template, session, flash
 from main import getStableRelations
-from database import db, User
+from database import db, database_file, User
+
+
+
+project_list = {"1" : 'Artifical Intelligence',
+                "2" : 'Machine Learning',
+                "3" : 'BlockChain',
+                "4" : 'Web Development',
+                "5" : 'IOT Systems',
+                "6" : 'Algorithms'
+}
+
 
 
 app = Flask(__name__)
+
+os.remove(database_file.split(':///')[1])
+
 db.create_all()
 
 admin = User(username="admin",password="mnnit123", name="admin")
@@ -31,7 +45,7 @@ def home(userObj=None):
         if userObj.username == "admin":
             return render_template("admin.html")
         else:
-            return render_template("student.html", name=userObj.name)
+            return render_template("student.html", name=userObj.name, project_list=project_list)
 
 
 @app.route('/login',methods=["POST"])
@@ -85,6 +99,7 @@ def doComputation():
     else:
         return '<script>alert("Invalid Submission, Please Try Again")</script>'
 
+
 @app.route('/result',methods=['POST'])
 def result():
     if request.form['home'] == True:
@@ -93,4 +108,4 @@ def result():
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run(debug=False, host='127.0.0.1', port=4000)
+    app.run(debug=False, host='127.0.0.1', port=4001)

@@ -17,3 +17,7 @@ $( function() {
     $( "#sortable" ).sortable();
     $( "#sortable" ).disableSelection();
   } );
+
+$('#preferenceForm').submit(function(){
+	return $( "#sortable" ).sortable("serialize");
+}); 
