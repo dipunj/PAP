@@ -51,7 +51,7 @@ body {
 }
 
 .nav-pills .nav-link:hover {
-    background-color: rgb(66, 133, 244,0.1);
+    background-color: rgb(66, 133, 244, 0.1);
 }
 
 .nav-pills .nav-link.active {
@@ -67,10 +67,36 @@ body {
     margin-top: 20px;
 }
 
-div#chargeDeck >div.col-md-4>div.card>div.card-body {
+div#chargeDeck>div.col-md-4>div.card>div.card-body {
     padding-bottom: 0px;
 }
 
 #chargeDeck {
     margin-bottom: 300px;
+}
+
+
+
+body.dragging,
+body.dragging * {
+    cursor: move !important;
+}
+
+.dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
+}
+
+.prefOpt {
+    position: relative;
+}
+
+.prefOpt:before {
+    position: absolute;
+    /** Define arrowhead **/
+}
+
+.prefList {
+    list-style-type: none;
 }
