@@ -18,6 +18,12 @@ $( function() {
     $( "#sortable" ).disableSelection();
   } );
 
-$('#preferenceForm').submit(function(){
-	return $( "#sortable" ).sortable("serialize");
-}); 
+// $('#preferenceForm').submit(function(){
+// 	 $( "#sortable" ).sortable("serialize");
+// }); 
+
+
+$("#prefBtn").click(function(){        
+	$("#order").val($( "#sortable" ).sortable( "toArray" ));
+	$("#prefForm").submit();
+});

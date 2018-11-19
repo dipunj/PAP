@@ -78,14 +78,13 @@
                 <div class="col-10">
                     <div class="card">
                         <h4 class="card-header">Project Preference</h4>
-                        <form action="/ConfirmSubmission" method="POST" id="prefForm">
                             <div class="card-body">
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-7 offset-3">
-                                            <ol id="sortable">
-                                                {% for idx, project_name in project_list.items() %}
-                                                    <li id="r_{{idx}}" class="ui-state-default">{{project_name}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+                                            <ol class="notsortable">
+                                                {% for project_name in confirm_list %}
+                                                    <li class="ui-state-default">{{project_name}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
                                                 {% endfor %}
                                             </ol>
                                         </div>
@@ -96,13 +95,16 @@
                                 <div class="container">
                                     <div class="row">                    
                                         <div class="col-12">
-                                            <input id="order" type="text" name="order">
-                                            <button type="button" class="btn btn-primary float-right" id="prefBtn">Next</button>
+                                            <form action="/">
+                                                <button type="submit" class="btn btn-primary float-left" id="back">Back</button>
+                                            </form>
+                                            <form action="/finalSubmit">
+                                                <button type="submit" class="btn btn-danger float-right" id="finalSubmit">Submit</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </form>
                     </div>
                 </div>
             </div>

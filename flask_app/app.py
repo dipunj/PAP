@@ -5,17 +5,20 @@ from database import db, database_file, User
 
 
 
-project_list = {"1" : 'Artifical Intelligence',
-                "2" : 'Machine Learning',
-                "3" : 'BlockChain',
-                "4" : 'Web Development',
-                "5" : 'IOT Systems',
-                "6" : 'Algorithms'
+project_list = \
+{
+    "1" : 'Artifical Intelligence',
+    "2" : 'Machine Learning',
+    "3" : 'BlockChain',
+    "4" : 'Web Development',
+    "5" : 'IOT Systems',
+    "6" : 'Algorithms'
 }
 
 
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 os.remove(database_file.split(':///')[1])
 
@@ -23,6 +26,7 @@ db.create_all()
 
 admin = User(username="admin",password="mnnit123", name="admin")
 student = User(username="20154061", password="20154061",name="Dipunj")
+
 db.session.add(admin)
 db.session.add(student)
 db.session.commit()
@@ -45,6 +49,7 @@ def home(userObj=None):
         if userObj.username == "admin":
             return render_template("admin.html")
         else:
+            session['name'] = userObj.name
             return render_template("student.html", name=userObj.name, project_list=project_list)
 
 
@@ -104,6 +109,19 @@ def doComputation():
 def result():
     if request.form['home'] == True:
         return home()
+
+
+@app.route('/ConfirmSubmission', methods=['POST'])
+def confirmIt():
+
+    order = request.form['order'].split(",")
+    order = [i.split("_")[1] for i in order]    
+    preview = []
+
+    for pr_id in order:
+        preview.append(project_list[pr_id])
+        
+    return render_template("confirm.html",name=session['name'], confirm_list=preview)
 
 
 if __name__ == "__main__":
