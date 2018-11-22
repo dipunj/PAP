@@ -24,8 +24,8 @@ os.remove(database_file.split(':///')[1])
 
 db.create_all()
 
-admin = User(username="admin",password="mnnit123", name="admin")
-student = User(username="20154061", password="20154061",name="Dipunj")
+admin = User(username="admin",password="mnnit123", name="admin",cpi=10,group_size=3)
+student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35,group_size=4)
 
 db.session.add(admin)
 db.session.add(student)
@@ -126,4 +126,4 @@ def confirmIt():
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run(debug=False, host='127.0.0.1', port=4001)
+    app.run(debug=False, host='127.0.0.1', port=4000)

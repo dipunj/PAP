@@ -1,95 +1,271 @@
-<link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible">
+	<title>Project Allotment Portal, MNNIT</title>
+
+	<link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/static/css/styles.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo:100,300,400">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="/static/css/toggle.css">
+	<!-- for debugging css / ghost code -->
+	<!-- <style>
+		* { background: #000 !important; color: #0f0 !important; outline: solid #f00 1px !important; }
+    </style> -->
+
+</head>
 
 <body>
-	<header class="jumbotron" style="background: url(/static/images/jumbo.jpg); background-size: 100%; background-position-y:bottom; border-radius: 0">
-		<div class="row row-header">
-			<div class="col-12 col-md-10" style="
-				margin-top: 5%;
-				padding: 5%;
-				background-color: rgba(255,255,255,0.6);
-				border-radius:10px;
-				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
-				<h1>Project Allotment Portal</h1>
-				<p>We use the concept behind stable marriage problem to assign projects to students, such that the assignment is stable between students and teachers</p>
-			</div>
-		</div>
-	</header>
-	
-	<nav class="navbar navbar-light bg-light navbar-expand-sm fixed-top">
+	<nav class="navbar navbar-expand-sm navbar-light bg-white fixed-top" id="mainNav">
 		<div class="container">
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">
+			<!-- hamburger button for smaller screens -->
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarSupportedContent"
+			 aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
+
 			<a class="navbar-brand" href="#"><img src="/static/images/motilal_square.png" height="40" width="40"></a>
-			<div class="collapse navbar-collapse" id="Navbar">
-				<ul class="nav nav-pills mr-auto">
-					<li class="nav-item" style="margin-left: 60px">
-						<a class="nav-link active" href="#">
-							Home
-						</a>
-					</li>
-					<li class="nav-item" style="margin-left: 60px">
-						<a class="nav-link disabled" style="cursor: not-allowed;">
-							Result
-						</a>
-					</li>
+			<a href="#" class="navbar-brand __title mr-auto">
+				<strong>Welcome</strong>, Admin
+			</a>
+
+			<!-- navbar buttons -->
+			<div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+				<ul class="nav nav-pills row">
+					<li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#home">Home</a></li>
+					<li class="nav-item mr-5"><a class="nav-link" data-toggle="pill" href="#manageUsers">Manage Users</a></li>
+					<li class="nav-item mr-5"><a class="nav-link disabled" style="cursor: not-allowed;" data-toggle="pill" href="#result">Result</a></li>
 				</ul>
-				<form class="form-inline mr-2 my-2" action="/logout" method="POST">
-					<button type="submit" class="btn btn-outline-dark mr-2 my-2">
-						Logout
-					</button>
-				</form>
 			</div>
+
+			<!-- logout button : create a form if required -->
+			<form class="form-inline mr-2 my-2" action="/logout" method="POST">
+				<button id="loginbtn" class="btn btn-logout float-right">Log Out</button>
+			</form>
 		</div>
 	</nav>
-	
-	<div class="container mt-5">
-		<div class="row justify-content-center">
-			<div class="col-10">
-				<div class="card">
-					<h4 class="card-header">Preferences</h4>
-					<div class="card-body">
-						<form action="/submit" method="POST" enctype="multipart/form-data">			
-							<div class="form-row form-group">
-								<label for="student" class="col-md-2 col-form-label">Student : </label>
-								<div class="col-md-10">
-									<input type="file" accept=".json" name="student">
+
+	<!-- portal image and name -->
+	<header class="jumbotron" style="background-image: url(/static/images/jumbo.jpg); background-size: 100%;">
+		<div class="container p-5">
+			<h1>MNNIT Allahabad</h1>
+			<p>Portal for Project Allotment</p>
+			<p>We use the concept behind stable marriage problem to assign projects to students, such that the assignment is
+				stable between students and teachers</p>
+		</div>
+	</header>
+
+
+
+
+
+	<div class="tab-content">
+
+		<div id="home" class="container mt-5 tab-pane active">
+			<div class="row justify-content-center">
+				<div class="col-12">
+					<div class="card">
+						<h4 class="card-header">Preferences</h4>
+						<div class="card-body">
+							<form action="/submit" method="POST" enctype="multipart/form-data">
+								<div class="form-row form-group">
+									<label for="student" class="col-md-2 col-form-label">Student : </label>
+									<div class="col-md-10">
+										<input type="file" accept=".json" name="student">
+									</div>
 								</div>
-							</div>
-							
-							<div class="form-row form-group">
-								<label for="teacher" class="col-md-2 col-form-label">Teacher : </label>
-								<div class="col-md-10">
-									<input type="file" accept=".json" name="teacher">
+
+								<div class="form-row form-group">
+									<label for="teacher" class="col-md-2 col-form-label">Teacher : </label>
+									<div class="col-md-10">
+										<input type="file" accept=".json" name="teacher">
+									</div>
 								</div>
-							</div>
-							
-							<div class="form-row form-group">
-								<label for="members" class="col-md-2 col-form-label">Group Members : </label>
-								<div class="col-md-10">
-									<input type="file" accept=".json" name="members">
+
+								<div class="form-row form-group">
+									<label for="members" class="col-md-2 col-form-label">Group Members : </label>
+									<div class="col-md-10">
+										<input type="file" accept=".json" name="members">
+									</div>
 								</div>
-							</div>
-							
-							<div class="form-group row">
-								<div class="offset-md-2 col-md-10">
-									<button type="submit" class="btn btn-primary">Send Preferences</button>
+
+								<div class="form-group row">
+									<div class="offset-md-2 col-md-10">
+										<button type="submit" class="btn btn-primary">Send Preferences</button>
+									</div>
 								</div>
-							</div>
-						</form>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+
+		<div id="manageUsers" class="container tab-pane fade">
+
+			<h2>User Membership</h2>
+			<div class="card-deck">
+
+				<div class="container" style="display: flex">	
+					<!-- create user -->
+					<div class="col" style="flex: 1; width: 100%">
+					<div class="card mb-4 shadow-lg border-success">
+						<div class="card-body">
+							<h4 class="my-0 mb-5 font-weight-light">Create New User</h4>
+							<form action="/createUser" method="POST">
+								<div class="form">
+									<div class="form-group offset-1 col-10">
+										<input type="text" class="form-control" name="newUserFullName" placeholder="Full Name">
+									</div>
+									<div class="form-group offset-1 col-10">
+										<input type="text" class="form-control" name="newUserCGPA" placeholder="Current CGPA">
+									</div>
+									<div class="form-group offset-1 col-10">
+										<input type="text" class="form-control" name="newUserRegNo" placeholder="Registeration No.">
+									</div>
+									<div class="form-group">
+										<button type="submit" class="btn btn-outline-success btn-lg float-right mt-3">Create</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					</div>
+
+					<!-- delete user -->
+					<div class="col" style="flex: 1; width: 100%">
+					<div class="card mb-4 shadow-lg border-danger">
+						<div class="card-body">
+							<h4 class="my-0 mb-5 font-weight-light">Delete Old User</h4>
+							<form action="/deleteUser" method="POST">
+								<div class="form">
+									<div class="form-group col-12">
+										<input type="text" class="form-control" name="oldUserRegNo" placeholder="Registeration No.">
+									</div>
+								</div>
+								<button type="submit" class="btn btn-outline-danger btn-lg float-right">Delete</button>
+							</form>
+						</div>
+					</div>
+
+					</div>
+				
+				</div>
+
+				<!-- view user list -->
+				<div class="col-12">
+					<div class="accordion" id="userAccordion">
+						<div class="card align-content-center">
+							<h4 class="card-header" id="userHeading">
+								Registered Users
+								<button class="btn btn-primary collapsed float-right" type="button" data-toggle="collapse" data-target="#collapseThree"
+								 aria-expanded="false" aria-controls="collapseThree">View</button>
+							</h4>
+							<div id="collapseThree" class="collapse" aria-labelledby="userHeading" data-parent="#userAccordion">
+								<div class="card-body">
+									{user list}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- login status -->
+				<div class="col-12">
+					<div class="card">
+						<h4 class="card-header">Status</h4>
+						<div class="card-body">
+							<form class="form" action="/togglePortal">
+								<div class="container">
+									<div class="row">
+										<div class="col-7 align-self-center">
+											<h6>Login Status :</h6>
+										</div>
+										<div class="col-3 align-self-center">
+											<button type="button" class="btn btn-secondary btn-toggle" data-toggle="button" aria-pressed="false"
+											 autocomplete="off">
+												<div class="handle"></div>
+											</button>
+										</div>
+										<div class="col-2 align-self-center">
+											<button type="submit" class="btn btn-primary btn-lg float-right">Save</button>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<!-- portal controls -->
+				<div class="col-12">
+					<div class="card">
+						<h4 class="card-header">Portal Controls</h4>
+						<div class="card-body">
+							<div class="container">
+								<form action="/doComputation">
+									<div class="form-group row">
+										<div class="col-md-8 offset-md-1">
+											<label for="resultButton" class="col-form-label-lg">Compute Final Result using Stable Marriage Hypothesis</label>
+										</div>
+										<div class="col-md-3">
+											<button type="submit" class="btn btn-outline-warning btn-lg float-right" id="resultButton">Compute</button>
+										</div>
+									</div>
+								</form>
+								<form action="/resetPortal">
+									<div class="form-group row" style="background-color: #ff00003b">
+										<div class="col-md-6 offset-md-1 pt-4 pb-3">
+											<label for="resetButton" class="text-danger col-form-label-lg">THIS ACTION IS IRREVERSIBLE</label>
+										</div>
+										<div class="col-md-3 offset-2 pt-4">
+											<button type="submit" class="btn btn-danger float-right" id="resetButton">RESET DATABASE </button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="result" class="container mt-5 tab-pane fade">
+			<div class="row justify-content-center">
+				<div class="col-12">
+					<div class="card">
+						<h4 class="card-header">Preferences</h4>
+						<div class="card-body">
+							<p>content</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 	</div>
-	
+
 </body>
 
-<script src="../static/bootstrap/dist/js/bootstrap.min.js"></script>
-<script>
+<script src="/static/js/jquery-3.3.1.min.js"></script>
+<script src="/static/popper.js/dist/popper.min.js"></script>
+<script src="/static/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<script src="/static/js/main.js"></script>
+
+
+<!-- <script>
 	// When the user scrolls down 80px from the top of the document, resize the navbar's padding and the logo's font size
-	window.onscroll = function() {scrollFunction()};
-	
+	window.onscroll = function () {
+		scrollFunction()
+	};
+
 	function scrollFunction() {
 		if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
 			document.getElementsByClassName("header").style.padding = "30px 10px";
@@ -99,4 +275,4 @@
 			document.getElementById("logo").style.fontSize = "35px";
 		}
 	}
-</script>
+</script> -->

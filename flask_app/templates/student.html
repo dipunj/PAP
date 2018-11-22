@@ -9,14 +9,15 @@
 
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/jquery-ui.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo:100,300,400">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/jquery-ui.css">
-    <link rel="stylesheet" href="/static/css/jquery-ui.min.css">
+    
     <!-- for debugging css / ghost code -->
     <!-- <style>
         * { background: #000 !important; color: #0f0 !important; outline: solid #f00 1px !important; }
     </style> -->
+    
 </head>
 
 <body>
@@ -42,7 +43,9 @@
             </div>
 
             <!-- logout button : create a form if required -->
-            <button id="loginbtn" class="btn btn-logout float-right">Log Out</button>
+            <form class="form-inline mr-2 my-2" action="/logout" method="POST">
+				<button id="loginbtn" class="btn btn-logout float-right">Log Out</button>
+			</form>
         </div>
     </nav>
 
@@ -107,14 +110,27 @@
                 </div>
             </div>
         </div>
+
+        <div id="result" class="container mt-5 tab-pane fade">
+            <p>hello</p>
+        </div>
     </div>
 
 </body>
 
-<script src="/static/js/jquery.slim.min.js"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+<!-- the order of inclusion of these files matter a lot,...do not change it -->
+
+<script src="/static/js/jquery-3.3.1.min.js"></script>
+
+<script src="/static/js/jquery-ui.min.js"></script>
+
+<script src="/static/popper.js/dist/popper.min.js"></script>
+<script src="/static/bootstrap/dist/js/bootstrap.min.js"></script>
+
 <script src="/static/js/main.js"></script>
+<script src="/static/js/prefDrag.js"></script>
 
 
 </html>
