@@ -20,6 +20,8 @@
 </head>
 
 <body>
+
+
 	<nav class="navbar navbar-expand-sm navbar-light bg-white fixed-top" id="mainNav">
 		<div class="container">
 			<!-- hamburger button for smaller screens -->
@@ -61,11 +63,14 @@
 	</header>
 
 
-
-
+	<!-- MAIN CONTENT BEGINS -->
+	<!-- MAIN CONTENT BEGINS -->
+	<!-- MAIN CONTENT BEGINS -->
+	<!-- MAIN CONTENT BEGINS -->
 
 	<div class="tab-content">
 
+		<!-- home page -->
 		<div id="home" class="container mt-5 tab-pane active">
 			<div class="row justify-content-center">
 				<div class="col-12">
@@ -106,6 +111,7 @@
 			</div>
 		</div>
 
+		<!-- manage users page -->
 		<div id="manageUsers" class="container tab-pane fade">
 
 			<h2>User Membership</h2>
@@ -175,6 +181,7 @@
 
 		</div>
 
+		<!-- portal controls page -->
 		<div id="portControls" class="container tab-pane fade">
 
 			<h2>Portal Controls</h2>
@@ -182,23 +189,22 @@
 			<div class="card-deck">
 
 				<!-- login status -->
-				<div class="col-12">
+				<div class="col-6">
 					<div class="card">
 						<h4 class="card-header">Status</h4>
 						<div class="card-body">
 							<form class="form" action="/togglePortal">
 								<div class="container">
-									<div class="row">
-										<div class="col-7 align-self-center">
-											<h6>Login Status :</h6>
+									<div class="form-group row">
+										<div class="col-4 align-self-center">
+											<label class="col-form-label">Login Status :</label>
 										</div>
-										<div class="col-3 align-self-center">
-											<button type="button" class="btn btn-secondary btn-toggle" data-toggle="button" aria-pressed="false"
-											 autocomplete="off">
+										<div class="col-4 align-self-center">
+											<button type="button" class="btn btn-info btn-toggle" data-toggle="button" aria-pressed="false" autocomplete="off">
 												<div class="handle"></div>
 											</button>
 										</div>
-										<div class="col-2 align-self-center">
+										<div class="col-4 align-self-center">
 											<button type="submit" class="btn btn-outline-primary float-right">Save</button>
 										</div>
 									</div>
@@ -209,20 +215,20 @@
 				</div>
 
 				<!-- group size -->
-				<div class="col-12">
+				<div class="col-6">
 					<div class="card">
 						<h4 class="card-header">Group Size</h4>
 						<div class="card-body">
 							<form class="form" action="/setGroupSize">
 								<div class="container">
 									<div class="form-group row">
-										<div class="col-4">
+										<div class="col-sm-6 col-md-4">
 											<label for="groupSize" class="col-form-label">Enter Group Size</label>
 										</div>
-										<div class="col-4">
+										<div class="col-sm-6 col-md-4">
 											<input type="number" min="1" id="groupSize" class="form-control">
 										</div>
-										<div class="col-4">
+										<div class="col-sm-12 col-md-4">
 											<button type="submit" class="btn btn-outline-secondary float-right">Save</button>
 										</div>
 									</div>
@@ -232,30 +238,48 @@
 					</div>
 				</div>
 
-				<!-- do computation -->
-				<div class="col-12">
-					<div class="card border-primary shadow-lg">
-						<h4 class="card-header bg-primary text-white">Compute Results</h4>
+				<!-- set project list -->
+				<div class="col-6">
+					<div class="card border-dark shadow-lg">
+						<h4 class="card-header bg-dark text-white">Set Project List</h4>
 						<div class="card-body">
-							<div class="container">
-								<form action="/doComputation">
-									<div class="form-row">
-										<div class="col-md-8 offset-md-1">
-											<label for="resultButton" class="col-form-label-lg text-primary">Compute Final Result using Stable Marriage
-												Hypothesis, only after deadline</label>
-										</div>
-										<div class="col-md-3">
-											<button type="submit" class="btn btn-outline-warning btn-lg float-right" id="resultButton">Compute</button>
+							<form action="/setProjectList">
+								<div class="container">
+									<div class="form-group row">
+										<div class="col-12">
+											<label for="projectList" class="col-form-label">Enter Semicolon Seperated Project List, this shall overwrite
+												existing list</label>
+												<textarea class="form-control" rows="4" name="projectList" class="form-control-plaintext" placeholder="Project name(Mentor Name); Project Name(Mentor Name); ...."></textarea>
 										</div>
 									</div>
-								</form>
+									<div class="form-group row">
+										<div class="col-12">
+											<button type="submit" class="btn btn-outline-dark float-right">Set</button>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
+
+				<!-- current project list -->
+				<div class="col-6">
+					<div class="card border-warning shadow-lg">
+						<h4 class="card-header bg-warning text-white">Current Project List</h4>
+						<div class="card-body">
+							<div class="container">
+								<div class="form-group row">
+									{project_list}
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
 				<!-- set admin password -->
-				<div class="col-12">
+				<div class="col-6">
 					<div class="card border-success shadow-sm">
 						<h4 class="card-header bg-success text-white">Set Admin Password</h4>
 						<div class="card-body">
@@ -289,6 +313,33 @@
 					</div>
 				</div>
 
+
+				<!-- do computation -->
+				<div class="col-6">
+					<div class="card border-primary shadow-lg">
+						<h4 class="card-header bg-primary text-white">Compute Results</h4>
+						<div class="card-body">
+							<form action="/doComputation">
+								<div class="container">
+									<div class="form-group row">
+										<div class="col-12">
+											<label for="resultButton" class="col-form-label text-primary">
+												Compute Final Result using Stable Marriage
+												Hypothesis, only after deadline
+											</label>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="col-md-12">
+											<button type="submit" class="btn btn-outline-warning btn-lg float-right" id="resultButton">Compute</button>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
 				<!-- portal controls -->
 				<div class="col-12">
 					<div class="card border-danger">
@@ -310,10 +361,10 @@
 					</div>
 				</div>
 
-
 			</div>
 		</div>
 
+		<!-- result page -->
 		<div id="result" class="container mt-5 tab-pane fade">
 			<div class="row justify-content-center">
 				<div class="col-12">
@@ -328,6 +379,12 @@
 		</div>
 
 	</div>
+
+
+	<!-- MAIN CONTENT ENDS -->
+	<!-- MAIN CONTENT ENDS -->
+	<!-- MAIN CONTENT ENDS -->
+	<!-- MAIN CONTENT ENDS -->
 
 </body>
 
