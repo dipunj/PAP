@@ -27,6 +27,12 @@ db = initializeDB(db)
 
 
 
+
+
+
+
+"""Login/Logout Related Routes"""
+
 @app.route('/', methods=['POST','GET'])
 def home(userObj=None):
     """handles the homepage of users
@@ -48,7 +54,6 @@ def home(userObj=None):
             return render_template("student.html", name=userObj.name, project_list=project_list)
 
 
-
 @app.route('/login',methods=["POST"])
 def do_login():
     """facilitates login from the login.html login page    
@@ -67,8 +72,6 @@ def do_login():
     return home(this_user)
 
 
-
-
 @app.route('/logout', methods=['POST'])
 def do_logout():
     """facilitates logout from anywhere
@@ -81,6 +84,14 @@ def do_logout():
 
 
 
+
+
+
+
+
+
+
+"""Admin Page Routes"""
 
 @app.route('/submit', methods=['POST'])
 def doComputation():
@@ -119,6 +130,15 @@ def result():
         return home()
 
 
+
+
+
+
+
+
+
+"""User Page Routes"""
+
 @app.route('/ConfirmSubmission', methods=['POST'])
 def confirmIt(project_list=project_list):
 
@@ -130,6 +150,23 @@ def confirmIt(project_list=project_list):
         preview.append(project_list[pr_id])
         
     return render_template("confirm.html",name=session['name'], confirm_list=preview)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
