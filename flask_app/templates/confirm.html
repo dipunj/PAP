@@ -65,8 +65,12 @@
     <!-- MAIN CONTENT BEGINS -->
     <!-- MAIN CONTENT BEGINS -->
 
-
-
+    <div class="container">
+        <div class="row justify-content-end">
+            <h2 class="text-monospace"> DEADLINE :</h2>
+            <h2 class="text-primary">{date}</h2>
+        </div>
+    </div>
 
 
 
@@ -78,33 +82,33 @@
                 <div class="col-10">
                     <div class="card">
                         <h4 class="card-header">Project Preference</h4>
-                            <div class="card-body">
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-7 offset-3">
-                                            <ol class="notsortable">
-                                                {% for project_name in confirm_list %}
-                                                    <li class="ui-state-default">{{project_name}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
-                                                {% endfor %}
-                                            </ol>
-                                        </div>
+                        <div class="card-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-7 offset-3">
+                                        <ol class="notsortable">
+                                            {% for project_name in confirm_list %}
+                                            <li style="margin: 10px 0">{{project_name}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+                                            {% endfor %}
+                                        </ol>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-footer">
-                                <div class="container">
-                                    <div class="row">                    
-                                        <div class="col-12">
-                                            <form action="/">
-                                                <button type="submit" class="btn btn-primary float-left" id="back">Back</button>
-                                            </form>
-                                            <form action="/finalSubmit">
-                                                <button type="submit" class="btn btn-danger float-right" id="finalSubmit">Submit</button>
-                                            </form>
-                                        </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <form action="/">
+                                            <button type="submit" class="btn btn-primary float-left" id="back">Back</button>
+                                        </form>
+                                        <form action="/finalSubmit">
+                                            <button type="submit" class="btn btn-danger float-right" id="finalSubmit">Submit</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>

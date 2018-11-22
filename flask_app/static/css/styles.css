@@ -98,8 +98,8 @@ div#chargeDeck>div.col-md-4>div.card>div.card-body {
 
 #notsortable li {
     margin: 0 3px 3px 3px;
-    padding: 0.4em;
+    padding: 1em;
     padding-left: 1.5em;
-    /* font-size: 1.4em; */
-    /* height: 18px; */
+    font-size: 1.4em;
+    height: 18px;
 }

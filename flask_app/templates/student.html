@@ -12,12 +12,12 @@
     <link rel="stylesheet" href="/static/css/jquery-ui.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo:100,300,400">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
+
     <!-- for debugging css / ghost code -->
     <!-- <style>
         * { background: #000 !important; color: #0f0 !important; outline: solid #f00 1px !important; }
     </style> -->
-    
+
 </head>
 
 <body>
@@ -39,13 +39,15 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
                 <ul class="nav nav-pills row">
                     <li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#pref">Preference</a></li>
+                    <li class="nav-item mr-5"><a class="nav-link" data-toggle="pill" href="#groupMem">Group Members</a></li>
+                    <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#groupMem">Result</a></li>
                 </ul>
             </div>
 
             <!-- logout button : create a form if required -->
             <form class="form-inline mr-2 my-2" action="/logout" method="POST">
-				<button id="loginbtn" class="btn btn-logout float-right">Log Out</button>
-			</form>
+                <button id="loginbtn" class="btn btn-logout float-right">Log Out</button>
+            </form>
         </div>
     </nav>
 
@@ -70,7 +72,12 @@
 
 
 
-
+    <div class="container">
+        <div class="row justify-content-end">
+            <h2 class="text-monospace"> DEADLINE :</h2>
+            <h2 class="text-primary">{date}</h2>
+        </div>
+    </div>
 
 
 
@@ -78,38 +85,95 @@
 
         <div id="pref" class="container mt-5 tab-pane active">
             <div class="row justify-content-center">
-                <div class="col-10">
-                    <div class="card">
-                        <h4 class="card-header">Project Preference</h4>
-                        <form action="/ConfirmSubmission" method="POST" id="prefForm">
-                            <div class="card-body">
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-7 offset-3">
-                                            <ol id="sortable">
-                                                {% for idx, project_name in project_list.items() %}
-                                                    <li id="r_{{idx}}" class="ui-state-default">{{project_name}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
-                                                {% endfor %}
-                                            </ol>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="container">
-                                    <div class="row">                    
-                                        <div class="col-12">
-                                            <input id="order" type="text" name="order">
-                                            <button type="button" class="btn btn-primary float-right" id="prefBtn">Next</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                <div class="col-6 text-center">
+                    <div class="container" style="top: 25%; position: relative;">
+                        <h3 class="text-monospace">Project Preference</h3>
+                        <p class="text-muted">1 is your most prefered</p>
                     </div>
+                </div>
+                <div class="col-6">
+                    <form action="/ConfirmSubmission" method="POST" id="prefForm">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-12">
+                                    <ol id="sortable">
+                                        {% for idx, project_name in project_list.items() %}
+                                        <li id="r_{{idx}}" class="ui-state-default">{{project_name}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+                                        {% endfor %}
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-12">
+                                    <input hidden id="order" type="text" name="order">
+                                    <button type="button" class="btn btn-primary float-right" id="prefBtn">Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
+
+        <div id="groupMem" class="container mt-5 tab-pane fade">
+            <div class="row">
+                <h2>Select Your Group Members</h2>
+                <div class="col-12">
+                    <form action="/selectMembers">
+                        <div class="card-deck">
+
+                            <!-- put it in a for loop -->
+                            <div class="col-sm-12 col-md-4">
+                                <div class="card shadow-lg border-dark">
+                                    <div class="card-body">
+                                        <h2 class="card-title">Slotter #2</h2>
+                                        <div class="form-group">
+                                            <div class="col-12">
+                                                <label for="2_FullName">Full Name : </label>
+                                            </div>
+                                            <div class="col-12">
+                                                <input type="text" class="form-control" name="2_fullname" id="2_FullName">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-12">
+                                                <label for="2_RegNo">Reg. No : </label>
+                                            </div>
+                                            <div class="col-12">
+                                                <input type="text" class="form-control" name="2_regno" id="2_regno">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-12">
+                                                <label for="cpi">CGPA* :</label>
+                                            </div>
+                                            <div class="col-12">
+                                                <input type="text" class="form-control" name="2_cgpa" id="2_cpi">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="container">
+                            <div class="row mb-5 mt-5">
+                                <div class="col-12">
+                                    <p class="text-muted">*As on web transcript</p>
+                                    <label for="finalisebtn" class="col-form-label">Please Carefully Review before
+                                        finalising, This Action is Irreversible</label>
+                                    <button type="submit" class="btn btn-outline-dark btn-lg float-right shadow-lg" id="#finalisebtn">Finalise</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
 
         <div id="result" class="container mt-5 tab-pane fade">
             <p>hello</p>
@@ -123,12 +187,9 @@
 <!-- the order of inclusion of these files matter a lot,...do not change it -->
 
 <script src="/static/js/jquery-3.3.1.min.js"></script>
-
 <script src="/static/js/jquery-ui.min.js"></script>
-
 <script src="/static/popper.js/dist/popper.min.js"></script>
 <script src="/static/bootstrap/dist/js/bootstrap.min.js"></script>
-
 <script src="/static/js/main.js"></script>
 <script src="/static/js/prefDrag.js"></script>
 
