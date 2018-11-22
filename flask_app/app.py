@@ -1,7 +1,8 @@
 import os, json
+from config import Config
 from flask import Flask, request, render_template, session, flash
 from main import getStableRelations
-from database import db, database_file, User
+from database import db,User,destroyDB,initializeDB
 
 
 
@@ -16,25 +17,11 @@ project_list = \
 }
 
 
-
 app = Flask(__name__)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_object(Config)
 
-os.remove(database_file.split(':///')[1])
-
-db.create_all()
-
-admin = User(username="admin",password="mnnit123", name="admin",cpi=10,group_size=3)
-student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35,group_size=4)
-
-db.session.add(admin)
-db.session.add(student)
-db.session.commit()
-
-# project_dir   = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.join(app.root_path, 'db/')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
+destroyDB(app)
+db = initializeDB(db)
 
 
 
@@ -42,6 +29,14 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/', methods=['POST','GET'])
 def home(userObj=None):
+    """handles the homepage of users
+        userObj (User, optional): Defaults to None. user Object
+    
+    Renders:
+        template according to session cookie, usertype (admin or normal)
+    """
+
+
 
     if userObj is None or session['logged_in'] == False:
         return render_template('login.html')
@@ -53,8 +48,11 @@ def home(userObj=None):
             return render_template("student.html", name=userObj.name, project_list=project_list)
 
 
+
 @app.route('/login',methods=["POST"])
 def do_login():
+    """facilitates login from the login.html login page    
+    """
 
     this_user = User.query.filter_by(username=request.form['username']).first()
 
@@ -69,8 +67,14 @@ def do_login():
     return home(this_user)
 
 
+
+
 @app.route('/logout', methods=['POST'])
-def do_admin_logout():
+def do_logout():
+    """facilitates logout from anywhere
+       sets session cookie's logged_in to false
+    """
+
     session['logged_in'] = False
     return home()
 
@@ -80,6 +84,10 @@ def do_admin_logout():
 
 @app.route('/submit', methods=['POST'])
 def doComputation():
+    """main application logic
+    
+        uses stable marriage problem logic to assign projects in a stable manner
+    """
 
     
     if request.files['teacher'] and request.files['student'] and request.files['members']:
@@ -112,7 +120,7 @@ def result():
 
 
 @app.route('/ConfirmSubmission', methods=['POST'])
-def confirmIt():
+def confirmIt(project_list=project_list):
 
     order = request.form['order'].split(",")
     order = [i.split("_")[1] for i in order]    

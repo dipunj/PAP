@@ -1,18 +1,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
-
+from config import Config
 app = Flask(__name__)
-
-#          project_dir      = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER    = os.path.join(app.root_path, 'db/')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-
-database_file    = "sqlite:///{}".format(os.path.join(UPLOAD_FOLDER, "users.db"))
-app.config["SQLALCHEMY_DATABASE_URI"] = database_file
-
-
+app.config.from_object(Config)
 db = SQLAlchemy(app)
 
 
@@ -31,7 +22,12 @@ class User(db.Model):
     # seperator is $#
     pref_order    = db.Column(db.String)
 
-    def __init__(self, username, password, name, cpi, group_size): 
+
+
+
+
+    def __init__(self, username, password, name, cpi, group_size, **kwargs): 
+        super(User, self).__init__(**kwargs)
         self.username          = username
         self.password          = password
         self.name              = name
@@ -48,3 +44,27 @@ class User(db.Model):
 
     def __repr__(self): 
         return "<Reg. {}> <Name: {}>".format(self.username,self.name)
+
+
+
+def initializeDB(db):
+    
+    # create all tables of db
+    db.create_all()
+    
+    # add user admin
+    admin = User(username="admin",password="admin", name="admin",cpi=10,group_size=1)
+    student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35,group_size=4)
+    # add to session
+    db.session.add(admin)
+    db.session.add(student)
+    db.session.commit()
+    return db
+
+
+
+def destroyDB(app):
+    try:
+        os.remove(app.config['SQLALCHEMY_DATABASE_URI'].split(':///')[1])
+    except:
+        pass

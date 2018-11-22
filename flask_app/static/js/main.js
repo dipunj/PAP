@@ -12,3 +12,12 @@ function parallax() {
 $(window).scroll(function (e) {
 	parallax();
 });
+
+
+
+$('#newPass, #confNewPass').on('keyup', function () {
+	if ($('#newPass').val() == $('#confNewPass').val()) {
+	  $('#passMatch').html('Matching').css('color', 'green');
+	} else 
+	  $('#passMatch').html('Do not Match').css('color', 'red');
+  });
