@@ -11,27 +11,27 @@ db = SQLAlchemy(app)
 class User(db.Model): 
     # __tablename__ = 'users'
 
-    username      = db.Column(db.String(8),unique=True, primary_key=True, nullable=False)
-    password      = db.Column(db.String(80))
-    name          = db.Column(db.String,nullable=False)
-    cpi           = db.Column(db.Float,nullable=False)
+    username = db.Column(db.String(8),unique=True, primary_key=True, nullable=False)
+    password = db.Column(db.String(80))
+    name     = db.Column(db.String,nullable=False)
+    cpi      = db.Column(db.Float,nullable=False)
 
     # after preferences has been submitted
-    pref_final    = db.Column(db.Boolean,default=False)
+    isPrefFinal = db.Column(db.Boolean,default=False)
 
     # set to true after user has entered details of all group members
-    group_final   = db.Column(db.Boolean,default=False)
+    isGroupFinal = db.Column(db.Boolean,default=False)
 
     # login permission
-    permission    = db.Column(db.Boolean,nullable=False,default=True)
+    permission = db.Column(db.Boolean,nullable=False,default=True)
     # group size including 1st slotter
-    group_size    = db.Column(db.Integer,default=4)
+    group_size = db.Column(db.Integer,default=4)
 
     # seperator is $#
     all_member_string = db.Column(db.String)
 
     # seperator is $#
-    pref_order    = db.Column(db.String)
+    pref_order = db.Column(db.String)
 
 
 

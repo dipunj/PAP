@@ -83,24 +83,31 @@
 
     <div class="tab-content">
         <div id="result" class="container mt-5 tab-pane active">
-            <div class="row">
-                <div class="col-8">
-                    <table class="table table-bordered">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col-2">Preference</th>
-                                <th scope="col-10">Project </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for project_name in my_proj_list.values() %}
-                            <tr>
-                                <td> {{loop.index}} </td>
-                                <td> {{project_name}} </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <div class="row justify-content-between">
+                <div class="col-6 align-self-center">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h4>Your Preferences</h4>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-bordered m-0">
+                                <thead class="thead-default">
+                                    <tr>
+                                        <th scope="col" width="10%">Preference</th>
+                                        <th scope="col" width="90%">Project </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project_name in my_proj_list.values() %}
+                                    <tr>
+                                        <td> {{loop.index}} </td>
+                                        <td> {{project_name}} </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

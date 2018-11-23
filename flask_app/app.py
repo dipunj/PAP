@@ -57,7 +57,7 @@ def home():
             users = User.query.order_by(User.username).all()
             return render_template("admin.html",DB_group_size=usrObj.group_size, DB_user_list=users, DB_current_projects=reference_prj_dict)
         else:
-            if usrObj.submitted == True:
+            if usrObj.isPrefFinal == True:
                 return render_template("done.html", name=usrObj.name, my_proj_list=usrObj.getPrefList())
             else:
                 return render_template("student.html", name=usrObj.name, project_list=reference_prj_dict, my_group_size=usrObj.group_size)
@@ -311,7 +311,7 @@ def finalSubmit():
 
         final_pref = request.form['final_preference'].split('-')
         usrObj.addPrefList(final_pref,admin.getPrefList())
-        usrObj.submitted = True
+        usrObj.isPrefFinal = True
         db.session.commit()
     
     return home()
