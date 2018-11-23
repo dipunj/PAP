@@ -47,7 +47,11 @@ def home(userObj=None):
     else:
         if userObj.username == "admin":
             users = User.query.order_by(User.username).all()
-            return render_template("admin.html",DB_group_size=userObj.group_size, DB_user_list=users, DB_current_projects=userObj.getPrefList())
+            try:
+                reference_prj_dict = userObj.getPrefList()
+            except:
+                reference_prj_dict = {"" : "No Projects Added Yet"}
+            return render_template("admin.html",DB_group_size=userObj.group_size, DB_user_list=users, DB_current_projects=reference_prj_dict)
         else:
             session['name'] = userObj.name
             return render_template("student.html", name=userObj.name, project_list=project_list)
@@ -193,6 +197,7 @@ def setAdminPassword():
 
     return home()
 
+
 @app.route('/resetPortal',methods=['POST'])
 def reset():
 
@@ -205,6 +210,7 @@ def reset():
     db = initializeDB(db)
     session['logged_in'] = False
     return home()
+
 
 @app.route('/setProjectList', methods=['POST'])
 def setProjects():
@@ -230,6 +236,16 @@ def setProjects():
     return home()
 
 
+@app.route('/resetProjectList', methods=['POST'])
+def resetProjectList():
+
+    global db
+
+    admin = User.query.filter_by(username="admin").first()
+    admin.pref_order = None
+    db.session.commit()
+
+    return home()
 
 
 

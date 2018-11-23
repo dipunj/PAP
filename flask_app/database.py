@@ -23,7 +23,7 @@ class User(db.Model):
     all_member_string = db.Column(db.String)
 
     # seperator is $#
-    pref_order    = db.Column(db.String,default="")
+    pref_order    = db.Column(db.String)
 
 
 
