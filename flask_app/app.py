@@ -311,10 +311,32 @@ def finalSubmit():
 
         final_pref = request.form['final_preference'].split('-')
         usrObj.addPrefList(final_pref,admin.getPrefList())
+        db.session.commit()
         usrObj.isPrefFinal = True
         db.session.commit()
     
     return home()
+
+@app.route('/selectMembers',methods=['POST'])
+def selectMembers():
+
+    global db
+    
+    usrObj = User.query.filter_by(username=session['username']).first()
+    admin = User.query.filter_by(username="admin").first()
+
+    user_grp_size = usrObj.group_size
+
+    for i in range(2,user_grp_size+1):
+        mem_name = request.form[str(i)+"_fullName"]
+        mem_reg = request.form[str(i)+"_regno"]
+        mem_cgpa = request.form[str(i)+"_cgpa"]
+        usrObj.addMember(str(i),mem_name,mem_cgpa,mem_reg)
+    
+    usrObj.isGroupFinal = True
+    db.session.commit()
+
+
 
 
 
