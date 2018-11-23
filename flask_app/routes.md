@@ -10,7 +10,7 @@
 <form action="/setProjectList">
 <!-- <form action="/setAdminPassword"> -->
 <form action="/doComputation">
-<form action="/resetPortal">
+<!-- <form action="/resetPortal"> -->
 
 
 <!-- user page -->

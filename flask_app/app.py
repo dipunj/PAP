@@ -202,8 +202,9 @@ def reset():
     global app
 
     if request.form['resetDATABASE'] == "true":
-        destroyDB(app)
-        db = initializeDB(db)
+        User.query.delete()
+    
+    db = initializeDB(db)
     session['logged_in'] = False
     return home()
 
