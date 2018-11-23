@@ -257,17 +257,17 @@
 					<div class="card">
 						<h4 class="card-header">Default Group Size</h4>
 						<div class="card-body">
-							<form class="form" action="/setGroupSize">
+							<form class="form" action="/setGroupSize" method="POST">
 								<div class="container">
 									<div class="form-group row">
 										<div class="col-sm-6 col-md-4">
 											<label for="groupSize" class="col-form-label">Enter Group Size</label>
 										</div>
 										<div class="col-sm-6 col-md-4">
-											<input type="number" min="1" id="groupSize" class="form-control" value={{DB_group_size}}>
+											<input type="number" min="1" id="groupSize" name="defaultGrpSize" class="form-control" value={{DB_group_size}} required>
 										</div>
 										<div class="col-sm-12 col-md-4">
-											<button type="submit" class="btn btn-outline-secondary float-right">Save</button>
+											<button type="submit" class="btn btn-outline-secondary float-rigsht">Save</button>
 										</div>
 									</div>
 								</div>

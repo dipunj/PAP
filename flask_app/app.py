@@ -6,15 +6,15 @@ from database import db,User,destroyDB,initializeDB
 
 
 
-project_list = \
-{
-    "1" : 'Artifical Intelligence',
-    "2" : 'Machine Learning',
-    "3" : 'BlockChain',
-    "4" : 'Web Development',
-    "5" : 'IOT Systems',
-    "6" : 'Algorithms'
-}
+# project_list = \
+# {
+#     "1" : 'Artifical Intelligence',
+#     "2" : 'Machine Learning',
+#     "3" : 'BlockChain',
+#     "4" : 'Web Development',
+#     "5" : 'IOT Systems',
+#     "6" : 'Algorithms'
+# }
 
 
 app = Flask(__name__)
@@ -57,10 +57,15 @@ def home():
             users = User.query.order_by(User.username).all()
             return render_template("admin.html",DB_group_size=usrObj.group_size, DB_user_list=users, DB_current_projects=reference_prj_dict)
         else:
-            if usrObj.isPrefFinal == True:
+            if usrObj.isPrefFinal == True and usrObj.isGroupFinal == True:
                 return render_template("done.html", name=usrObj.name, my_proj_list=usrObj.getPrefList())
             else:
-                return render_template("student.html", name=usrObj.name, project_list=reference_prj_dict, my_group_size=usrObj.group_size)
+                return render_template("student.html",
+                                        name          = usrObj.name,
+                                        project_list  = reference_prj_dict,
+                                        my_group_size = usrObj.group_size,
+                                        isGroupFinal  = usrObj.isGroupFinal,
+                                        isPrefFinal   = usrObj.isPrefFinal)
 
 
 @app.route('/login',methods=["POST"])
@@ -196,6 +201,20 @@ def togglePortal():
     db.session.commit()
 
     return home()
+
+
+@app.route('/setGroupSize', methods=['POST'])
+def setGroupSize():
+
+    global db
+
+    admin=User.query.filter_by(username='admin').first()
+
+    admin.group_size=request.form['defaultGrpSize']
+    db.session.commit()
+
+    return home()
+
 
 
 @app.route('/setAdminPassword', methods=['POST'])
