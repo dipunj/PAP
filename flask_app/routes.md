@@ -8,7 +8,7 @@
 <!-- <form action="/togglePortal"> -->
 <!-- <form action="/setGroupSize"> -->
 <form action="/setProjectList">
-<form action="/setAdminPassword">
+<!-- <form action="/setAdminPassword"> -->
 <form action="/doComputation">
 <form action="/resetPortal">
 

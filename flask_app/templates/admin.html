@@ -380,12 +380,13 @@
 						<h4 class="card-header text-white bg-danger">Reset Portal</h4>
 						<div class="card-body">
 							<div class="container">
-								<form action="/resetPortal">
+								<form action="/resetPortal" method="POST">
 									<div class="form-row">
 										<div class="col-md-6 offset-md-1 pt-4 pb-3">
 											<label for="resetButton" class="text-danger col-form-label-lg">CAUTION!! THIS ACTION IS IRREVERSIBLE</label>
 										</div>
 										<div class="col-md-3 offset-2 pt-4">
+											<input type="text" name="resetDATABASE" value="true" hidden>
 											<button type="submit" class="btn btn-danger float-right" id="resetButton">RESET DATABASE </button>
 										</div>
 									</div>
