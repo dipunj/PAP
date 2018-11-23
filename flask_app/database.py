@@ -20,10 +20,10 @@ class User(db.Model):
     group_size    = db.Column(db.Integer)
 
     # seperator is $#
-    member_string = db.Column(db.String)
+    all_member_string = db.Column(db.String)
 
     # seperator is $#
-    pref_order    = db.Column(db.String)
+    pref_order    = db.Column(db.String,default="")
 
 
 
@@ -40,15 +40,25 @@ class User(db.Model):
         pass
 
     def addMember(self, group_position, mem_name,mem_cpi,mem_reg_no): 
-        self.member_string += str(group_position)+","+str(mem_reg_no)+","+str(mem_name)+","+str(mem_cpi)+"$#"
+        self.all_member_string += str(group_position)+","+str(mem_reg_no)+","+str(mem_name)+","+str(mem_cpi)+"$#"
 
-    def addPrefList(self, pref_string, project_dict):
-        this_user_order = list(map(project_dict.get,[i.split("_")[1] for i in pref_string]))
+    def addPrefList(self, pref_order_list, academic_project_dict):
+        """adds the preference order of the projects in academic_project_dict
+        
+        Args:
+            pref_order_list (list): ["r_3","r_1","r_2"....]
+            academic_project_dict (dict): {"1":"ML","2":"IOT".....}
+        """
+
+        this_user_order = list(map(academic_project_dict.get,[i.split("_")[1] for i in pref_order_list]))
         self.pref_order = "$#".join(this_user_order)        
 
-    # def __repr__(self): 
-        # return "{},{},{},{}".format(self.username,self.name,self.cpi,self.group_size)
-
+    def getPrefList(self):
+        to_dict = self.pref_order.split("$#")
+        pref_dict = dict(enumerate(to_dict,start=1))
+        pref_dict = {str(k):str(v) for k,v in pref_dict.items()}
+        
+        return pref_dict
 
 def initializeDB(db):
     

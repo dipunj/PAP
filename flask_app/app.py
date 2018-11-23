@@ -47,7 +47,7 @@ def home(userObj=None):
     else:
         if userObj.username == "admin":
             users = User.query.order_by(User.username).all()
-            return render_template("admin.html",DB_group_size=userObj.group_size, DB_user_list=users)
+            return render_template("admin.html",DB_group_size=userObj.group_size, DB_user_list=users, DB_current_projects=userObj.getPrefList())
         else:
             session['name'] = userObj.name
             return render_template("student.html", name=userObj.name, project_list=project_list)
@@ -166,7 +166,6 @@ def togglePortal():
 
     global db
 
-    print(request.form)
     if request.form['portalSwitch'] == 'off':
         User.query.update({User.permission: False}) 
     else:
@@ -187,7 +186,6 @@ def setAdminPassword():
     new_pass = request.form['newPass']
     re_pass = request.form['confNewPass']
 
-    print(new_pass,re_pass)
     admin = User.query.filter_by(username='admin').first()
     if new_pass == re_pass:
         admin.password = new_pass
@@ -208,7 +206,28 @@ def reset():
     session['logged_in'] = False
     return home()
 
+@app.route('/setProjectList', methods=['POST'])
+def setProjects():
 
+    global db
+    if request.form['projectList']:
+        
+        projects = request.form['projectList'].strip().split("\r\n")
+
+        ref_dict = {}
+        linear_keys = []
+
+        for idx,name in enumerate(projects,start=1):
+            ref_dict.update({str(idx):name})
+            linear_keys.append("r_"+str(idx))
+
+        admin = User.query.filter_by(username="admin").first()
+        
+        admin.addPrefList(linear_keys,ref_dict)
+
+        db.session.commit()
+
+    return home()
 
 
 

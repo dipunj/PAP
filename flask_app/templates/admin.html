@@ -277,13 +277,13 @@
 					<div class="card border-dark shadow-lg">
 						<h4 class="card-header bg-dark text-white">Set Project List</h4>
 						<div class="card-body">
-							<form action="/setProjectList">
+							<form action="/setProjectList" method="POST">
 								<div class="container">
 									<div class="form-group row">
 										<div class="col-12">
-											<label for="projectList" class="col-form-label">Enter Semicolon Seperated Project List, this shall overwrite
-												existing list</label>
-											<textarea class="form-control" rows="4" name="projectList" class="form-control-plaintext" placeholder="Project name(Mentor Name); Project Name(Mentor Name); ...."></textarea>
+											<label for="projectList" class="col-form-label">Enter <em>one project per line</em>, this shall overwrite
+												the existing list</label>
+											<textarea class="form-control" rows="4" name="projectList" class="form-control-plaintext" placeholder="Project name(Mentor Name) ...."></textarea>
 										</div>
 									</div>
 									<div class="form-group row">
@@ -305,7 +305,22 @@
 						<div class="card-body">
 							<div class="container">
 								<div class="form-group row">
-									{project_list}
+									<table class="table">
+										<thead class="thead-dark">
+											<tr>
+												<th scope="col">#</th>
+												<th scope="col">Project Name</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for idx,prj_name in DB_current_projects.items()%}
+											<tr>
+												<td> {{idx}} </td>
+												<td> {{prj_name}} </td>
+											</tr>
+											{% endfor %}
+										</tbody>
+									</table>
 								</div>
 							</div>
 						</div>
@@ -384,6 +399,23 @@
 									<div class="form-row">
 										<div class="col-md-6 offset-md-1 pt-4 pb-3">
 											<label for="resetButton" class="text-danger col-form-label-lg">CAUTION!! THIS ACTION IS IRREVERSIBLE</label>
+											<p class="text-muted text-danger">New admin credentials will be :</p>
+											<div class="row">
+												<div class="col-5 offset-2">
+													<label class="float-right text-muted">Username : </label>
+												</div>
+												<div class="col-5">
+													<p class="text-muted">admin</p>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-5 offset-2">
+													<label class="float-right text-muted">Password : </label>
+												</div>
+												<div class="col-5">
+													<p class="text-muted">admin</p>
+												</div>
+											</div>
 										</div>
 										<div class="col-md-3 offset-2 pt-4">
 											<input type="text" name="resetDATABASE" value="true" hidden>
@@ -395,7 +427,6 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
 		</div>
 
