@@ -34,7 +34,7 @@ db = initializeDB(db)
 """Login/Logout Related Routes"""
 
 @app.route('/', methods=['POST','GET'])
-def home(userObj=None):
+def home():
     """handles the homepage of users
         userObj (User, optional): Defaults to None. user Object
     
@@ -42,20 +42,22 @@ def home(userObj=None):
         template according to session cookie, usertype (admin or normal)
     """
 
-    # admin=User.query.filter_by(username=admin).first()
+    admin=User.query.filter_by(username='admin').first()
 
-    if userObj is None or session['logged_in'] == False:
+    try:
+        reference_prj_dict = admin.getPrefList()
+    except:
+        reference_prj_dict = {"" : "No Projects Added Yet"}
+
+    if 'authenticated' not in session or session['authenticated'] == False:
         return render_template('login.html')
     else:
-        if userObj.username == "admin":
+        usrObj = User.query.filter_by(username=session['username']).first()
+        if usrObj.username == "admin":
             users = User.query.order_by(User.username).all()
-            try:
-                reference_prj_dict = userObj.getPrefList()
-            except:
-                reference_prj_dict = {"" : "No Projects Added Yet"}
-            return render_template("admin.html",DB_group_size=userObj.group_size, DB_user_list=users, DB_current_projects=reference_prj_dict)
+            return render_template("admin.html",DB_group_size=usrObj.group_size, DB_user_list=users, DB_current_projects=reference_prj_dict)
         else:
-            return render_template("student.html", name=userObj.name, project_list=project_list, admin_group_size=userObj.group_size)
+            return render_template("student.html", name=usrObj.name, project_list=reference_prj_dict, my_group_size=usrObj.group_size)
 
 
 @app.route('/login',methods=["POST"])
@@ -67,22 +69,25 @@ def do_login():
 
     if this_user is not None:
         if this_user.password == request.form["password"]:
-            session['logged_in'] = True
+            session['authenticated'] = True
+            session['username'] = this_user.username
         else:
             flash("Incorrect Password, Please Try Again")    
     else:
         flash("Invalid Username, Please Try Again")
     
-    return home(this_user)
+    return home()
 
 
 @app.route('/logout', methods=['POST'])
 def do_logout():
     """facilitates logout from anywhere
-       sets session cookie's logged_in to false
+       sets session cookie's authenticated to false
     """
 
-    session['logged_in'] = False
+    session['authenticated'] = False
+    session['usrObj'] = None
+
     return home()
 
 
@@ -142,14 +147,16 @@ def addUserToDB():
 
     global db
 
-    name = request.form['newUserFullName']
-    cgpa = request.form['newUserCGPA']
-    reg_n = request.form['newUserRegNo']
-    grp_size = request.form['newUserGroupSize']
+    if (request.form['newUserFullName'] and request.form['newUserCGPA'] and request.form['newUserRegNo'] and request.form['newUserGroupSize']):
 
-    leader = User(username=reg_n, password=str(cgpa),name=name,cpi=cgpa,group_size=grp_size)
-    db.session.add(leader)
-    db.session.commit()
+        name = request.form['newUserFullName']
+        cgpa = request.form['newUserCGPA']
+        reg_n = request.form['newUserRegNo']
+        grp_size = request.form['newUserGroupSize']
+
+        leader = User(username=reg_n, password=str(cgpa),name=name,cpi=cgpa,group_size=grp_size)
+        db.session.add(leader)
+        db.session.commit()
 
     return home()
 
@@ -159,10 +166,12 @@ def delUserfromDB():
     
     global db
 
-    reg_no = request.form['oldUserRegNo']
-    this_user = User.query.filter_by(username=reg_no).first()
-    db.session.delete(this_user)
-    db.session.commit()
+    if request.form['oldUserRegNo']:
+        reg_no = request.form['oldUserRegNo']
+        this_user = User.query.filter_by(username=reg_no).first()
+        db.session.delete(this_user)
+        db.session.commit()
+
     return home()
 
 
@@ -209,8 +218,8 @@ def reset():
         User.query.delete()
     
     db = initializeDB(db)
-    session['logged_in'] = False
-    return home()
+    
+    return do_logout()
 
 
 @app.route('/setProjectList', methods=['POST'])
