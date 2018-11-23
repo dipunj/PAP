@@ -148,6 +148,16 @@ def addUserToDB():
     return home()
 
 
+@app.route('/deleteUser', methods=['POST'])
+def delUserfromDB():
+    
+    global db
+
+    reg_no = request.form['oldUserRegNo']
+    this_user = User.query.filter_by(username=reg_no).first()
+    db.session.delete(this_user)
+    db.session.commit()
+    return home()
 
 
 
