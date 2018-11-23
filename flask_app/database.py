@@ -29,7 +29,7 @@ class User(db.Model):
 
 
 
-    def __init__(self, username, password, name, cpi, group_size=1, **kwargs): 
+    def __init__(self, username, password, name, cpi, group_size=4, **kwargs): 
         super(User, self).__init__(**kwargs)
         self.username          = username
         self.password          = password

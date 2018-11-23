@@ -122,25 +122,25 @@
                     <form action="/selectMembers">
                         <div class="card-deck">
 
-                            <!-- put it in a for loop -->
+                            {% for i in range(admin_group_size-1) %}
                             <div class="col-sm-12 col-md-4">
                                 <div class="card shadow-lg border-dark">
                                     <div class="card-body">
-                                        <h2 class="card-title">Slotter #2</h2>
+                                        <h2 class="card-title">Slotter #{{i+2}}</h2>
                                         <div class="form-group">
                                             <div class="col-12">
-                                                <label for="2_FullName">Full Name : </label>
+                                                <label for="{{i+2}}_FullName">Full Name : </label>
                                             </div>
                                             <div class="col-12">
-                                                <input type="text" class="form-control" name="2_fullname" id="2_FullName">
+                                                <input type="text" class="form-control" name="{{i+2}}_fullname" id="{{i+2}}_FullName">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="col-12">
-                                                <label for="2_RegNo">Reg. No : </label>
+                                                <label for="{{i+2}}_RegNo">Reg. No : </label>
                                             </div>
                                             <div class="col-12">
-                                                <input type="text" class="form-control" name="2_regno" id="2_regno">
+                                                <input type="text" class="form-control" name="{{i+2}}_regno" id="{{i+2}}_regno">
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -148,13 +148,13 @@
                                                 <label for="cpi">CGPA* :</label>
                                             </div>
                                             <div class="col-12">
-                                                <input type="text" class="form-control" name="2_cgpa" id="2_cpi">
+                                                <input type="text" class="form-control" name="{{i+2}}_cgpa" id="{{i+2}}_cpi">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
+                            {% endfor %}
 
                         </div>
                         <div class="container">

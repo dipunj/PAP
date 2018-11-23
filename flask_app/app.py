@@ -42,6 +42,8 @@ def home(userObj=None):
         template according to session cookie, usertype (admin or normal)
     """
 
+    # admin=User.query.filter_by(username=admin).first()
+
     if userObj is None or session['logged_in'] == False:
         return render_template('login.html')
     else:
@@ -53,8 +55,7 @@ def home(userObj=None):
                 reference_prj_dict = {"" : "No Projects Added Yet"}
             return render_template("admin.html",DB_group_size=userObj.group_size, DB_user_list=users, DB_current_projects=reference_prj_dict)
         else:
-            session['name'] = userObj.name
-            return render_template("student.html", name=userObj.name, project_list=project_list)
+            return render_template("student.html", name=userObj.name, project_list=project_list, admin_group_size=userObj.group_size)
 
 
 @app.route('/login',methods=["POST"])
@@ -249,7 +250,17 @@ def resetProjectList():
 
 
 
+
+
+
+
+
+
+
+
 """User Page Routes"""
+
+
 
 @app.route('/ConfirmSubmission', methods=['POST'])
 def confirmIt(project_list=project_list):
