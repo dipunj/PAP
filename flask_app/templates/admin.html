@@ -190,7 +190,11 @@
 										</thead>
 										<tbody>
 											{% for user in DB_user_list %}
-											<tr>
+											{% if user.submitted == True%}
+											<tr class="bg-success">
+											{% else %}
+											<tr class="bg-danger">
+											{% endif %}
 												<td> {{loop.index}} </td>
 												<td> {{user.username}} </td>
 												<td> {{user.name}} </td>

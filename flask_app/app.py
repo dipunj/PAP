@@ -20,8 +20,8 @@ project_list = \
 app = Flask(__name__)
 app.config.from_object(Config)
 
-destroyDB(app)
-db = initializeDB(db)
+# destroyDB(app)
+# db = initializeDB(db)
 
 
 
@@ -57,7 +57,10 @@ def home():
             users = User.query.order_by(User.username).all()
             return render_template("admin.html",DB_group_size=usrObj.group_size, DB_user_list=users, DB_current_projects=reference_prj_dict)
         else:
-            return render_template("student.html", name=usrObj.name, project_list=reference_prj_dict, my_group_size=usrObj.group_size)
+            if usrObj.submitted == True:
+                return render_template("done.html", name=usrObj.name, my_proj_list=usrObj.getPrefList())
+            else:
+                return render_template("student.html", name=usrObj.name, project_list=reference_prj_dict, my_group_size=usrObj.group_size)
 
 
 @app.route('/login',methods=["POST"])
@@ -71,6 +74,9 @@ def do_login():
         if this_user.password == request.form["password"]:
             session['authenticated'] = True
             session['username'] = this_user.username
+            session['name'] = this_user.name
+            session['cpi'] = this_user.cpi
+            session['grp_size'] = this_user.group_size
         else:
             flash("Incorrect Password, Please Try Again")    
     else:
@@ -235,7 +241,7 @@ def setProjects():
 
         for idx,name in enumerate(projects,start=1):
             ref_dict.update({str(idx):name})
-            linear_keys.append("r_"+str(idx))
+            linear_keys.append(str(idx))
 
         admin = User.query.filter_by(username="admin").first()
         
@@ -272,23 +278,43 @@ def resetProjectList():
 
 
 @app.route('/ConfirmSubmission', methods=['POST'])
-def confirmIt(project_list=project_list):
+def confirmIt():
 
-    order = request.form['order'].split(",")
-    order = [i.split("_")[1] for i in order]    
+    admin=User.query.filter_by(username='admin').first()
+
+    try:
+        project_list = admin.getPrefList()
+    except:
+        project_list = {"" : "No Projects Added Yet"}
+
+    pref_order = request.form['order'].split(",")
+    pref_order = [i.split("_")[1] for i in pref_order]    
+    
     preview = []
 
-    for pr_id in order:
+    for pr_id in pref_order:
         preview.append(project_list[pr_id])
-        
-    return render_template("confirm.html",name=session['name'], confirm_list=preview)
+
+    if pref_order == ['']:
+        return home()
+    else:
+        return render_template("confirm.html",name=session['name'], confirm_list=preview, prefOrder="-".join(pref_order))
 
 
+@app.route('/finalSubmit',methods=['POST'])
+def finalSubmit():
 
+    if request.form['final_preference']:
 
+        usrObj = User.query.filter_by(username=session['username']).first()
+        admin = User.query.filter_by(username="admin").first()
 
-
-
+        final_pref = request.form['final_preference'].split('-')
+        usrObj.addPrefList(final_pref,admin.getPrefList())
+        usrObj.submitted = True
+        db.session.commit()
+    
+    return home()
 
 
 

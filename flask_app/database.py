@@ -16,10 +16,16 @@ class User(db.Model):
     name          = db.Column(db.String,nullable=False)
     cpi           = db.Column(db.Float,nullable=False)
 
+    # after preferences has been submitted
+    pref_final    = db.Column(db.Boolean,default=False)
+
+    # set to true after user has entered details of all group members
+    group_final   = db.Column(db.Boolean,default=False)
+
     # login permission
     permission    = db.Column(db.Boolean,nullable=False,default=True)
     # group size including 1st slotter
-    group_size    = db.Column(db.Integer)
+    group_size    = db.Column(db.Integer,default=4)
 
     # seperator is $#
     all_member_string = db.Column(db.String)
@@ -31,28 +37,36 @@ class User(db.Model):
 
 
 
-    def __init__(self, username, password, name, cpi, group_size=4, **kwargs): 
+    def __init__(self, username, password, name, cpi, **kwargs): 
         super(User, self).__init__(**kwargs)
         self.username          = username
         self.password          = password
         self.name              = name
         self.cpi               = cpi
-        self.group_size        = group_size
-        self.all_member_string = "1,"+username+","+name+","+str(cpi)+"$#"
+        self.all_member_string = "1,"+username+","+name+","+str(cpi)
         pass
 
+
     def addMember(self, group_position, mem_name,mem_cpi,mem_reg_no): 
-        self.all_member_string += str(group_position)+","+str(mem_reg_no)+","+str(mem_name)+","+str(mem_cpi)+"$#"
+        self.all_member_string += "$#"+str(group_position)+","+str(mem_reg_no)+","+str(mem_name)+","+str(mem_cpi)
+
+    def getMembers(self):
+        members = self.all_member_string.split('$#')
+        printable_details = []
+        for student in members:
+            printable_details.append(tuple(student.split(',')))
+        
+        return printable_details
 
     def addPrefList(self, pref_order_list, academic_project_dict):
         """adds the preference order of the projects in academic_project_dict
         
         Args:
-            pref_order_list (list): ["r_3","r_1","r_2"....]
+            pref_order_list (list): ["3","1","2"....]
             academic_project_dict (dict): {"1":"ML","2":"IOT".....}
         """
 
-        this_user_order = list(map(academic_project_dict.get,[i.split("_")[1] for i in pref_order_list]))
+        this_user_order = list(map(academic_project_dict.get,pref_order_list))
         self.pref_order = "$#".join(this_user_order)        
 
     def getPrefList(self):
@@ -68,14 +82,13 @@ def initializeDB(db):
     db.create_all()
     
     # add user admin
-    admin = User(username="admin",password="admin", name="admin",cpi=10,group_size=9)
+    admin = User(username="admin",password="admin", name="admin",cpi=10)
     student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35)
     # add to session
     db.session.add(admin)
     db.session.add(student)
     db.session.commit()
     return db
-
 
 
 def destroyDB(app):
