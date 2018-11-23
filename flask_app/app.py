@@ -42,13 +42,11 @@ def home(userObj=None):
         template according to session cookie, usertype (admin or normal)
     """
 
-
-
     if userObj is None or session['logged_in'] == False:
         return render_template('login.html')
     else:
         if userObj.username == "admin":
-            return render_template("admin.html")
+            return render_template("admin.html",DB_group_size=userObj.group_size)
         else:
             session['name'] = userObj.name
             return render_template("student.html", name=userObj.name, project_list=project_list)
@@ -93,6 +91,8 @@ def do_logout():
 
 """Admin Page Routes"""
 
+
+
 @app.route('/submit', methods=['POST'])
 def doComputation():
     """main application logic
@@ -123,14 +123,29 @@ def doComputation():
     else:
         return '<script>alert("Invalid Submission, Please Try Again")</script>'
 
-
 @app.route('/result',methods=['POST'])
 def result():
     if request.form['home'] == True:
         return home()
 
 
+@app.route('/createUser', methods=['POST'])
+def addUserToDB():
+    """Adds the user from the form to database
+    """
 
+    global db
+
+    name = request.form['newUserFullName']
+    cgpa = request.form['newUserCGPA']
+    reg_n = request.form['newUserRegNo']
+    grp_size = request.form['newUserGroupSize']
+
+    leader = User(username=reg_n, password=str(cgpa),name=name,cpi=cgpa,group_size=grp_size)
+    db.session.add(leader)
+    db.session.commit()
+
+    return home()
 
 
 

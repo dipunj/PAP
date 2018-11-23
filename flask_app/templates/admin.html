@@ -123,15 +123,23 @@
 						<div class="card-body">
 							<h4 class="my-0 mb-5 font-weight-light">Create New User</h4>
 							<form action="/createUser" method="POST">
-								<div class="form">
-									<div class="form-group offset-1 col-10">
+								<div class="container">
+									<div class="form-group row">
 										<input type="text" class="form-control" name="newUserFullName" placeholder="Full Name">
 									</div>
-									<div class="form-group offset-1 col-10">
+									<div class="form-group row">
 										<input type="text" class="form-control" name="newUserCGPA" placeholder="Current CGPA">
 									</div>
-									<div class="form-group offset-1 col-10">
+									<div class="form-group row">
 										<input type="text" class="form-control" name="newUserRegNo" placeholder="Registeration No.">
+									</div>
+									<div class="form-group row">
+										<div class="offset-4 col-4">
+											<label class="col-form-label float-right">Group Size</label>
+										</div>
+										<div class="col-4">
+											<input type="number" class="form-control" name="newUserGroupSize" min="1" value={{DB_group_size}}>
+										</div>
 									</div>
 									<div class="form-group">
 										<button type="submit" class="btn btn-outline-success btn-lg float-right mt-3">Create</button>
@@ -226,7 +234,7 @@
 											<label for="groupSize" class="col-form-label">Enter Group Size</label>
 										</div>
 										<div class="col-sm-6 col-md-4">
-											<input type="number" min="1" id="groupSize" class="form-control">
+											<input type="number" min="1" id="groupSize" class="form-control" value={{DB_group_size}}>
 										</div>
 										<div class="col-sm-12 col-md-4">
 											<button type="submit" class="btn btn-outline-secondary float-right">Save</button>

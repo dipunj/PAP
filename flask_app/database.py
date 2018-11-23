@@ -15,6 +15,9 @@ class User(db.Model):
     password      = db.Column(db.String(80))
     name          = db.Column(db.String,nullable=False)
     cpi           = db.Column(db.Float,nullable=False)
+    
+    # group size including 1st slotter
+    group_size    = db.Column(db.Integer)
 
     # seperator is $#
     member_string = db.Column(db.String)
@@ -26,12 +29,13 @@ class User(db.Model):
 
 
 
-    def __init__(self, username, password, name, cpi, group_size, **kwargs): 
+    def __init__(self, username, password, name, cpi, group_size=1, **kwargs): 
         super(User, self).__init__(**kwargs)
         self.username          = username
         self.password          = password
         self.name              = name
         self.cpi               = cpi
+        self.group_size        = group_size
         self.all_member_string = "1,"+username+","+name+","+str(cpi)+"$#"
         pass
 
@@ -46,15 +50,14 @@ class User(db.Model):
         return "<Reg. {}> <Name: {}>".format(self.username,self.name)
 
 
-
 def initializeDB(db):
     
     # create all tables of db
     db.create_all()
     
     # add user admin
-    admin = User(username="admin",password="admin", name="admin",cpi=10,group_size=1)
-    student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35,group_size=4)
+    admin = User(username="admin",password="admin", name="admin",cpi=10,group_size=9)
+    student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35)
     # add to session
     db.session.add(admin)
     db.session.add(student)
