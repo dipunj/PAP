@@ -15,7 +15,7 @@ class User(db.Model):
     password      = db.Column(db.String(80))
     name          = db.Column(db.String,nullable=False)
     cpi           = db.Column(db.Float,nullable=False)
-    
+    permission    = db.Column(db.Boolean,nullable=False,default=True)
     # group size including 1st slotter
     group_size    = db.Column(db.Integer)
 

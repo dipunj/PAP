@@ -222,7 +222,7 @@
 					<div class="card">
 						<h4 class="card-header">Status</h4>
 						<div class="card-body">
-							<form class="form" action="/togglePortal" method="POST">
+							<form class="form" action="/togglePortal" id="toggle-form" method="POST">
 								<div class="container">
 									<div class="form-group row">
 										<div class="col-4 align-self-center">
@@ -230,7 +230,8 @@
 										</div>
 										<div class="col-4 align-self-center">
 											<label class="switch">
-												<input type="checkbox" id="togBtn">
+												<input type='hidden' id="toggle-switch-off" value='off' name='portalSwitch'>
+												<input type="checkbox" id="toggle-switch-on" name="portalSwitch">
 												<div class="slider round">
 													<span class="on">ON</span>
 													<span class="off">OFF</span>
@@ -250,7 +251,7 @@
 				<!-- group size -->
 				<div class="col-6">
 					<div class="card">
-						<h4 class="card-header">Group Size</h4>
+						<h4 class="card-header">Default Group Size</h4>
 						<div class="card-body">
 							<form class="form" action="/setGroupSize">
 								<div class="container">

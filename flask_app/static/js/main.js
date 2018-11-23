@@ -20,4 +20,11 @@ $('#newPass, #confNewPass').on('keyup', function () {
 	  $('#passMatch').html('Matching').css('color', 'green');
 	} else 
 	  $('#passMatch').html('Do not Match').css('color', 'red');
-  });
+	});
+
+	
+
+$("#toggle-form").submit(function(){
+	if(document.getElementById("toggle-switch-on").checked) {
+		document.getElementById('toggle-switch-off').disabled = true;
+}});

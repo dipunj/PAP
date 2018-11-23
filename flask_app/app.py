@@ -167,7 +167,16 @@ def togglePortal():
     global db
 
     print(request.form)
+    if request.form['portalSwitch'] == 'off':
+        User.query.update({User.permission: False}) 
+    else:
+        User.query.update({User.permission: True}) 
 
+    admin = User.query.filter_by(username='admin').first()
+    admin.permission = True
+    db.session.commit()
+
+    return home()
 
 """User Page Routes"""
 
