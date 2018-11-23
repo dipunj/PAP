@@ -97,7 +97,10 @@ def do_logout():
     """
 
     session['authenticated'] = False
-    session['usrObj'] = None
+    session['username']      = None
+    session['name']          = None
+    session['cpi']           = None
+    session['grp_size']      = None
 
     return home()
 
@@ -216,7 +219,6 @@ def setGroupSize():
     return home()
 
 
-
 @app.route('/setAdminPassword', methods=['POST'])
 def setAdminPassword():
 
@@ -330,11 +332,12 @@ def finalSubmit():
 
         final_pref = request.form['final_preference'].split('-')
         usrObj.addPrefList(final_pref,admin.getPrefList())
-        db.session.commit()
+
         usrObj.isPrefFinal = True
         db.session.commit()
     
     return home()
+
 
 @app.route('/selectMembers',methods=['POST'])
 def selectMembers():
