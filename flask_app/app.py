@@ -46,7 +46,8 @@ def home(userObj=None):
         return render_template('login.html')
     else:
         if userObj.username == "admin":
-            return render_template("admin.html",DB_group_size=userObj.group_size)
+            users = User.query.order_by(User.username).all()
+            return render_template("admin.html",DB_group_size=userObj.group_size, DB_user_list=users)
         else:
             session['name'] = userObj.name
             return render_template("student.html", name=userObj.name, project_list=project_list)
@@ -160,6 +161,12 @@ def delUserfromDB():
     return home()
 
 
+@app.route('/togglePortal', methods=['POST'])
+def togglePortal():
+
+    global db
+
+    print(request.form)
 
 
 """User Page Routes"""

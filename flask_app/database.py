@@ -46,8 +46,8 @@ class User(db.Model):
         this_user_order = list(map(project_dict.get,[i.split("_")[1] for i in pref_string]))
         self.pref_order = "$#".join(this_user_order)        
 
-    def __repr__(self): 
-        return "<Reg. {}> <Name: {}>".format(self.username,self.name)
+    # def __repr__(self): 
+        # return "{},{},{},{}".format(self.username,self.name,self.cpi,self.group_size)
 
 
 def initializeDB(db):

@@ -178,7 +178,28 @@
 							</h4>
 							<div id="collapseThree" class="collapse" aria-labelledby="userHeading" data-parent="#userAccordion">
 								<div class="card-body">
-									{user list}
+									<table class="table">
+										<thead class="thead-dark">
+											<tr>
+												<th scope="col">#</th>
+												<th scope="col">Reg. No</th>
+												<th scope="col">1st Slotter's Name</th>
+												<th scope="col">CGPA</th>
+												<th scope="col">Group Size</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for user in DB_user_list %}
+											<tr>
+												<td> {{loop.index}} </td>
+												<td> {{user.username}} </td>
+												<td> {{user.name}} </td>
+												<td> {{user.cpi}} </td>
+												<td> {{user.group_size}} </td>
+											</tr>
+											{% endfor %}
+										</tbody>
+									</table>
 								</div>
 							</div>
 						</div>
@@ -201,16 +222,20 @@
 					<div class="card">
 						<h4 class="card-header">Status</h4>
 						<div class="card-body">
-							<form class="form" action="/togglePortal">
+							<form class="form" action="/togglePortal" method="POST">
 								<div class="container">
 									<div class="form-group row">
 										<div class="col-4 align-self-center">
 											<label class="col-form-label">Login Status :</label>
 										</div>
 										<div class="col-4 align-self-center">
-											<button type="button" class="btn btn-info btn-toggle" data-toggle="button" aria-pressed="false" autocomplete="off">
-												<div class="handle"></div>
-											</button>
+											<label class="switch">
+												<input type="checkbox" id="togBtn">
+												<div class="slider round">
+													<span class="on">ON</span>
+													<span class="off">OFF</span>
+												</div>
+											</label>
 										</div>
 										<div class="col-4 align-self-center">
 											<button type="submit" class="btn btn-outline-primary float-right">Save</button>
@@ -257,7 +282,7 @@
 										<div class="col-12">
 											<label for="projectList" class="col-form-label">Enter Semicolon Seperated Project List, this shall overwrite
 												existing list</label>
-												<textarea class="form-control" rows="4" name="projectList" class="form-control-plaintext" placeholder="Project name(Mentor Name); Project Name(Mentor Name); ...."></textarea>
+											<textarea class="form-control" rows="4" name="projectList" class="form-control-plaintext" placeholder="Project name(Mentor Name); Project Name(Mentor Name); ...."></textarea>
 										</div>
 									</div>
 									<div class="form-group row">
