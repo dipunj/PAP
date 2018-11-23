@@ -178,6 +178,30 @@ def togglePortal():
 
     return home()
 
+
+@app.route('/setAdminPassword', methods=['POST'])
+def setAdminPassword():
+
+    global db
+
+    new_pass = request.form['newPass']
+    re_pass = request.form['confNewPass']
+
+    print(new_pass,re_pass)
+    admin = User.query.filter_by(username='admin').first()
+    if new_pass == re_pass:
+        admin.password = new_pass
+        db.session.commit()
+
+    return home()
+
+
+
+
+
+
+
+
 """User Page Routes"""
 
 @app.route('/ConfirmSubmission', methods=['POST'])
