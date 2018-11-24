@@ -23,8 +23,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-    # destroyDB(app)
-    # db = initializeDB(db)
+destroyDB(app)
+db = initializeDB(db)
 
 
 
@@ -53,10 +53,23 @@ def home():
     except:
         reference_prj_dict = {"" : "No Projects Added Yet"}
 
+
+    #####################
+    # LOGIN LOGIC BELOW
+    ####################
+    
+    
+    # unauthenticated -> take to login page
     if 'authenticated' not in session or session['authenticated'] == False:
         return render_template('login.html')
     else:
-        usrObj = User.query.filter_by(username=session['username']).first()
+
+        if session['isTeacher'] == True:
+            usrObj = Teacher.query.filter_by(username=session['username']).first()
+        else:
+            usrObj = User.query.filter_by(username=session['username']).first()
+
+        # admin
         if usrObj.username == "admin":
             users = User.query.order_by(User.username).all()
             return render_template("admin.html",
@@ -65,23 +78,40 @@ def home():
                                     DB_current_projects = reference_prj_dict,
                                     curr_deadline       = deadline)
         else:
-            if usrObj.isGroupFinal == False:
-                return render_template("group.html",
-                                        name=usrObj.name,
-                                        my_group_size=usrObj.group_size,
-                                        DB_deadline=deadline)
 
-            elif usrObj.isPrefFinal == False:
-                return render_template("preference.html",
-                                        name          = usrObj.name,
-                                        project_list  = reference_prj_dict,
-                                        DB_deadline=deadline)
+            # teacher
+            if session['isTeacher'] == True:
+                if usrObj.isPrefFinal == False:
+                    return render_template("teacherpreference.html",
+                                            name          = usrObj.name,
+                                            project_list  = reference_prj_dict,
+                                            DB_deadline=deadline)
+                else:
+                    return render_template("teacherresult.html",
+                                            name=usrObj.name,
+                                            my_proj_list=usrObj.getPrefList(),
+                                            my_group_members=usrObj.getMembers(),
+                                            DB_deadline=deadline)
+
+            # student
             else:
-                return render_template("done.html",
-                                        name=usrObj.name,
-                                        my_proj_list=usrObj.getPrefList(),
-                                        my_group_members=usrObj.getMembers(),
-                                        DB_deadline=deadline)
+                if usrObj.isGroupFinal == False:
+                    return render_template("group.html",
+                                            name=usrObj.name,
+                                            my_group_size=usrObj.group_size,
+                                            DB_deadline=deadline)
+
+                elif usrObj.isPrefFinal == False:
+                    return render_template("preference.html",
+                                            name          = usrObj.name,
+                                            project_list  = reference_prj_dict,
+                                            DB_deadline=deadline)
+                else:
+                    return render_template("done.html",
+                                            name=usrObj.name,
+                                            my_proj_list=usrObj.getPrefList(),
+                                            my_group_members=usrObj.getMembers(),
+                                            DB_deadline=deadline)
 
 
 @app.route('/login',methods=["POST"])
@@ -96,7 +126,7 @@ def do_login():
     
     # is this_user is not student or admin then check teacher table
     if this_user is None:
-        this_user = Teacher.query.filter_by(email=request.form['username']).first()
+        this_user = Teacher.query.filter_by(username=request.form['username']).first()
         isTeacher = True
 
     # if this_user is still none -> invalid user

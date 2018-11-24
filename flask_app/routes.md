@@ -12,6 +12,8 @@
 <form action="/doComputation">
 <!-- <form action="/resetPortal"> -->
 
+/ConfirmSubmissionTeacher
+/finalSubmitTeacher
 
 <!-- user page -->
 

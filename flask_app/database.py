@@ -97,16 +97,18 @@ class portalConfig(db.Model):
 class Teacher(db.Model):
     
     # email id
-    username = db.Column(db.String,primary_key=True)
-
-    # normal name
+    username = db.Column(db.String,primary_key=True,nullable=False)
+    password = db.Column(db.String,nullable=False)
     name  = db.Column(db.String)
+    isPrefFinal = db.Column(db.Boolean,default=False)
+
     pref_order = db.Column(db.String)
 
-    def __init__(self, email, name,**kwargs): 
-        super(User, self).__init__(**kwargs)
-        self.email             = email
-        self.name              = name
+    def __init__(self, username, password, name,**kwargs): 
+        super(Teacher, self).__init__(**kwargs)
+        self.username             = username
+        self.name                 = name
+        self.password             = password
         pass
 
 
@@ -138,8 +140,10 @@ def initializeDB(db):
     admin = User(username="admin",password="admin", name="admin",cpi=10)
     config = portalConfig(1)
     student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35)
+    demo_teacher = Teacher(username="a@b.com",password="000",name="Prof. Suneeta")
     # add to session
     db.session.add(config)
+    db.session.add(demo_teacher)
     db.session.add(admin)
     db.session.add(student)
     db.session.commit()
