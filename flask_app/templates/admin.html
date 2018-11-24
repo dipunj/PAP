@@ -13,9 +13,9 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" href="/static/css/toggle.css">
 	<!-- for debugging css / ghost code -->
-	<!-- <style>
+	<style>
 		* { background: #000 !important; color: #0f0 !important; outline: solid #f00 1px !important; }
-	</style> -->
+	</style>
 
 
 </head>
@@ -230,7 +230,7 @@
 						<div class="card-body">
 							<form class="form" action="/togglePortal" id="toggle-form" method="POST">
 								<div class="container">
-									<div class="form-group row">
+									<div class="form-group row justify-content-between">
 										<div class="col-4 align-self-center">
 											<label class="col-form-label">Login Status :</label>
 										</div>
@@ -245,7 +245,7 @@
 											</label>
 										</div>
 										<div class="col-4 align-self-center">
-											<button type="submit" class="btn btn-outline-primary float-right">Save</button>
+											<button type="submit" class="btn btn-outline-primary float-right mt-4 mb-4">Save</button>
 										</div>
 									</div>
 								</div>
@@ -259,16 +259,16 @@
 						<div class="card-body">
 							<form class="form" action="/setGroupSize" method="POST">
 								<div class="container">
-									<div class="form-group row">
-										<div class="col-sm-6 col-md-4">
+									<div class="form-group row justify-content-between">
+										<div class="col-8 col-md-4 align-self-center">
 											<label for="groupSize" class="col-form-label">Enter Group Size</label>
 										</div>
-										<div class="col-sm-6 col-md-4">
+										<div class="col-4 col-md-4 align-self-center">
 											<input type="number" min="1" id="groupSize" name="defaultGrpSize" class="form-control" value={{DB_group_size}}
 											 required>
 										</div>
-										<div class="col-sm-12 col-md-4">
-											<button type="submit" class="btn btn-outline-secondary float-rigsht">Save</button>
+										<div class="col-12 col-md-4 align-self-center">
+											<button type="submit" class="btn btn-outline-secondary float-right mt-4 mb-4">Save</button>
 										</div>
 									</div>
 								</div>
@@ -295,7 +295,7 @@
 								</div>
 								<div class="form-group row">
 									<div class="col-12">
-										<button type="submit" class="btn btn-outline-dark float-right">Set</button>
+										<button type="submit" class="btn btn-outline-dark btn-block float-right">Set</button>
 									</div>
 								</div>
 							</div>
@@ -365,7 +365,7 @@
 								</div>
 								<div class="form-group row align-content-end">
 									<div class="col-md-12">
-										<button type="submit" class="btn btn-outline-success float-right">Change</button>
+										<button type="submit" class="btn btn-outline-success btn-block float-ri">Change</button>
 										<span id='passMatch' class="float-right mr-5"></span>
 									</div>
 								</div>
@@ -390,7 +390,7 @@
 								</div>
 								<div class="form-group row">
 									<div class="col-md-12">
-										<button type="submit" class="btn btn-primary btn-lg float-right" id="resultButton">Compute</button>
+										<button type="submit" class="btn btn-primary btn-lg btn-block float-right float-right" id="resultButton">Compute</button>
 									</div>
 								</div>
 							</div>
@@ -402,36 +402,36 @@
 
 			<!-- portal controls -->
 			<div class="row">
-				<div class="col-12">
+				<div class="card-deck col-12">
 					<div class="card border-danger">
 					<h4 class="card-header text-white bg-danger">Reset Portal</h4>
 					<div class="card-body">
 						<div class="container">
 							<form action="/resetPortal" method="POST">
-								<div class="form-row">
-									<div class="col-md-6 offset-md-1 pt-4 pb-3">
+								<div class="form-group row justify-content-between">
+									<div class="col-md-8">
 										<label for="resetButton" class="text-danger col-form-label-lg">CAUTION!! THIS ACTION IS IRREVERSIBLE</label>
 										<p class="text-muted text-danger">New admin credentials will be :</p>
 										<div class="row">
-											<div class="col-5 offset-2">
-												<label class="float-right text-muted">Username : </label>
-											</div>
 											<div class="col-5">
-												<p class="text-muted">admin</p>
+												<label class="col-form-label float-right">Username : </label>
+											</div>
+											<div class="col-4">
+												<input class="form-control" type="text" placeholder="admin" readonly>
 											</div>
 										</div>
 										<div class="row">
-											<div class="col-5 offset-2">
-												<label class="float-right text-muted">Password : </label>
-											</div>
 											<div class="col-5">
-												<p class="text-muted">admin</p>
+												<label class="col-form-label float-right">Password : </label>
+											</div>
+											<div class="col-4">
+												<input class="form-control" type="text" placeholder="admin" readonly>
 											</div>
 										</div>
 									</div>
-									<div class="col-md-3 offset-2 pt-4">
+									<div class="col-md-4 align-self-center text-center">
 										<input type="text" name="resetDATABASE" value="true" hidden>
-										<button type="submit" class="btn btn-danger float-right" id="resetButton">RESET DATABASE </button>
+										<button type="submit" class="btn btn-danger m-4" id="resetButton">RESET DATABASE </button>
 									</div>
 								</div>
 							</form>
