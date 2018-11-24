@@ -315,7 +315,7 @@ def deleteFrm_StudentRefList(user_regno):
     
     rank_list = []
     for i in range(1,len(new_dict)+1):
-        rank_list.append(i)
+        rank_list.append(str(i))
     
     portal_config.setStudentList(rank_list,new_dict)
     db.session.commit()
@@ -334,8 +334,9 @@ def createTeacher_and_projects():
     new_teacher = Teacher(teacher_email,request.form['teacher_password'],teacher_name)
     
     projects = request.form['projectList'].strip().split("\r\n")
+    new_teacher.setProjectList(projects)
+    
     projects = [teacher_email+"__"+i for i in projects]
-
     db.session.add(new_teacher)
     
     for prj in projects:
@@ -394,7 +395,7 @@ def deleteFrm_ProjectList(project_name):
     
     rank_list = []
     for i in range(1,len(new_dict)+1):
-        rank_list.append(i)
+        rank_list.append(str(i))
     
     portal_config.setProjectList(rank_list,new_dict)
     db.session.commit()

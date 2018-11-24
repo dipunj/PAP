@@ -28,10 +28,10 @@ class User(db.Model):
     # group size including 1st slotter
     group_size = db.Column(db.Integer,default=4)
 
-    # seperator is $#
+    # seperator is $#@!
     all_member_string = db.Column(db.String)
 
-    # seperator is $#
+    # seperator is $#@!
     pref_order = db.Column(db.String)
 
 
@@ -49,10 +49,10 @@ class User(db.Model):
 
 
     def addMember(self, group_position, mem_name,mem_cpi,mem_reg_no): 
-        self.all_member_string += "$#"+str(group_position)+","+str(mem_reg_no)+","+str(mem_name)+","+str(mem_cpi)
+        self.all_member_string += "$#@!"+str(group_position)+","+str(mem_reg_no)+","+str(mem_name)+","+str(mem_cpi)
 
     def getMembers(self):
-        members = self.all_member_string.split('$#')
+        members = self.all_member_string.split('$#@!')
         printable_details = []
         for student in members:
             printable_details.append(tuple(student.split(',')))
@@ -68,10 +68,10 @@ class User(db.Model):
         """
 
         this_user_order = list(map(academic_project_dict.get,pref_order_list))
-        self.pref_order = "$#".join(this_user_order)        
+        self.pref_order = "$#@!".join(this_user_order)        
 
     def getPrefList(self):
-        to_dict = self.pref_order.split("$#")
+        to_dict = self.pref_order.split("$#@!")
         pref_dict = dict(enumerate(to_dict,start=1))
         pref_dict = {str(k):str(v) for k,v in pref_dict.items()}
         
@@ -85,7 +85,7 @@ class portalConfig(db.Model):
     deadline = db.Column(db.DateTime,default=datetime(9999, 9, 9, 9, 9))
     reference_project_list = db.Column(db.String,default="")
 
-    # 20154061$#20154015$#......
+    # 20154061$#@!20154015$#@!......
     reference_student_list = db.Column(db.String,default="")
 
     def __init__(self,mode):
@@ -97,7 +97,7 @@ class portalConfig(db.Model):
         if not self.reference_project_list:
             return {}
         else:
-            to_dict = self.reference_project_list.split("$#")
+            to_dict = self.reference_project_list.split("$#@!")
             pref_dict = dict(enumerate(to_dict,start=1))
             pref_dict = {str(k):str(v) for k,v in pref_dict.items()}
             return pref_dict
@@ -110,17 +110,17 @@ class portalConfig(db.Model):
             project_dict (dict): {"1":"suneeta@mnnit.ac.in__algo","2":"aks@mnnit.ac.in__DS".....}
 
         Result:
-            self.pref_order == "$#suneeta__algo$#aks__DS"
+            self.pref_order == "$#@!suneeta__algo$#@!aks__DS"
         """
 
         project_name = list(map(project_dict.get,linear_list))
-        self.reference_project_list = "$#".join(project_name)
+        self.reference_project_list = "$#@!".join(project_name)
 
     def getcurrentStudentList(self):
         if not self.reference_student_list:
             return {}
         else:
-            to_dict = self.reference_student_list.split("$#")
+            to_dict = self.reference_student_list.split("$#@!")
             pref_dict = dict(enumerate(to_dict,start=1))
             pref_dict = {str(k):str(v) for k,v in pref_dict.items()}
             return pref_dict
@@ -133,11 +133,11 @@ class portalConfig(db.Model):
             student_dict (dict): {"1":"20154061","2":"20154015".....}
 
         Result:
-            self.pref_order == "$#20154061$#20154015"
+            self.pref_order == "$#@!20154061$#@!20154015"
         """
 
         students_regno = list(map(student_dict.get,linear_list))
-        self.reference_student_list = "$#".join(students_regno)
+        self.reference_student_list = "$#@!".join(students_regno)
 
 
 
@@ -153,7 +153,7 @@ class Teacher(db.Model):
     password = db.Column(db.String,nullable=False)
     name  = db.Column(db.String)
     isPrefFinal = db.Column(db.Boolean,default=False)
-
+    myprojects = db.Column(db.String,default="")
     pref_order = db.Column(db.String)
 
     def __init__(self, username, password, name,**kwargs): 
@@ -173,15 +173,20 @@ class Teacher(db.Model):
         """
 
         this_user_order = list(map(student_dict.get,pref_order_list))
-        self.pref_order = "$#".join(this_user_order)        
+        self.pref_order = "$#@!".join(this_user_order)        
 
     def getPrefList(self):
-        to_dict = self.pref_order.split("$#")
+        to_dict = self.pref_order.split("$#@!")
         pref_dict = dict(enumerate(to_dict,start=1))
         pref_dict = {str(k):str(v) for k,v in pref_dict.items()}
         
         return pref_dict
 
+    def setProjectList(self,prj_list):
+        self.myprojects = "$#@!".join(prj_list)
+
+    def getProjectList(self):
+        return self.myprojects.split("$#@!")
 
 def initializeDB(db):
     
