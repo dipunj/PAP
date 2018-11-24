@@ -15,7 +15,8 @@
 	<!-- for debugging css / ghost code -->
 	<!-- <style>
 		* { background: #000 !important; color: #0f0 !important; outline: solid #f00 1px !important; }
-    </style> -->
+	</style> -->
+
 
 </head>
 
@@ -192,9 +193,9 @@
 											{% for user in DB_user_list %}
 											{% if user.isGroupFinal == true and user.isPrefFinal == true%}
 											<tr class="bg-success">
-											{% else %}
+												{% else %}
 											<tr class="bg-danger">
-											{% endif %}
+												{% endif %}
 												<td> {{loop.index}} </td>
 												<td> {{user.username}} </td>
 												<td> {{user.name}} </td>
@@ -217,12 +218,13 @@
 		<!-- portal controls page -->
 		<div id="portControls" class="container tab-pane fade">
 
-			<h2>Portal Controls</h2>
+			<div class="row">
+				<h2>Portal Controls</h2>
+			</div>
 
-			<div class="card-deck">
-
-				<!-- login status -->
-				<div class="col-6">
+			<div class="row">
+				<div class="card-deck col-12">
+					<!-- login status -->
 					<div class="card">
 						<h4 class="card-header">Status</h4>
 						<div class="card-body">
@@ -250,10 +252,8 @@
 							</form>
 						</div>
 					</div>
-				</div>
 
-				<!-- group size -->
-				<div class="col-6">
+					<!-- group size -->
 					<div class="card">
 						<h4 class="card-header">Default Group Size</h4>
 						<div class="card-body">
@@ -264,7 +264,8 @@
 											<label for="groupSize" class="col-form-label">Enter Group Size</label>
 										</div>
 										<div class="col-sm-6 col-md-4">
-											<input type="number" min="1" id="groupSize" name="defaultGrpSize" class="form-control" value={{DB_group_size}} required>
+											<input type="number" min="1" id="groupSize" name="defaultGrpSize" class="form-control" value={{DB_group_size}}
+											 required>
 										</div>
 										<div class="col-sm-12 col-md-4">
 											<button type="submit" class="btn btn-outline-secondary float-rigsht">Save</button>
@@ -275,188 +276,188 @@
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<!-- set project list -->
-				<div class="col-6">
+			<div class="row">
+				<div class="card-deck col-12">
+					<!-- set project list -->
 					<div class="card border-dark">
-						<h4 class="card-header bg-dark text-white">Set Project List</h4>
-						<div class="card-body">
-							<form action="/setProjectList" method="POST">
-								<div class="container">
-									<div class="form-group row">
-										<div class="col-12">
-											<label for="projectList" class="col-form-label">Enter <em>one project per line</em>, this shall overwrite
-												the existing list</label>
-											<textarea class="form-control" rows="4" name="projectList" class="form-control-plaintext" placeholder="Project name(Mentor Name) ...."></textarea>
-										</div>
-									</div>
-									<div class="form-group row">
-										<div class="col-12">
-											<button type="submit" class="btn btn-outline-dark float-right">Set</button>
-										</div>
+					<h4 class="card-header bg-dark text-white">Set Project List</h4>
+					<div class="card-body">
+						<form action="/setProjectList" method="POST">
+							<div class="container">
+								<div class="form-group row">
+									<div class="col-12">
+										<label for="projectList" class="col-form-label">Enter <em>one project per line</em>, this shall overwrite
+											the existing list</label>
+										<textarea class="form-control" rows="4" name="projectList" class="form-control-plaintext" placeholder="Project name(Mentor Name) ...."></textarea>
 									</div>
 								</div>
-							</form>
-						</div>
+								<div class="form-group row">
+									<div class="col-12">
+										<button type="submit" class="btn btn-outline-dark float-right">Set</button>
+									</div>
+								</div>
+							</div>
+						</form>
 					</div>
-				</div>
+					</div>
 
-
-				<!-- current project list -->
-				<div class="col-6">
+					<!-- current project list -->
 					<div class="card border-warning">
 						<h4 class="card-header bg-warning text-white">Current Project List</h4>
-						<div class="card-body">
-							<div class="container">
-								<div class="row">
-									<table class="table">
-										<thead class="thead-light">
-											<tr>
-												<th scope="col">#</th>
-												<th scope="col">Project Name</th>
-											</tr>
-										</thead>
-										<tbody>
-											{% for idx,prj_name in DB_current_projects.items()%}
-											<tr>
-												<td> {{idx}} </td>
-												<td> {{prj_name}} </td>
-											</tr>
-											{% endfor %}
-										</tbody>
-									</table>
-								</div>
-								<div class="row">
-									<div class="col-sm-12">
-										<form action="/resetProjectList" method="POST">
-											<button type="submit" class="btn btn-outline-warning float-right">Reset Project List</button>
-										</form>
-									</div>
+						<div class="card-body p-0">
+						<div class="container">
+							<div class="row">
+								<table class="table">
+									<thead class="thead-light">
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">Project Name</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for idx,prj_name in DB_current_projects.items()%}
+										<tr>
+											<td> {{idx}} </td>
+											<td> {{prj_name}} </td>
+										</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+							<div class="row">
+								<div class="col-sm-12">
+									<form action="/resetProjectList" method="POST">
+										<button type="submit" class="btn btn-outline-warning float-right">Reset Project List</button>
+									</form>
 								</div>
 							</div>
 						</div>
-					</div>
-				</div>
-
-				<!-- set admin password -->
-				<div class="col-6">
-					<div class="card border-success shadow-sm">
-						<h4 class="card-header bg-success text-white">Set Admin Password</h4>
-						<div class="card-body">
-							<div class="container">
-								<form action="/setAdminPassword" method="POST">
-									<div class="form-group row">
-										<div class="col-md-3 offset-1">
-											<label for="newPass" class="col-form-label text-secondary">New Password</label>
-										</div>
-										<div class="col-md-5">
-											<input type="password" name="newPass" id="newPass" class="form-control">
-										</div>
-									</div>
-									<div class="form-group row">
-										<div class="col-md-3 offset-1">
-											<label for="confNewPass" class="col-form-label text-secondary">Confirm New Password</label>
-										</div>
-										<div class="col-md-5">
-											<input type="password" name="confNewPass" id="confNewPass" class="form-control">
-										</div>
-									</div>
-									<div class="form-group row align-content-end">
-										<div class="col-md-12">
-											<button type="submit" class="btn btn-outline-success float-right">Change</button>
-											<span id='passMatch' class="float-right mr-5"></span>
-										</div>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-
-
-				<!-- do computation -->
-				<div class="col-6">
-					<div class="card border-primary">
-						<h4 class="card-header bg-primary text-white">Compute Results</h4>
-						<div class="card-body">
-							<form action="/doComputation">
-								<div class="container">
-									<div class="form-group row">
-										<div class="col-12">
-											<label for="resultButton" class="col-form-label text-primary">
-												Compute Final Result using Stable Marriage
-												Hypothesis, only after deadline
-											</label>
-										</div>
-									</div>
-									<div class="form-group row">
-										<div class="col-md-12">
-											<button type="submit" class="btn btn-primary btn-lg float-right" id="resultButton">Compute</button>
-										</div>
-									</div>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-
-				<!-- portal controls -->
-				<div class="col-12">
-					<div class="card border-danger">
-						<h4 class="card-header text-white bg-danger">Reset Portal</h4>
-						<div class="card-body">
-							<div class="container">
-								<form action="/resetPortal" method="POST">
-									<div class="form-row">
-										<div class="col-md-6 offset-md-1 pt-4 pb-3">
-											<label for="resetButton" class="text-danger col-form-label-lg">CAUTION!! THIS ACTION IS IRREVERSIBLE</label>
-											<p class="text-muted text-danger">New admin credentials will be :</p>
-											<div class="row">
-												<div class="col-5 offset-2">
-													<label class="float-right text-muted">Username : </label>
-												</div>
-												<div class="col-5">
-													<p class="text-muted">admin</p>
-												</div>
-											</div>
-											<div class="row">
-												<div class="col-5 offset-2">
-													<label class="float-right text-muted">Password : </label>
-												</div>
-												<div class="col-5">
-													<p class="text-muted">admin</p>
-												</div>
-											</div>
-										</div>
-										<div class="col-md-3 offset-2 pt-4">
-											<input type="text" name="resetDATABASE" value="true" hidden>
-											<button type="submit" class="btn btn-danger float-right" id="resetButton">RESET DATABASE </button>
-										</div>
-									</div>
-								</form>
-							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+
+			<div class="row">
+				<div class="card-deck col-12">
+					<!-- set admin password -->
+					<div class="card border-success">
+					<h4 class="card-header bg-success text-white">Set Admin Password</h4>
+					<div class="card-body">
+						<div class="container">
+							<form action="/setAdminPassword" method="POST">
+								<div class="form-group row">
+									<div class="col-md-3 offset-1">
+										<label for="newPass" class="col-form-label text-secondary">New Password</label>
+									</div>
+									<div class="col-md-5">
+										<input type="password" name="newPass" id="newPass" class="form-control">
+									</div>
+								</div>
+								<div class="form-group row">
+									<div class="col-md-3 offset-1">
+										<label for="confNewPass" class="col-form-label text-secondary">Confirm New Password</label>
+									</div>
+									<div class="col-md-5">
+										<input type="password" name="confNewPass" id="confNewPass" class="form-control">
+									</div>
+								</div>
+								<div class="form-group row align-content-end">
+									<div class="col-md-12">
+										<button type="submit" class="btn btn-outline-success float-right">Change</button>
+										<span id='passMatch' class="float-right mr-5"></span>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					</div>
+
+					<!-- do computation -->
+					<div class="card border-primary">
+					<h4 class="card-header bg-primary text-white">Compute Results</h4>
+					<div class="card-body">
+						<form action="/doComputation">
+							<div class="container">
+								<div class="form-group row">
+									<div class="col-12">
+										<label for="resultButton" class="col-form-label text-primary">
+											Compute Final Result using Stable Marriage
+											Hypothesis, only after deadline
+										</label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<div class="col-md-12">
+										<button type="submit" class="btn btn-primary btn-lg float-right" id="resultButton">Compute</button>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- portal controls -->
+			<div class="row">
+				<div class="col-12">
+					<div class="card border-danger">
+					<h4 class="card-header text-white bg-danger">Reset Portal</h4>
+					<div class="card-body">
+						<div class="container">
+							<form action="/resetPortal" method="POST">
+								<div class="form-row">
+									<div class="col-md-6 offset-md-1 pt-4 pb-3">
+										<label for="resetButton" class="text-danger col-form-label-lg">CAUTION!! THIS ACTION IS IRREVERSIBLE</label>
+										<p class="text-muted text-danger">New admin credentials will be :</p>
+										<div class="row">
+											<div class="col-5 offset-2">
+												<label class="float-right text-muted">Username : </label>
+											</div>
+											<div class="col-5">
+												<p class="text-muted">admin</p>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-5 offset-2">
+												<label class="float-right text-muted">Password : </label>
+											</div>
+											<div class="col-5">
+												<p class="text-muted">admin</p>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3 offset-2 pt-4">
+										<input type="text" name="resetDATABASE" value="true" hidden>
+										<button type="submit" class="btn btn-danger float-right" id="resetButton">RESET DATABASE </button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					</div>
+				</div>
+			</div>
+
 		</div>
 
 		<!-- result page -->
 		<div id="result" class="container mt-5 tab-pane fade">
-			<div class="row justify-content-center">
-				<div class="col-12">
-					<div class="card">
-						<h4 class="card-header">Preferences</h4>
-						<div class="card-body">
-							<p>content</p>
-						</div>
+		<div class="row justify-content-center">
+			<div class="col-12">
+				<div class="card">
+					<h4 class="card-header">Preferences</h4>
+					<div class="card-body">
+						<p>content</p>
 					</div>
 				</div>
 			</div>
 		</div>
-
+		</div>
+	
 	</div>
-
 
 	<!-- MAIN CONTENT ENDS -->
 	<!-- MAIN CONTENT ENDS -->

@@ -42,7 +42,7 @@ def home():
         template according to session cookie, usertype (admin or normal)
     """
 
-    admin=User.query.filter_by(username='admin').first()
+    admin = User.query.filter_by(username='admin').first()
 
     try:
         reference_prj_dict = admin.getPrefList()
@@ -70,7 +70,8 @@ def home():
             else:
                 return render_template("done.html",
                                         name=usrObj.name,
-                                        my_proj_list=usrObj.getPrefList())
+                                        my_proj_list=usrObj.getPrefList(),
+                                        my_group_members=usrObj.getMembers())
 
 
 @app.route('/login',methods=["POST"])
