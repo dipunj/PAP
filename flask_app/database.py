@@ -83,7 +83,7 @@ class portalConfig(db.Model):
 
     mode = db.Column(db.Integer,primary_key=True)
     deadline = db.Column(db.DateTime,default=datetime(9999, 9, 9, 9, 9))
-    # reference_project_list = db.Column(db.String,default="")
+    reference_project_list = db.Column(db.String,default="")
 
     # 20154061$#20154015$#......
     reference_student_list = db.Column(db.String,default="")
@@ -91,6 +91,30 @@ class portalConfig(db.Model):
     def __init__(self,mode):
         self.mode = mode
         pass
+
+    
+    def getcurrentProjectList(self):
+        if not self.reference_project_list:
+            return {}
+        else:
+            to_dict = self.reference_project_list.split("$#")
+            pref_dict = dict(enumerate(to_dict,start=1))
+            pref_dict = {str(k):str(v) for k,v in pref_dict.items()}
+            return pref_dict
+
+    def setProjectList(self, linear_list, project_dict):
+        """sets the students in reference_project_list
+
+        Args:
+            linear_list (list): ["1","2","3"....]
+            project_dict (dict): {"1":"suneeta@mnnit.ac.in__algo","2":"aks@mnnit.ac.in__DS".....}
+
+        Result:
+            self.pref_order == "$#suneeta__algo$#aks__DS"
+        """
+
+        project_name = list(map(project_dict.get,linear_list))
+        self.reference_project_list = "$#".join(project_name)
 
     def getcurrentStudentList(self):
         if not self.reference_student_list:
@@ -141,7 +165,7 @@ class Teacher(db.Model):
 
 
     def addPrefList(self, pref_order_list, student_dict):
-        """adds the preference order of the projects in academic_project_dict
+        """adds the preference order of the students from student_dict
         
         Args:
             pref_order_list (list): ["3","1","2"....]
@@ -171,6 +195,7 @@ def initializeDB(db):
     demo_teacher = Teacher(username="a@b.com",password="000",name="Prof. Suneeta")
 
     config.setStudentList(["1"],{"1":"20154061"})
+    config.setProjectList(["1"],{"1":"Prof. Suneeta__algo"})
     
     # add to session
     db.session.add(config)

@@ -268,7 +268,6 @@ def addUserToDB():
 
     return home()
 
-
 def addTo_StudentRefList(user_regno):
     
     global db
@@ -288,6 +287,7 @@ def addTo_StudentRefList(user_regno):
     db.session.commit()
 
 
+
 @app.route('/deleteUser', methods=['POST'])
 def delUserfromDB():
     
@@ -304,7 +304,6 @@ def delUserfromDB():
 
     return home()
 
-
 def deleteFrm_StudentRefList(user_regno):
 
     global db
@@ -320,6 +319,86 @@ def deleteFrm_StudentRefList(user_regno):
     
     portal_config.setStudentList(rank_list,new_dict)
     db.session.commit()
+
+
+
+
+@app.route('/createTeacher', methods=['POST'])
+def createTeacher_and_projects():
+
+    global db
+    
+    teacher_name = request.form['teacher_fullname']
+    teacher_email = request.form['teacher_username']
+    
+    new_teacher = Teacher(teacher_email,request.form['teacher_password'],teacher_name)
+    
+    projects = request.form['projectList'].strip().split("\r\n")
+    projects = [teacher_email+"__"+i for i in projects]
+
+    db.session.add(new_teacher)
+    
+    for prj in projects:
+        addTo_ProjRefList(prj)
+    
+    db.session.commit()
+    
+    return home()
+
+def addTo_ProjRefList(project_name):
+    
+    global db
+
+    portal_config = portalConfig.query.get(1)
+
+    project_dict = portal_config.getcurrentProjectList()
+    project_list = list(project_dict.values())
+    project_list.append(project_name)
+    new_dict = dict(enumerate(project_list,start=1))
+
+    rank_list = []
+    for i in range(1,len(new_dict)+1):
+        rank_list.append(i)
+
+    portal_config.setProjectList(rank_list, new_dict)
+    db.session.commit()
+
+
+
+@app.route('/deleteTeacher',methods=['POST'])
+def deleteTeacher_and_projects():
+    
+    global db
+
+    if request.form['teacher_username']:
+        teacher_email = request.form['teacher_username']
+        this_teacher = Teacher.query.filter_by(username=teacher_email).first()
+        
+        for prj in this_teacher.getProjectList():
+            deleteFrm_ProjectList(teacher_email+"__"+prj)
+        
+        db.session.delete(this_teacher)
+        db.session.commit()
+
+    return home()
+
+
+def deleteFrm_ProjectList(project_name):
+    
+    global db
+
+    portal_config = portalConfig.query.get(1)
+
+    project_dict = portal_config.getcurrentProjectList()
+    new_dict = { k:v for k, v in project_dict.items() if v != project_name }
+    
+    rank_list = []
+    for i in range(1,len(new_dict)+1):
+        rank_list.append(i)
+    
+    portal_config.setProjectList(rank_list,new_dict)
+    db.session.commit()
+
 
 
 
@@ -524,7 +603,7 @@ def confirmStudents():
     config = portalConfig.query.get(1)
     
     try:
-        student_list = admin.getPrefList()
+        student_list = config.getcurrentStudentList()
     except:
         student_list = {"" : "No ProjStudents Added By Admin Yet"}
 
@@ -547,6 +626,25 @@ def confirmStudents():
                                 prefOrder="-".join(pref_order),
                                 DB_deadline=config.getDeadline())
 
+@app.route('/finalSubmitTeacher', methods=['POST'])
+def finalStudentSubmit():
+
+    global db
+
+    if request.form['final_preference']:
+
+        usrObj = User.query.filter_by(username=session['username']).first()
+        portal_conf = portalConfig.query.get(1)
+
+        final_pref = request.form['final_preference'].split('-')
+        usrObj.addPrefList(final_pref,portal_conf.getcurrentStudentList())
+
+        usrObj.isPrefFinal = True
+        db.session.commit()
+    
+    return home()
+
+
 
 
 class fakeUser:
@@ -562,24 +660,6 @@ class fakeUser:
 
     def __repr__ (self):
         print("{} - {} - {} ".format(self.username,self.name,self.cpi))
-
-@app.route('/finalSubmitTeacher', methods=['POST'])
-def finalStudentSubmit():
-
-    global db
-
-    if request.form['final_preference']:
-
-        usrObj = User.query.filter_by(username=session['username']).first()
-        admin = User.query.filter_by(username="admin").first()
-
-        final_pref = request.form['final_preference'].split('-')
-        usrObj.addPrefList(final_pref,admin.getPrefList())
-
-        usrObj.isPrefFinal = True
-        db.session.commit()
-    
-    return home()
 
 
 
