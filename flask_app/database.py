@@ -90,7 +90,7 @@ class portalConfig(db.Model):
         pass
 
     def getDeadline(self):
-        return self.deadline.strftime('%B, %d %Y-%I:%M %p IST')
+        return (self.deadline.strftime('%B, %d %Y'),self.deadline.strftime('%I:%M %p IST'))
 
 
 
