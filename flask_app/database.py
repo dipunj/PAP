@@ -96,7 +96,7 @@ class portalConfig(db.Model):
         if not self.reference_student_list:
             return {}
         else:
-            to_dict = self.reference_project_list.split("$#")
+            to_dict = self.reference_student_list.split("$#")
             pref_dict = dict(enumerate(to_dict,start=1))
             pref_dict = {str(k):str(v) for k,v in pref_dict.items()}
             return pref_dict

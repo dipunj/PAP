@@ -95,11 +95,22 @@
                     <div class="container">
                         <div class="row" style="border:1px solid #0004ff; border-radius: 10px 10px">
                             <div class="col-12">
-                                <ol class="notsortable">
-                                    {% for student in confirm_list %}
-                                    <li style="margin: 10px 0">{{student}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
-                                    {% endfor %}
-                                </ol>
+                                <table class="table">
+                                    <thead class="thead-dark">
+                                        <th>#Pref No</th>
+                                        <th>Reg. No.</th>
+                                        <th>Leader Name</th>
+                                        <th>CGPA</th>
+                                    </thead>
+                                    <tbody>
+                                        {% for usrObj in confirm_list %}
+                                        <tr>{{loop.index}}</tr>
+                                        <tr>{{usrObj.username}}</tr>
+                                        <tr>{{usrObj.name}}</tr>
+                                        <tr>{{usrObj.cpi}} </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         <div class="row mt-4 mb-5 justify-content-between">

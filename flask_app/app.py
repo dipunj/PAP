@@ -53,6 +53,10 @@ def home():
     except:
         reference_prj_dict = {"" : "No Projects Added Yet"}
 
+    try:
+        reference_student_list = portalConfig.query.get(1).getcurrentStudentList()
+    except :
+        reference_student_list = {"" : "No students yet added by admin"}
 
     #####################
     # LOGIN LOGIC BELOW
@@ -288,7 +292,7 @@ def delUserfromDB():
         reg_no = request.form['oldUserRegNo']
         this_user = User.query.filter_by(username=reg_no).first()
         
-        deleteFrm_StudentRefList(this_user.username)
+        deleteFrm_StudentRefList(reg_no)
         
         db.session.delete(this_user)
         db.session.commit()
@@ -312,23 +316,6 @@ def deleteFrm_StudentRefList(user_regno):
     portal_config.setStudentList(rank_list,new_dict)
     db.session.commit()
 
-
-
-
-def setStudentList():
-
-    global db
-
-    ref_dict = {}
-    linear_keys = []
-
-    for idx,name in enumerate(student_list,start=1):
-        ref_dict.update({str(idx):name})
-        linear_keys.append(str(idx))
-        
-    portalConfig.setStudentList(linear_keys,ref_dict)
-
-    db.session.commit()
 
 
 @app.route('/togglePortal', methods=['POST'])
@@ -529,13 +516,13 @@ def selectMembers():
 @app.route('/ConfirmSubmissionTeacher', methods=['POST'])
 def confirmStudents():
 
-    admin = User.query.filter_by(username='admin').first()
     config = portalConfig.query.get(1)
-
+    
     try:
-        project_list = admin.getPrefList()
+        student_list = admin.getPrefList()
+        flag = True
     except:
-        project_list = {"" : "No Projects Added Yet"}
+        student_list = {"" : "No Projects Added Yet"}
 
     pref_order = request.form['order'].split(",")
     pref_order = [i.split("_")[1] for i in pref_order]    
@@ -543,7 +530,9 @@ def confirmStudents():
     preview = []
 
     for pr_id in pref_order:
-        preview.append(project_list[pr_id])
+        this_mem_reg_no = student_list[pr_id]
+        usrObj = User.query.filter_by(username=this_mem_reg_no).first()
+        preview.append(usrObj)
 
     if pref_order == ['']:
         return home()
