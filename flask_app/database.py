@@ -82,12 +82,40 @@ class User(db.Model):
 class portalConfig(db.Model):
 
     mode = db.Column(db.Integer,primary_key=True)
-    login_enabled = db.Column(db.Boolean,nullable=False,default=True)
     deadline = db.Column(db.DateTime,default=datetime(9999, 9, 9, 9, 9))
+    # reference_project_list = db.Column(db.String,default="")
+
+    # 20154061$#20154015$#......
+    reference_student_list = db.Column(db.String,default="")
 
     def __init__(self,mode):
         self.mode = mode
         pass
+
+    def getcurrentStudentList(self):
+        if not self.reference_student_list:
+            return {}
+        else:
+            to_dict = self.reference_project_list.split("$#")
+            pref_dict = dict(enumerate(to_dict,start=1))
+            pref_dict = {str(k):str(v) for k,v in pref_dict.items()}
+            return pref_dict
+
+    def setStudentList(self, linear_list, student_dict):
+        """sets the students in reference_student_list
+
+        Args:
+            linear_list (list): ["1","2","3"....]
+            student_dict (dict): {"1":"20154061","2":"20154015".....}
+
+        Result:
+            self.pref_order == "$#20154061$#20154015"
+        """
+
+        students_regno = list(map(student_dict.get,linear_list))
+        self.reference_student_list = "$#".join(students_regno)
+
+
 
     def getDeadline(self):
         return (self.deadline.strftime('%B, %d %Y'),self.deadline.strftime('%I:%M %p IST'))

@@ -71,7 +71,7 @@ def home():
 
         # admin
         if usrObj.username == "admin":
-            users = User.query.order_by(User.username).all()
+            users = User.query.order_by(User.username).filter(User.username !="admin").all()
             return render_template("admin.html",
                                     DB_group_size       = usrObj.group_size,
                                     DB_user_list        = users,
@@ -84,7 +84,7 @@ def home():
                 if usrObj.isPrefFinal == False:
                     return render_template("teacherpreference.html",
                                             name          = usrObj.name,
-                                            project_list  = reference_prj_dict,
+                                            student_list  = reference_student_list,
                                             DB_deadline=deadline)
                 else:
                     return render_template("teacherresult.html",
@@ -243,19 +243,40 @@ def addUserToDB():
     """
 
     global db
+    
+    name = request.form['newUserFullName']
+    cgpa = request.form['newUserCGPA']
+    reg_n = request.form['newUserRegNo']
+    grp_size = request.form['newUserGroupSize']
 
-    if (request.form['newUserFullName'] and request.form['newUserCGPA'] and request.form['newUserRegNo'] and request.form['newUserGroupSize']):
+    leader = User(username=reg_n, password=str(cgpa),name=name,cpi=cgpa,group_size=grp_size)
 
-        name = request.form['newUserFullName']
-        cgpa = request.form['newUserCGPA']
-        reg_n = request.form['newUserRegNo']
-        grp_size = request.form['newUserGroupSize']
+    db.session.add(leader)
 
-        leader = User(username=reg_n, password=str(cgpa),name=name,cpi=cgpa,group_size=grp_size)
-        db.session.add(leader)
-        db.session.commit()
+    addTo_StudentRefList(reg_n)
+    db.session.commit()
+
 
     return home()
+
+
+def addTo_StudentRefList(user_regno):
+    
+    global db
+
+    portal_config = portalConfig.query.get(1)
+
+    student_dict = portal_config.getcurrentStudentList()
+    student_list = list(student_dict.values())
+    student_list.append(user_regno)
+    new_dict = dict(enumerate(student_list,start=1))
+
+    rank_list = []
+    for i in range(1,len(new_dict)+1):
+        rank_list.append(i)
+
+    portal_config.setStudentList(rank_list, new_dict)
+    db.session.commit()
 
 
 @app.route('/deleteUser', methods=['POST'])
@@ -266,10 +287,48 @@ def delUserfromDB():
     if request.form['oldUserRegNo']:
         reg_no = request.form['oldUserRegNo']
         this_user = User.query.filter_by(username=reg_no).first()
+        
+        deleteFrm_StudentRefList(this_user.username)
+        
         db.session.delete(this_user)
         db.session.commit()
 
     return home()
+
+
+def deleteFrm_StudentRefList(user_regno):
+
+    global db
+
+    portal_config = portalConfig.query.get(1)
+
+    student_dict = portal_config.getcurrentStudentList()
+    new_dict = { k:v for k, v in student_dict.items() if v != user_regno }
+    
+    rank_list = []
+    for i in range(1,len(new_dict)+1):
+        rank_list.append(i)
+    
+    portal_config.setStudentList(rank_list,new_dict)
+    db.session.commit()
+
+
+
+
+def setStudentList():
+
+    global db
+
+    ref_dict = {}
+    linear_keys = []
+
+    for idx,name in enumerate(student_list,start=1):
+        ref_dict.update({str(idx):name})
+        linear_keys.append(str(idx))
+        
+    portalConfig.setStudentList(linear_keys,ref_dict)
+
+    db.session.commit()
 
 
 @app.route('/togglePortal', methods=['POST'])
@@ -423,6 +482,8 @@ def confirmIt():
 @app.route('/finalSubmit',methods=['POST'])
 def finalSubmit():
 
+    global db
+
     if request.form['final_preference']:
 
         usrObj = User.query.filter_by(username=session['username']).first()
@@ -463,10 +524,55 @@ def selectMembers():
 
 
 
+""" Teacher Page Routes"""
+
+@app.route('/ConfirmSubmissionTeacher', methods=['POST'])
+def confirmStudents():
+
+    admin = User.query.filter_by(username='admin').first()
+    config = portalConfig.query.get(1)
+
+    try:
+        project_list = admin.getPrefList()
+    except:
+        project_list = {"" : "No Projects Added Yet"}
+
+    pref_order = request.form['order'].split(",")
+    pref_order = [i.split("_")[1] for i in pref_order]    
+    
+    preview = []
+
+    for pr_id in pref_order:
+        preview.append(project_list[pr_id])
+
+    if pref_order == ['']:
+        return home()
+    else:
+        return render_template("teacherconfirm.html",
+                                name=session['name'],
+                                confirm_list=preview,
+                                prefOrder="-".join(pref_order),
+                                DB_deadline=config.getDeadline())
 
 
 
+@app.route('/finalSubmitTeacher', methods=['POST'])
+def finalStudentSubmit():
 
+    global db
+
+    if request.form['final_preference']:
+
+        usrObj = User.query.filter_by(username=session['username']).first()
+        admin = User.query.filter_by(username="admin").first()
+
+        final_pref = request.form['final_preference'].split('-')
+        usrObj.addPrefList(final_pref,admin.getPrefList())
+
+        usrObj.isPrefFinal = True
+        db.session.commit()
+    
+    return home()
 
 
 
