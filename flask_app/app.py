@@ -79,9 +79,11 @@ def home():
         # admin
         if usrObj.username == "admin":
             users = User.query.order_by(User.username).filter(User.username !="admin").all()
+            teachers = Teacher.query.all()
             return render_template("admin.html",
                                     DB_group_size       = usrObj.group_size,
                                     DB_user_list        = users,
+                                    DB_teacher_list     = teachers,
                                     DB_current_projects = reference_prj_dict,
                                     curr_deadline       = deadline)
         else:
