@@ -326,7 +326,8 @@ def resetProjectList():
 @app.route('/ConfirmSubmission', methods=['POST'])
 def confirmIt():
 
-    admin=User.query.filter_by(username='admin').first()
+    admin = User.query.filter_by(username='admin').first()
+    config = portalConfig.query.get(1)
 
     try:
         project_list = admin.getPrefList()
@@ -344,7 +345,11 @@ def confirmIt():
     if pref_order == ['']:
         return home()
     else:
-        return render_template("confirm.html",name=session['name'], confirm_list=preview, prefOrder="-".join(pref_order))
+        return render_template("confirm.html",
+                                name=session['name'],
+                                confirm_list=preview,
+                                prefOrder="-".join(pref_order),
+                                DB_deadline=config.getDeadline())
 
 
 @app.route('/finalSubmit',methods=['POST'])

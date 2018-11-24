@@ -86,10 +86,10 @@
 
     <div class="tab-content">
         <div id="result" class="container mt-5 tab-pane active">
-            <div class="row justify-content-between" style="background: red">
-                <div class="col-sm-12 col-md-6 h-100 d-inline-block">
-                    <div class="card border-primary">
-                        <div class="card-header bg-primary text-white">
+            <div class="row justify-content-between">
+                <div class="card-deck col-12">
+                    <div class="card border-danger">
+                        <div class="card-header bg-danger text-white">
                             <h4>Your Group</h4>
                         </div>
                         <div class="card-body p-0">
@@ -113,8 +113,7 @@
                             </table>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-12 col-md-6 h-100 d-inline-block">
+
                     <div class="card border-success">
                         <div class="card-header bg-success text-white">
                             <h4>Preference Order Submitted</h4>
@@ -136,6 +135,20 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="card-deck col-12">
+                    <div class="card border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h4>Result</h4>
+                        </div>
+                        <div class="card-body p-0">
+                        </div>
+                        <div class="card-footer">
+                            <blockquote class="blockquote text-center text-muted">Not Declared</blockquote>
                         </div>
                     </div>
                 </div>
