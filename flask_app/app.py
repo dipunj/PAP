@@ -349,14 +349,17 @@ def selectMembers():
 
     user_grp_size = usrObj.group_size
 
+    print(request.form)
     for i in range(2,user_grp_size+1):
-        mem_name = request.form[str(i)+"_fullName"]
+        mem_name = request.form[str(i)+"_fullname"]
         mem_reg = request.form[str(i)+"_regno"]
         mem_cgpa = request.form[str(i)+"_cgpa"]
         usrObj.addMember(str(i),mem_name,mem_cgpa,mem_reg)
     
     usrObj.isGroupFinal = True
     db.session.commit()
+
+    return home()
 
 
 

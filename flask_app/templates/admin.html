@@ -190,7 +190,7 @@
 										</thead>
 										<tbody>
 											{% for user in DB_user_list %}
-											{% if user.submitted == True%}
+											{% if user.isGroupFinal == true and user.isPrefFinal == true%}
 											<tr class="bg-success">
 											{% else %}
 											<tr class="bg-danger">

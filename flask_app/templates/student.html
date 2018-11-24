@@ -38,9 +38,14 @@
             <!-- navbar buttons -->
             <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
                 <ul class="nav nav-pills row">
-                    <li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#pref">Preference</a></li>
-                    <li class="nav-item mr-5"><a class="nav-link" data-toggle="pill" href="#groupMem">Group Members</a></li>
-                    <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#groupMem">Result</a></li>
+                    {% if isGroupFinal == false%}
+                    <li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#">Group Members</a></li>
+                    <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#pref" style="cursor: not-allowed;">Preference</a></li>
+                    {% elif isGroupFinal == true and isPrefFinal == false %}
+                    <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#groupMem" style="cursor: not-allowed;">Group Members</a></li>
+                    <li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#">Preference</a></li>
+                    {% endif %}
+                    <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#result" style="cursor: not-allowed;">Result</a></li>
                 </ul>
             </div>
 
@@ -83,39 +88,8 @@
 
     <div class="tab-content">
 
-        <div id="pref" class="container mt-5 tab-pane active">
-            <div class="row justify-content-center">
-                <div class="col-6 text-center">
-                    <div class="container" style="top: 25%; position: relative;">
-                        <h3 class="text-monospace">Project Preference</h3>
-                        <p class="text-muted">1 is your most prefered</p>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <form action="/ConfirmSubmission" method="POST" id="prefForm">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-12">
-                                    <ol id="sortable">
-                                        {% for idx, project_name in project_list.items() %}
-                                        <li id="r_{{idx}}" class="ui-state-default">{{project_name}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
-                                        {% endfor %}
-                                    </ol>
-                                </div>
-                            </div>
-                            <div class="row mt-4 mb-5">
-                                <div class="col-12">
-                                    <input hidden id="order" type="text" name="order">
-                                    <button type="button" class="btn btn-primary float-right pl-5 pr-5" id="prefBtn">Next</button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div id="groupMem" class="container mt-5 tab-pane fade">
+        {% if isGroupFinal == false%}
+        <div id="groupMem" class="container mt-5 tab-pane active">
             <div class="row">
                 <h2>Select Your Group Members</h2>
                 <div class="col-12">
@@ -172,6 +146,46 @@
             </div>
         </div>
 
+        <div id="pref" class="container mt-5 tab-pane fade">
+            <p>result</p>
+        </div>
+        {% elif isGroupFinal == true and isPrefFinal == false %}
+        <div id="groupMem" class="container mt-5 tab-pane fade">
+            <p>result</p>
+        </div>
+    
+        <div id="pref" class="container mt-5 tab-pane active">
+                    <div class="row justify-content-center">
+                        <div class="col-6 text-center">
+                            <div class="container" style="top: 25%; position: relative;">
+                                <h3 class="text-monospace">Project Preference</h3>
+                                <p class="text-muted">1 is your most prefered</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <form action="/ConfirmSubmission" method="POST" id="prefForm">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <ol id="sortable">
+                                                {% for idx, project_name in project_list.items() %}
+                                                <li id="r_{{idx}}" class="ui-state-default">{{project_name}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+                                                {% endfor %}
+                                            </ol>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4 mb-5">
+                                        <div class="col-12">
+                                            <input hidden id="order" type="text" name="order">
+                                            <button type="button" class="btn btn-primary float-right pl-5 pr-5" id="prefBtn">Next</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+        </div>
+        {% endif %}
 
         <div id="result" class="container mt-5 tab-pane fade">
             <p>result</p>
