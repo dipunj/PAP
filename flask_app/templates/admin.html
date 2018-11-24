@@ -13,9 +13,9 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" href="/static/css/toggle.css">
 	<!-- for debugging css / ghost code -->
-	<style>
+	<!-- <style>
 		* { background: #000 !important; color: #0f0 !important; outline: solid #f00 1px !important; }
-	</style>
+	</style> -->
 
 
 </head>
@@ -348,25 +348,21 @@
 						<div class="container">
 							<form action="/setAdminPassword" method="POST">
 								<div class="form-group row">
-									<div class="col-md-3 offset-1">
+									<div class="col-12 align-self-center">
 										<label for="newPass" class="col-form-label text-secondary">New Password</label>
-									</div>
-									<div class="col-md-5">
-										<input type="password" name="newPass" id="newPass" class="form-control">
+										<input type="password" name="newPass" id="newPass" class="form-control" required>
 									</div>
 								</div>
 								<div class="form-group row">
-									<div class="col-md-3 offset-1">
-										<label for="confNewPass" class="col-form-label text-secondary">Confirm New Password</label>
-									</div>
-									<div class="col-md-5">
-										<input type="password" name="confNewPass" id="confNewPass" class="form-control">
+									<div class="col-12 align-self-center">
+										<label for="confNewPass" class="col-form-label text-secondary">Confirm Password</label>
+										<input type="password" name="confNewPass" id="confNewPass" class="form-control" required>
 									</div>
 								</div>
 								<div class="form-group row align-content-end">
-									<div class="col-md-12">
+									<div class="col-12">
+										<span id='passMatch'></span>
 										<button type="submit" class="btn btn-outline-success btn-block float-ri">Change</button>
-										<span id='passMatch' class="float-right mr-5"></span>
 									</div>
 								</div>
 							</form>
