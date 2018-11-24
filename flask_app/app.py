@@ -57,15 +57,20 @@ def home():
             users = User.query.order_by(User.username).all()
             return render_template("admin.html",DB_group_size=usrObj.group_size, DB_user_list=users, DB_current_projects=reference_prj_dict)
         else:
-            if usrObj.isPrefFinal == True and usrObj.isGroupFinal == True:
-                return render_template("done.html", name=usrObj.name, my_proj_list=usrObj.getPrefList())
-            else:
-                return render_template("student.html",
+
+            if usrObj.isGroupFinal == False:
+                return render_template("group.html",
+                                        name=usrObj.name,
+                                        my_group_size=usrObj.group_size)
+
+            elif usrObj.isPrefFinal == False:
+                return render_template("preference.html",
                                         name          = usrObj.name,
-                                        project_list  = reference_prj_dict,
-                                        my_group_size = usrObj.group_size,
-                                        isGroupFinal  = usrObj.isGroupFinal,
-                                        isPrefFinal   = usrObj.isPrefFinal)
+                                        project_list  = reference_prj_dict)
+            else:
+                return render_template("done.html",
+                                        name=usrObj.name,
+                                        my_proj_list=usrObj.getPrefList())
 
 
 @app.route('/login',methods=["POST"])
