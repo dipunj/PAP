@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 import os
 from config import Config
 app = Flask(__name__)
@@ -76,6 +77,23 @@ class User(db.Model):
         
         return pref_dict
 
+
+
+class portalConfig(db.Model):
+
+    mode = db.Column(db.Integer,primary_key=True)
+    login_enabled = db.Column(db.Boolean,nullable=False,default=True)
+    deadline = db.Column(db.DateTime,default=datetime(9999, 9, 9, 9, 9))
+
+    def __init__(self,mode):
+        self.mode = mode
+        pass
+
+    def getDeadline(self):
+        return self.deadline.strftime('%B, %d %Y-%I:%M %p IST')
+
+
+
 def initializeDB(db):
     
     # create all tables of db
@@ -83,8 +101,10 @@ def initializeDB(db):
     
     # add user admin
     admin = User(username="admin",password="admin", name="admin",cpi=10)
+    config = portalConfig(1)
     student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35)
     # add to session
+    db.session.add(config)
     db.session.add(admin)
     db.session.add(student)
     db.session.commit()

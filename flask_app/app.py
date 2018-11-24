@@ -1,9 +1,11 @@
 import os, json
-from config import Config
 from flask import Flask, request, render_template, session, flash
-from main import getStableRelations
-from database import db,User,destroyDB,initializeDB
+from datetime import datetime
 
+
+from config import Config
+from main import getStableRelations
+from database import db,User,destroyDB,initializeDB, portalConfig
 
 
 # project_list = \
@@ -43,6 +45,7 @@ def home():
     """
 
     admin = User.query.filter_by(username='admin').first()
+    deadline = portalConfig.query.get(1).getDeadline()
 
     try:
         reference_prj_dict = admin.getPrefList()
@@ -55,23 +58,29 @@ def home():
         usrObj = User.query.filter_by(username=session['username']).first()
         if usrObj.username == "admin":
             users = User.query.order_by(User.username).all()
-            return render_template("admin.html",DB_group_size=usrObj.group_size, DB_user_list=users, DB_current_projects=reference_prj_dict)
+            return render_template("admin.html",
+                                    DB_group_size       = usrObj.group_size,
+                                    DB_user_list        = users,
+                                    DB_current_projects = reference_prj_dict,
+                                    curr_deadline       = deadline)
         else:
-
             if usrObj.isGroupFinal == False:
                 return render_template("group.html",
                                         name=usrObj.name,
-                                        my_group_size=usrObj.group_size)
+                                        my_group_size=usrObj.group_size,
+                                        DB_deadline=deadline)
 
             elif usrObj.isPrefFinal == False:
                 return render_template("preference.html",
                                         name          = usrObj.name,
-                                        project_list  = reference_prj_dict)
+                                        project_list  = reference_prj_dict,
+                                        DB_deadline=deadline)
             else:
                 return render_template("done.html",
                                         name=usrObj.name,
                                         my_proj_list=usrObj.getPrefList(),
-                                        my_group_members=usrObj.getMembers())
+                                        my_group_members=usrObj.getMembers(),
+                                        DB_deadline=deadline)
 
 
 @app.route('/login',methods=["POST"])
@@ -240,6 +249,15 @@ def setAdminPassword():
 
     return home()
 
+@app.route('/setDeadline', methods=['POST'])
+def setDeadline():
+
+    config = portalConfig.query.get(1)
+    print(request.form)
+    config.deadline = datetime.strptime(request.form['new_deadline'], '%Y-%m-%dT%H:%M')
+    db.session.commit()
+    return home()
+
 
 @app.route('/resetPortal',methods=['POST'])
 def reset():
@@ -249,6 +267,7 @@ def reset():
 
     if request.form['resetDATABASE'] == "true":
         User.query.delete()
+        portalConfig.query.delete()
     
     db = initializeDB(db)
     
