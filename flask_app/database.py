@@ -169,6 +169,9 @@ def initializeDB(db):
     config = portalConfig(1)
     student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35)
     demo_teacher = Teacher(username="a@b.com",password="000",name="Prof. Suneeta")
+
+    config.setStudentList(["1"],{"1":"20154061"})
+    
     # add to session
     db.session.add(config)
     db.session.add(demo_teacher)

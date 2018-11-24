@@ -53,10 +53,13 @@ def home():
     except:
         reference_prj_dict = {"" : "No Projects Added Yet"}
 
-    try:
-        reference_student_list = portalConfig.query.get(1).getcurrentStudentList()
-    except :
-        reference_student_list = {"" : "No students yet added by admin"}
+    reference_student_list = {}
+    student_list = portalConfig.query.get(1).getcurrentStudentList()
+    for idx,reg_no in student_list.items():
+        reference_student_list[idx] = User.query.filter_by(username=reg_no).first()
+
+    if not reference_student_list: 
+        reference_student_list[" "] = fakeUser()
 
     #####################
     # LOGIN LOGIC BELOW
@@ -520,9 +523,8 @@ def confirmStudents():
     
     try:
         student_list = admin.getPrefList()
-        flag = True
     except:
-        student_list = {"" : "No Projects Added Yet"}
+        student_list = {"" : "No ProjStudents Added By Admin Yet"}
 
     pref_order = request.form['order'].split(",")
     pref_order = [i.split("_")[1] for i in pref_order]    
@@ -544,6 +546,20 @@ def confirmStudents():
                                 DB_deadline=config.getDeadline())
 
 
+
+class fakeUser:
+
+    username = None
+    name = None
+    cpi = None
+
+    def __init__(self):
+        self.username = "-1"
+        self.name = "Admin has not yet added any users"
+        self.cpi = ""
+
+    def __repr__ (self):
+        print("{} - {} - {} ".format(self.username,self.name,self.cpi))
 
 @app.route('/finalSubmitTeacher', methods=['POST'])
 def finalStudentSubmit():

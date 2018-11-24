@@ -97,8 +97,8 @@
                             <div class="row">
                                 <div class="col-12">
                                     <ol id="sortable">
-                                        {% for idx, student in student_list.items() %}
-                                        <li id="r_{{idx}}" class="ui-state-default">{{student}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+                                        {% for idx,usrObj in student_list.items() %}
+                                        <li id="r_{{idx}}" class="ui-state-default">{{usrObj.username}} {{usrObj.name}} {{usrObj.cpi}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
                                         {% endfor %}
                                     </ol>
                                 </div>
