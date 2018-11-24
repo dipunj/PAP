@@ -96,7 +96,10 @@ class portalConfig(db.Model):
 
 class Teacher(db.Model):
     
-    email = db.Column(db.String,primary_key=True)
+    # email id
+    username = db.Column(db.String,primary_key=True)
+
+    # normal name
     name  = db.Column(db.String)
     pref_order = db.Column(db.String)
 

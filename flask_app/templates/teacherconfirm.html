@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible">
+    <title>Project Allotment Portal, MNNIT</title>
+
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo:100,300,400">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/jquery-ui.css">
+    <link rel="stylesheet" href="/static/css/jquery-ui.min.css">
+    <!-- for debugging css / ghost code -->
+    <!-- <style>
+        * { background: #000 !important; color: #0f0 !important; outline: solid #f00 1px !important; }
+    </style> -->
+</head>
+
+<body>
+
+    <!-- fixed navbar -->
+    <nav class="navbar navbar-expand-sm navbar-light bg-white fixed-top" id="mainNav">
+            <div class="container">
+                <!-- hamburger button for smaller screens -->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+    
+                <a href="#" class="navbar-brand __title mr-auto">
+                    <strong>Welcome</strong>, {{ name }}
+                </a>
+    
+                <!-- navbar buttons -->
+                <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+                    <ul class="nav nav-pills row">
+                        <li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#pref">Preference</a></li>
+                        <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#result" style="cursor: not-allowed;">Result</a></li>
+                    </ul>
+                </div>
+    
+                <!-- logout button : create a form if required -->
+                <form class="form-inline mr-2 my-2" action="/logout" method="POST">
+                    <button id="loginbtn" class="btn btn-logout float-right">Log Out</button>
+                </form>
+            </div>
+        </nav>
+
+    <!-- portal image and name -->
+    <header class="jumbotron" style="background-image: url('/static/images/jumbo.jpg'); background-size: 100%;">
+        <div class="container p-5">
+            <h1>MNNIT Allahabad</h1>
+            <p>Portal for Project Allotment</p>
+        </div>
+    </header>
+
+
+
+
+    <!-- MAIN CONTENT BEGINS -->
+    <!-- MAIN CONTENT BEGINS -->
+    <!-- MAIN CONTENT BEGINS -->
+    <!-- MAIN CONTENT BEGINS -->
+    <!-- MAIN CONTENT BEGINS -->
+    <!-- MAIN CONTENT BEGINS -->
+    <!-- MAIN CONTENT BEGINS -->
+
+    <div class="container">
+            <div class="row justify-content-end mr-3">
+                <h5 class="text-monospace mb-0"> DEADLINE: </h5>
+                <h5 class="text-primary mb-0">{{DB_deadline[0]}}</h5>
+            </div>
+            <div class="row justify-content-end mr-3">
+                <h6 class="text-secondary text-right mt-0 pt-0">{{DB_deadline[1]}}</h5>
+            </div>
+        </div>
+
+
+
+
+    <div class="tab-content">
+
+        <div id="pref" class="container mt-5 tab-pane active">
+            <div class="row justify-content-center">
+                <div class="col-6 text-center">
+                    <div class="container" style="top: 25%; position: relative;">
+                        <h3 class="text-monospace">Finalise ?</h3>
+                        <p class="text-muted">1 is your most prefered</p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="container">
+                        <div class="row" style="border:1px solid #0004ff; border-radius: 10px 10px">
+                            <div class="col-12">
+                                <ol class="notsortable">
+                                    {% for student in confirm_list %}
+                                    <li style="margin: 10px 0">{{student}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="row mt-4 mb-5 justify-content-between">
+                            <div class="col-4">
+                                <form action="/">
+                                    <button type="submit" class="btn btn-primary float-left" id="back">Back</button>
+                                </form>
+                            </div>
+                            <div class="col-4">
+                                <form action="/finalSubmitTeacher" method="POST">
+                                    <input type="text" value="{{prefOrder}}" name="final_preference" hidden>
+                                    <button type="submit" class="btn btn-danger float-right" id="finalSubmit">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+<script src="/static/js/jquery.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="/static/js/main.js"></script>
+
+
+</html>

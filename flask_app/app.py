@@ -6,7 +6,7 @@ from datetime import datetime
 from config import Config
 from main import getStableRelations
 from utilities import stable
-from database import db,User,destroyDB,initializeDB, portalConfig
+from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 
 
 # project_list = \
@@ -89,20 +89,32 @@ def do_login():
     """facilitates login from the login.html login page    
     """
 
-    this_user = User.query.filter_by(username=request.form['username']).first()
+    isTeacher = False
 
+    # check if this_user is admin or normal user
+    this_user = User.query.filter_by(username=request.form['username']).first()
+    
+    # is this_user is not student or admin then check teacher table
+    if this_user is None:
+        this_user = Teacher.query.filter_by(email=request.form['username']).first()
+        isTeacher = True
+
+    # if this_user is still none -> invalid user
     if this_user is not None:
         if this_user.password == request.form["password"]:
             session['authenticated'] = True
             session['username'] = this_user.username
             session['name'] = this_user.name
-            session['cpi'] = this_user.cpi
-            session['grp_size'] = this_user.group_size
+            session['isTeacher'] = isTeacher
+            try:
+                session['cpi'] = this_user.cpi
+                session['grp_size'] = this_user.group_size
+            except:
+                pass
         else:
             flash("Incorrect Password, Please Try Again")    
     else:
         flash("Invalid Username, Please Try Again")
-    
     return home()
 
 
@@ -143,6 +155,11 @@ def autoCompute():
 
     grp_leaders = User.query.order_by(User.username).all()
     teachers    = Teachers.query.order_by(Teacher.email).all()
+
+    if len(grp_leaders -1  != teachers):
+        # error cannot procede
+        pass
+
 
     for usrObj in grp_leaders:
         student_pref[usrObj.username] = usrObj.getPrefList().values()
