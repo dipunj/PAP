@@ -94,6 +94,38 @@ class portalConfig(db.Model):
 
 
 
+class Teacher(db.Model):
+    
+    email = db.Column(db.String,primary_key=True)
+    name  = db.Column(db.String)
+    pref_order = db.Column(db.String)
+
+    def __init__(self, email, name,**kwargs): 
+        super(User, self).__init__(**kwargs)
+        self.email             = email
+        self.name              = name
+        pass
+
+
+    def addPrefList(self, pref_order_list, student_dict):
+        """adds the preference order of the projects in academic_project_dict
+        
+        Args:
+            pref_order_list (list): ["3","1","2"....]
+            student_dict (dict): {"1":"Dipunj Gupta","2":"Abhey Rana", "3":"Manmeet Singh".....}
+        """
+
+        this_user_order = list(map(student_dict.get,pref_order_list))
+        self.pref_order = "$#".join(this_user_order)        
+
+    def getPrefList(self):
+        to_dict = self.pref_order.split("$#")
+        pref_dict = dict(enumerate(to_dict,start=1))
+        pref_dict = {str(k):str(v) for k,v in pref_dict.items()}
+        
+        return pref_dict
+
+
 def initializeDB(db):
     
     # create all tables of db

@@ -5,6 +5,7 @@ from datetime import datetime
 
 from config import Config
 from main import getStableRelations
+from utilities import stable
 from database import db,User,destroyDB,initializeDB, portalConfig
 
 
@@ -133,13 +134,33 @@ def do_logout():
 
 
 
+@app.route('/computeResult', methods=['POST'])
+def autoCompute():
+
+    # step 1 : generate dict containing student's preference
+    student_pref = {}
+    teacher_pref = {}
+
+    grp_leaders = User.query.order_by(User.username).all()
+    teachers    = Teachers.query.order_by(Teacher.email).all()
+
+    for usrObj in grp_leaders:
+        student_pref[usrObj.username] = usrObj.getPrefList().values()
+    
+    for prof in teachers:
+        teacher_pref[prof.email] = prof.getPrefList().values()
+        
+    # step 2 : generate dict containing teacher's preferences
+
+    myresult = stable(student_pref,teacher_pref)
+    return render_template('result.html', result=myresult)
+
 @app.route('/submit', methods=['POST'])
 def doComputation():
     """main application logic
     
         uses stable marriage problem logic to assign projects in a stable manner
     """
-
     
     if request.files['teacher'] and request.files['student'] and request.files['members']:
     
