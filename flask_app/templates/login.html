@@ -7,7 +7,7 @@
 <!--===============================================================================================-->	
 	<link rel="icon" type="image/png" href="/static/images/icons/favicon.ico"/>
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/bootstrap/dist/css/bootstrap.min.css">
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 <!--===============================================================================================-->
@@ -30,8 +30,8 @@
 </head>
 <body>
 	<div class="limiter">
-		<div class="container-login100">
-			<div class="wrap-login100">
+		<div class="container-login100 shadow-lg">
+			<div class="wrap-login100 shadow-lg pb-0">
 				<div class="login100-form-title" style="background-image: url(/static/images/motilal_square.png);">
 					<span class="login100-form-title-1">
 						Project Allotment Portal
@@ -49,21 +49,21 @@
 	  				{% endif %}
 				{% endwith %}
 
-				<form class="login100-form validate-form" action="/login" method="POST">
-					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
+				<form class="login100-form validate-form pb-5" action="/login" method="POST">
+					<div class="wrap-input100 validate-input m-b-26 shadow-lg" style="border-radius: 15px;" data-validate="Username is required">
 						<span class="label-input100">Username</span>
-						<input class="input100" type="text" name="username" placeholder="Enter username">
+						<input class="input100 border-dark" type="text" name="username" placeholder="Enter username">
 						<span class="focus-input100"></span>
 					</div>
 
-					<div class="wrap-input100 validate-input m-b-18" data-validate = "Password is required">
+					<div class="wrap-input100 validate-input m-b-26 shadow-lg" style="border-radius: 15px;" data-validate = "Password is required">
 						<span class="label-input100">Password</span>
 						<input class="input100" type="password" name="password" placeholder="Enter password">
 						<span class="focus-input100"></span>
 					</div>
  
-					<div class="container-login100-form-btn">
-						<button class="login100-form-btn">
+					<div class="container-login100-form-btn justify-content-center">
+						<button class="login100-form-btn mt-4">
 							Login
 						</button>
 					</div>
@@ -73,12 +73,12 @@
 	</div>
 
 <!--===============================================================================================-->
-	<script src="/static/vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="/static/js/jquery-3.3.1.min.js"></script>
 <!--===============================================================================================-->
 	<script src="/static/vendor/animsition/js/animsition.min.js"></script>
 <!--===============================================================================================-->
-	<script src="/static/vendor/bootstrap/js/popper.js"></script>
-	<script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/static/popper.js/dist/popper.min.js"></script>
+	<script src="/static/bootstrap/dist/js/bootstrap.min.js"></script>
 <!--===============================================================================================-->
 	<script src="/static/vendor/select2/select2.min.js"></script>
 <!--===============================================================================================-->
