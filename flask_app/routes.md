@@ -32,3 +32,5 @@
 6. result page for admin
 7. result page for student
 8. result page for professor
+9. remove set project list option
+10. fix reset project list option

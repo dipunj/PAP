@@ -454,14 +454,16 @@
 										<thead class="thead-light">
 											<tr>
 												<th scope="col">#</th>
+												<th scope="col">Faculty Name</th>
 												<th scope="col">Project Name</th>
 											</tr>
 										</thead>
 										<tbody>
-											{% for idx,prj_name in DB_current_projects.items()%}
+											{% for idx,prj_tuple in DB_current_projects.items()%}
 											<tr>
 												<td> {{idx}} </td>
-												<td> {{prj_name}} </td>
+												<td> {{prj_tuple[0]}} </td>
+												<td> {{prj_tuple[1]}} </td>
 											</tr>
 											{% endfor %}
 										</tbody>

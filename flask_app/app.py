@@ -48,13 +48,19 @@ def home():
     admin = User.query.filter_by(username='admin').first()
     deadline = portalConfig.query.get(1).getDeadline()
 
-    try:
-        reference_prj_dict = admin.getPrefList()
-    except:
+    reference_prj_dict = {}
+    project_list = portalConfig.query.get(1).getcurrentProjectList()
+    print(project_list)
+    for idx,project in project_list.items():
+        teacher_project = project.split("__")
+        reference_prj_dict[idx] = (Teacher.query.get(teacher_project[0]).name,teacher_project[1])
+    
+    if not reference_prj_dict:
         reference_prj_dict = {"" : "No Projects Added Yet"}
 
     reference_student_list = {}
     student_list = portalConfig.query.get(1).getcurrentStudentList()
+
     for idx,reg_no in student_list.items():
         reference_student_list[idx] = User.query.filter_by(username=reg_no).first()
 
