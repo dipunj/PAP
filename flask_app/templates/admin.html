@@ -274,14 +274,16 @@
 										</div>
 									</div>
 									<div class="form-group row">
-											<div class="col-12">
-												<input type="email" class="form-control" name="teacher_username" placeholder="Email Address" required>
-											</div>
+										<div class="col-12">
+											<input type="email" class="form-control" name="teacher_username" placeholder="Email Address" required>
 										</div>
+									</div>
 									<div class="form-group row">
 										<div class="col-12">
-											<label for="projectList" class="col-form-label">Enter <strong>one project per</strong> under this faculty member</label>
-											<textarea class="form-control" rows="3" name="projectList" class="form-control-plaintext" placeholder="number of projects also represents number of groups under this faculty" required></textarea>
+											<label for="projectList" class="col-form-label">Enter <strong>one project per</strong> under this faculty
+												member</label>
+											<textarea class="form-control" rows="3" name="projectList" class="form-control-plaintext" placeholder="number of projects also represents number of groups under this faculty"
+											 required></textarea>
 										</div>
 									</div>
 									<div class="form-group row">
@@ -519,14 +521,14 @@
 						<div class="card-body">
 							<form action="/computeResult" method="POST">
 								{% with messages = get_flashed_messages() %}
-	  								{% if messages %}
-	    								{% for message in messages %}
-		  									<div class="alert alert-danger alert-dismissible" role="alert">
-		  										<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-													{{message}}
-		  									</div>
-										{% endfor %}
-	  								{% endif %}
+								{% if messages %}
+								{% for message in messages %}
+								<div class="alert alert-danger alert-dismissible" role="alert">
+									<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+									{{message}}
+								</div>
+								{% endfor %}
+								{% endif %}
 								{% endwith %}
 								<div class="container">
 									<div class="form-group row">
@@ -597,21 +599,35 @@
 			<div class="row justify-content-center">
 				<div class="col-12">
 					<div class="card">
-						<h4 class="card-header">Preferences</h4>
+						<h4 class="card-header">Result</h4>
 						<div class="card-body">
-							<p>content</p>
+							<table class="table table-hover table-bordered table-light">
+								<thead class="thead-dark">
+									<tr>
+										<th scope="col">Group</th>
+										<th scope="col">Project Assigned</th>
+									</tr>
+								</thead>
+								<tbody>
+									
+								</tbody>
+							</table>
+							<div class="row justify-content-center align-content-center">
+								<div class="mt-5 mb-5" style="align-content: center">
+									<button class="btn btn-primary" onclick="printDiv('printThis')" style="align-self: center">Print</button>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+
 		</div>
 
-	</div>
-
-	<!-- MAIN CONTENT ENDS -->
-	<!-- MAIN CONTENT ENDS -->
-	<!-- MAIN CONTENT ENDS -->
-	<!-- MAIN CONTENT ENDS -->
+		<!-- MAIN CONTENT ENDS -->
+		<!-- MAIN CONTENT ENDS -->
+		<!-- MAIN CONTENT ENDS -->
+		<!-- MAIN CONTENT ENDS -->
 
 </body>
 

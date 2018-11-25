@@ -230,8 +230,18 @@ def autoCompute():
             teacher_pref[prof.username+"__"+prj_underProf] = list(prof.getPrefList().values())
         
     myresult = stable(student_pref,teacher_pref)
-    portal_conf.resultDeclared = True
+
+    for (reg_no,prj_name) in myresult:
+        userObj = User.query.filter_by(username=reg_no).first()
+        
+        teacher_key = prj_name.split('__')[0]
+        only_project_name = prj_name.split('__')[1]
+        teacher = Teacher.query.filter_by(username=teacher_key)
+
+        userObj.Mentor = prj_name
+        teacher.addYearStudents(reg_no,only_project_name)
     
+    portal_conf.resultDeclared = True
     db.session.commit()
     
     return render_template('result.html', result=myresult)

@@ -155,6 +155,7 @@ class Teacher(db.Model):
     isPrefFinal = db.Column(db.Boolean,default=False)
     myprojects = db.Column(db.String,default="")
     pref_order = db.Column(db.String)
+    myYearStudents = db.Column(db.String,default="")
 
     def __init__(self, username, password, name,**kwargs): 
         super(Teacher, self).__init__(**kwargs)
@@ -188,6 +189,13 @@ class Teacher(db.Model):
     def getProjectList(self):
         return self.myprojects.split("$#@!")
 
+    def addYearStudents(self, reg_no, project_name):
+        curr = self.myYearStudents.split("$#@!")
+        curr.append([reg_no+"__"+project_name])
+        self.myYearStudents = "$#@!".join(curr)
+
+
+
 def initializeDB(db):
     
     # create all tables of db
@@ -196,7 +204,7 @@ def initializeDB(db):
     # add user admin
     admin = User(username="admin",password="admin", name="admin",cpi=10)
     config = portalConfig(1)
-    student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35)
+    demo_student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35)
     demo_teacher = Teacher(username="suneeta@mnnit.ac.in",password="hello",name="Prof. Suneeta Agarwal")
     demo_teacher.setProjectList(['algo'])
     config.setStudentList(["1"],{"1":"20154061"})
@@ -206,7 +214,7 @@ def initializeDB(db):
     db.session.add(config)
     db.session.add(demo_teacher)
     db.session.add(admin)
-    db.session.add(student)
+    db.session.add(demo_student)
     db.session.commit()
     return db
 
