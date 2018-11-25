@@ -23,8 +23,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-destroyDB(app)
-db = initializeDB(db)
+# destroyDB(app)
+# db = initializeDB(db)
 
 
 
@@ -567,8 +567,6 @@ def setDeadline():
 
 @app.route('/resetPortal',methods=['POST'])
 def reset():
-
-    session['wasAt'] = request.form['wasAt']
 
     global db
     global app
