@@ -26,7 +26,7 @@ class User(db.Model):
     # login permission
     permission = db.Column(db.Boolean,nullable=False,default=True)
     # group size including 1st slotter
-    group_size = db.Column(db.Integer,default=4)
+    group_size = db.Column(db.Integer,default=2)
 
     # seperator is $#@!
     all_member_string = db.Column(db.String)
@@ -194,8 +194,16 @@ class Teacher(db.Model):
 
     def addYearStudents(self, reg_no, project_name):
         curr = self.myYearStudents.split("$#@!")
+        if curr == ['']:
+            curr = []
+        print("recieved args",reg_no,project_name)
+        print("ADDYEAR---before append",curr)
         curr.append(reg_no+"__"+project_name)
+        print("ADDYEAR---after append",curr)
         self.myYearStudents = "$#@!".join(curr)
+    
+    def getYearStudents(self):
+        return [tuple(i.split('__')) for i in self.myYearStudents.split('$#@!')]
 
 
 

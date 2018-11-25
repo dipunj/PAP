@@ -108,15 +108,36 @@ def home():
                                             DB_deadline   = deadline)
                 else:
 
+                    # optimise this ->store in DB if teacher has already confirmed preference
+                    # why calculate it every time on login
+
                     mystudent_list = {}
                     student_list = usrObj.getPrefList()
                     for idx,reg_no in student_list.items():
                         mystudent_list[idx] = User.query.filter_by(username=reg_no).first()
 
+                    my_group_result = []
+                    if isDeclared:
+                        my__result = usrObj.getYearStudents()
+                        # my__result.remove(('',))
+
+                        print(my__result)
+                        for i in my__result:
+                            reg_no,proj_name = i
+                            this_leader = User.query.get(reg_no)
+                            dummy = fakeUser()
+                            dummy.username = reg_no
+                            dummy.name = this_leader.name
+                            dummy.cpi = this_leader.cpi
+                            dummy.members = this_leader.getMembers()
+                            dummy.project_name = proj_name
+                            my_group_result.append(dummy)
+                    
                     return render_template("teacherresult.html",
-                                            usrObj=usrObj,
+                                            name=usrObj.name,
                                             student_list=mystudent_list,
                                             DB_deadline=deadline,
+                                            result=my_group_result,
                                             DB_result_declared = isDeclared)
 
             # student
@@ -134,7 +155,7 @@ def home():
                                             DB_deadline=deadline)
                 else:
                     return render_template("done.html",
-                                            usrObj=usrObj,
+                                            name=usrObj.name,
                                             my_proj_list=usrObj.getPrefList(),
                                             my_group_members=usrObj.getMembers(),
                                             DB_deadline=deadline,
@@ -245,18 +266,35 @@ def autoCompute():
     myresult = stable(student_pref,teacher_pref)
     
     ###########################################
+    print("############################")
+    print("after computation")
+    print(myresult)
+    print("############################")
 
+    for teacher in Teacher.query.all():
+        teacher.myYearStudents = ""
+    
+    db.session.commit()
 
     for (reg_no,prj_name) in myresult:
         
         teacher_key = prj_name.split('__')[0]
         only_project_name = prj_name.split('__')[1]
 
-        teacher = Teacher.query.filter_by(username=teacher_key).first()
-        userObj = User.query.filter_by(username=reg_no).first()
+        print("############################")
+        print("after computation")
+        print(teacher_key)    
+        print("registeration num")
+        print(reg_no)
+    
+
+        teacher = Teacher.query.get(teacher_key)
+        userObj = User.query.get(reg_no)
 
         userObj.Mentor = teacher.name+"__"+only_project_name
         teacher.addYearStudents(reg_no,only_project_name)
+        print("teacher student list :")
+        print(teacher.getYearStudents())
     
     portal_conf.resultDeclared = True
     db.session.commit()
@@ -583,7 +621,6 @@ def resetProjectList():
 @app.route('/ConfirmSubmission', methods=['POST'])
 def confirmIt():
 
-    admin = User.query.filter_by(username='admin').first()
     config = portalConfig.query.get(1)
 
     try:
@@ -710,6 +747,8 @@ class fakeUser:
     username = None
     name = None
     cpi = None
+    members = []
+    project_name = ""
 
     def __init__(self):
         self.username = "-1"
