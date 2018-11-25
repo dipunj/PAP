@@ -122,8 +122,8 @@
                         {% if DB_result_declared == true %}
                         <div class="card-body">
                             {% for group in result %}
-                            <div class="col-sm-12 col-md-4">
-                                <div class="card shadow-lg border-dark">
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="card shadow-lg border-dark mt-5 mb-5">
                                     <div class="card-body">
                                         <h2 class="card-title">#{{loop.index}} {{group.project_name}} </h2>
                                         <div class="form-group row">
@@ -167,10 +167,16 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-12 text-right">
-                    <form action="/getSheet" method="POST">          
-                        <button type="submit" class="btn btn-success">Download XLS</button>
-                    </form>
+                <div class="card-deck col-12">
+                    <div class="container">
+                        <div class="row justify-content-end p-5">
+                            {% if DB_result_declared == true %}
+                            <form action="/getSheet" method="POST">          
+                                <button type="submit" class="btn btn-success">Download XLS</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

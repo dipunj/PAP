@@ -29,9 +29,10 @@
 <!-- 3. result page for professor -->
 <!-- 4. break admin page into multiple pages -->
 5. fix navbar for responsive behaviour
-6. find pdf api
+<!-- 6. find pdf api -->
 7. confirmation modals for teacher pages
-8. front end checks, DB checks if user/teacher already exists
+8. optimise xls (cache files)
+<!-- 8. front end checks, DB checks if user/teacher already exists -->
 <!-- 2. add route for teacher finalsubmission -->
 <!-- 1. add route for teacher confirmation -->
 <!-- 3. store project list in portalConfig -->
