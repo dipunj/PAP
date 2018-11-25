@@ -517,7 +517,17 @@
 					<div class="card border-primary">
 						<h4 class="card-header bg-primary text-white">Compute Results</h4>
 						<div class="card-body">
-							<form action="/doComputation">
+							<form action="/computeResult" method="POST">
+								{% with messages = get_flashed_messages() %}
+	  								{% if messages %}
+	    								{% for message in messages %}
+		  									<div class="alert alert-danger alert-dismissible" role="alert">
+		  										<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+													{{message}}
+		  									</div>
+										{% endfor %}
+	  								{% endif %}
+								{% endwith %}
 								<div class="container">
 									<div class="form-group row">
 										<div class="col-12">

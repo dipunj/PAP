@@ -97,18 +97,17 @@ def home():
 
             # teacher
             if session['isTeacher'] == True:
-
-                mystudent_list = {}
-                student_list = usrObj.getPrefList()
-                for idx,reg_no in student_list.items():
-                    mystudent_list[idx] = User.query.filter_by(username=reg_no).first()
-
                 if usrObj.isPrefFinal == False:
                     return render_template("teacherpreference.html",
                                             name          = usrObj.name,
                                             student_list  = reference_student_list,
                                             DB_deadline=deadline)
                 else:
+
+                    mystudent_list = {}
+                    student_list = usrObj.getPrefList()
+                    for idx,reg_no in student_list.items():
+                        mystudent_list[idx] = User.query.filter_by(username=reg_no).first()
 
                     return render_template("teacherresult.html",
                                             name=usrObj.name,
@@ -201,27 +200,36 @@ def do_logout():
 @app.route('/computeResult', methods=['POST'])
 def autoCompute():
 
-    # step 1 : generate dict containing student's preference
     student_pref = {}
     teacher_pref = {}
+    portal_conf = portalConfig.query.get(1)
 
-    grp_leaders = User.query.order_by(User.username).all()
-    teachers    = Teachers.query.order_by(Teacher.email).all()
+    all_usrObj = User.query.order_by(User.username).filter(User.username !="admin").all()
+    all_profs = Teacher.query.order_by(Teacher.username).all()
 
-    if len(grp_leaders -1  != teachers):
-        # error cannot procede
-        pass
-
-
-    for usrObj in grp_leaders:
-        student_pref[usrObj.username] = usrObj.getPrefList().values()
+    all_projects = portal_conf.getcurrentProjectList()
+    all_students = portal_conf.getcurrentStudentList()
     
-    for prof in teachers:
-        teacher_pref[prof.email] = prof.getPrefList().values()
-        
+    num_projects = len(all_projects)
+    num_students = len(all_students)
+    
+    if num_projects != num_students:
+        if num_projects < num_students:
+            flash('Please add more projects! There are not enough projects for all students')
+        else:
+            flash('Please add more group leaders, extra projects found')
+    
+    # step 1 : generate dict containing student's preference
+    for usrObj in all_usrObj:
+        student_pref[usrObj.username] = list(usrObj.getPrefList().values())
+    
     # step 2 : generate dict containing teacher's preferences
-
+    for prof in all_profs:
+        for prj_underProf in prof.getProjectList():
+            teacher_pref[prof.username+"__"+prj_underProf] = list(prof.getPrefList().values())
+        
     myresult = stable(student_pref,teacher_pref)
+
     return render_template('result.html', result=myresult)
 
 @app.route('/submit', methods=['POST'])
