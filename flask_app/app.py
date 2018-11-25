@@ -50,13 +50,14 @@ def home():
 
     reference_prj_dict = {}
     project_list = portalConfig.query.get(1).getcurrentProjectList()
-    print(project_list)
+    print("project_list",project_list)
     for idx,project in project_list.items():
         teacher_project = project.split("__")
+        # convert from email to name with teacher query
         reference_prj_dict[idx] = (Teacher.query.get(teacher_project[0]).name,teacher_project[1])
     
     if not reference_prj_dict:
-        reference_prj_dict = {"" : "No Projects Added Yet"}
+        reference_prj_dict = {"" : ("No Projects Added","No faculty Added")}
 
     reference_student_list = {}
     student_list = portalConfig.query.get(1).getcurrentStudentList()
@@ -317,8 +318,11 @@ def deleteFrm_StudentRefList(user_regno):
     portal_config = portalConfig.query.get(1)
 
     student_dict = portal_config.getcurrentStudentList()
-    new_dict = { k:v for k, v in student_dict.items() if v != user_regno }
-    
+    student_dict = list(student_dict.values())
+    student_dict.remove(user_regno)
+    new_dict = dict(enumerate(student_dict,start=1))
+    new_dict = {str(k):str(v) for k,v in new_dict.items()}
+
     rank_list = []
     for i in range(1,len(new_dict)+1):
         rank_list.append(str(i))
@@ -380,7 +384,7 @@ def deleteTeacher_and_projects():
     if request.form['teacher_username']:
         teacher_email = request.form['teacher_username']
         this_teacher = Teacher.query.filter_by(username=teacher_email).first()
-        
+        print("deleteTeacher....",this_teacher.getProjectList())
         for prj in this_teacher.getProjectList():
             deleteFrm_ProjectList(teacher_email+"__"+prj)
         
@@ -397,12 +401,23 @@ def deleteFrm_ProjectList(project_name):
     portal_config = portalConfig.query.get(1)
 
     project_dict = portal_config.getcurrentProjectList()
-    new_dict = { k:v for k, v in project_dict.items() if v != project_name }
+    print("=======================================")
+    print("project_name",project_name)
+    print("before ::",project_dict.values())
+
+    project_dict = list(project_dict.values())
+    project_dict.remove(project_name)
+    new_dict = dict(enumerate(project_dict,start=1))
+    new_dict = {str(k):str(v) for k,v in new_dict.items()}
     
+    print("after ::",project_dict)
+
     rank_list = []
     for i in range(1,len(new_dict)+1):
         rank_list.append(str(i))
-    
+    print("NEW_DICT",new_dict)    
+    print("RANK_LIST",rank_list)
+    print("=======================================")
     portal_config.setProjectList(rank_list,new_dict)
     db.session.commit()
 
@@ -472,6 +487,7 @@ def reset():
 
     if request.form['resetDATABASE'] == "true":
         User.query.delete()
+        Teacher.query.delete()
         portalConfig.query.delete()
     
     db = initializeDB(db)
@@ -508,8 +524,8 @@ def resetProjectList():
 
     global db
 
-    admin = User.query.filter_by(username="admin").first()
-    admin.pref_order = None
+    Teacher.query.delete()
+    portalConfig.query.get(1).reference_project_list = ""
     db.session.commit()
 
     return home()
@@ -535,7 +551,7 @@ def confirmIt():
     config = portalConfig.query.get(1)
 
     try:
-        project_list = admin.getPrefList()
+        project_list = config.getcurrentProjectList()
     except:
         project_list = {"" : "No Projects Added Yet"}
 
@@ -565,10 +581,10 @@ def finalSubmit():
     if request.form['final_preference']:
 
         usrObj = User.query.filter_by(username=session['username']).first()
-        admin = User.query.filter_by(username="admin").first()
-
+        portal_config = portalConfig.query.get(1)
+        
         final_pref = request.form['final_preference'].split('-')
-        usrObj.addPrefList(final_pref,admin.getPrefList())
+        usrObj.addPrefList(final_pref,portal_config.getcurrentProjectList())
 
         usrObj.isPrefFinal = True
         db.session.commit()

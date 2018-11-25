@@ -198,7 +198,7 @@ def initializeDB(db):
     config = portalConfig(1)
     student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35)
     demo_teacher = Teacher(username="suneeta@mnnit.ac.in",password="hello",name="Prof. Suneeta Agarwal")
-
+    demo_teacher.setProjectList(['algo'])
     config.setStudentList(["1"],{"1":"20154061"})
     config.setProjectList(["1"],{"1":"suneeta@mnnit.ac.in__algo"})
     
