@@ -733,7 +733,28 @@ def selectMembers():
 
     return home()
 
+@app.route('/setPassword', methods=['POST'])
+def setUserPassword():
 
+    global db
+
+    new_pass = request.form['newPass']
+    re_pass = request.form['confNewPass']
+    old_pass = request.form['oldPass']
+
+    if session['isTeacher']:
+        usrObj = Teacher.query.get(session['username'])
+    else:
+        usrObj = User.query.get(session['username'])
+    
+    if old_pass != usrObj.password:
+        return '<script>alert("Incorrect old password, Please Try Again")</script>'
+    
+    if new_pass == re_pass:
+        usrObj.password = new_pass
+        db.session.commit()
+
+    return home()
 
 
 
