@@ -97,16 +97,22 @@ def home():
 
             # teacher
             if session['isTeacher'] == True:
+
+                mystudent_list = {}
+                student_list = usrObj.getPrefList()
+                for idx,reg_no in student_list.items():
+                    mystudent_list[idx] = User.query.filter_by(username=reg_no).first()
+
                 if usrObj.isPrefFinal == False:
                     return render_template("teacherpreference.html",
                                             name          = usrObj.name,
                                             student_list  = reference_student_list,
                                             DB_deadline=deadline)
                 else:
+
                     return render_template("teacherresult.html",
                                             name=usrObj.name,
-                                            my_proj_list=usrObj.getPrefList(),
-                                            my_group_members=usrObj.getMembers(),
+                                            student_list=mystudent_list,
                                             DB_deadline=deadline)
 
             # student
