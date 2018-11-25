@@ -23,8 +23,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-destroyDB(app)
-db = initializeDB(db)
+# destroyDB(app)
+# db = initializeDB(db)
 
 
 
@@ -656,13 +656,13 @@ def finalStudentSubmit():
 
     if request.form['final_preference']:
 
-        usrObj = User.query.filter_by(username=session['username']).first()
+        teacherObj = Teacher.query.filter_by(username=session['username']).first()
         portal_conf = portalConfig.query.get(1)
 
         final_pref = request.form['final_preference'].split('-')
-        usrObj.addPrefList(final_pref,portal_conf.getcurrentStudentList())
+        teacherObj.addPrefList(final_pref,portal_conf.getcurrentStudentList())
 
-        usrObj.isPrefFinal = True
+        teacherObj.isPrefFinal = True
         db.session.commit()
     
     return home()

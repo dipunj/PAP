@@ -104,10 +104,12 @@
                                     </thead>
                                     <tbody>
                                         {% for usrObj in confirm_list %}
-                                        <tr>{{loop.index}}</tr>
-                                        <tr>{{usrObj.username}}</tr>
-                                        <tr>{{usrObj.name}}</tr>
-                                        <tr>{{usrObj.cpi}} </tr>
+                                        <tr>
+                                            <td>{{loop.index}}</td>
+                                            <td>{{usrObj.username}}</td>
+                                            <td>{{usrObj.name}}</td>
+                                            <td>{{usrObj.cpi}} </td>
+                                        </tr>
                                         {% endfor %}
                                     </tbody>
                                 </table>
