@@ -23,8 +23,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# destroyDB(app)
-# db = initializeDB(db)
+destroyDB(app)
+db = initializeDB(db)
 
 
 
@@ -252,11 +252,17 @@ def autoCompute():
     
     if num_projects != num_students:
         if num_projects < num_students:
-            flash('Please add more projects! There are not enough projects for all students')
+            flash('Please add more projects! There are not enough projects for all students','warning')
         else:
-            flash('Please add more group leaders, extra projects found')
+            flash('Please add more group leaders, extra projects found','warning')
         return home()
     
+
+    if not ifAllSubmitted():
+        flash('Not all teachers and users have submitted','danger')
+        return home()
+
+
     # step 1 : generate dict containing student's preference
     for usrObj in all_usrObj:
         student_pref[usrObj.username] = list(usrObj.getPrefList().values())
@@ -294,8 +300,21 @@ def autoCompute():
     
     portal_conf.resultDeclared = True
     db.session.commit()
-    
+
+    flash('Result compute, check result page','success')
     return home()
+
+
+def ifAllSubmitted():
+
+    candidates = User.query.filter(User.username != "admin").all()
+    candidates += Teacher.query.all()
+
+    for obj in candidates:
+        if not obj.isPrefFinal:
+            return False
+    
+    return True
 
 @app.route('/submit', methods=['POST'])
 def doComputation():
@@ -386,10 +405,15 @@ def delUserfromDB():
     if request.form['oldUserRegNo']:
         reg_no = request.form['oldUserRegNo']
         this_user = User.query.filter_by(username=reg_no).first()
+
+        if this_user is None:
+            flash('User does not exist in database')
+            return home()
         
+
         deleteFrm_StudentRefList(reg_no)
-        
         db.session.delete(this_user)
+            
         db.session.commit()
 
     return home()
@@ -471,7 +495,11 @@ def deleteTeacher_and_projects():
     if request.form['teacher_username']:
         teacher_email = request.form['teacher_username']
         this_teacher = Teacher.query.filter_by(username=teacher_email).first()
-        print("deleteTeacher....",this_teacher.getProjectList())
+        
+        if this_teacher is None:
+            flash('Teacher does not exist in database')
+            return home()
+
         for prj in this_teacher.getProjectList():
             deleteFrm_ProjectList(teacher_email+"__"+prj)
         
@@ -770,4 +798,4 @@ class fakeUser:
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run(debug=False, host='127.0.0.1', port=4000)
+    app.run(debug=False, host='127.0.0.1', port=4001)

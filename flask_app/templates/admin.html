@@ -140,20 +140,20 @@
 							<form action="/createUser" method="POST">
 								<div class="container">
 									<div class="form-group row">
-										<input type="text" class="form-control" name="newUserFullName" placeholder="Full Name">
+										<input type="text" class="form-control" name="newUserFullName" placeholder="Full Name" required>
 									</div>
 									<div class="form-group row">
-										<input type="text" class="form-control" name="newUserCGPA" placeholder="Current CGPA">
+										<input type="text" class="form-control" name="newUserCGPA" placeholder="Current CGPA" required>
 									</div>
 									<div class="form-group row">
-										<input type="text" class="form-control" name="newUserRegNo" placeholder="Registeration No.">
+										<input type="text" class="form-control" name="newUserRegNo" placeholder="Registeration No." required>
 									</div>
 									<div class="form-group row">
 										<div class="offset-4 col-4">
 											<label class="col-form-label float-right">Group Size</label>
 										</div>
 										<div class="col-4">
-											<input type="number" class="form-control" name="newUserGroupSize" min="1" value={{DB_group_size}}>
+											<input type="number" class="form-control" name="newUserGroupSize" min="1" value={{DB_group_size}} required>
 										</div>
 									</div>
 									<div class="form-group row">
@@ -171,11 +171,21 @@
 					<div class="card mb-4 border-danger">
 						<div class="card-body">
 							<h4 class="my-0 mb-5 font-weight-light">Delete Old User</h4>
+							{% with messages = get_flashed_messages() %}
+								{% if messages %}
+								{% for message in messages %}
+								<div class="alert alert-danger alert-dismissible" role="alert">
+									<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+									{{message}}
+								</div>
+								{% endfor %}
+								{% endif %}
+								{% endwith %}
 							<form action="/deleteUser" method="POST">
 								<div class="container">
 									<div class="form-group row">
 										<div class="col-12">
-											<input type="text" class="form-control" name="oldUserRegNo" placeholder="Registeration No.">
+											<input type="text" class="form-control" name="oldUserRegNo" placeholder="Registeration No." required>
 										</div>
 									</div>
 									<div class="form-group row">
@@ -324,11 +334,21 @@
 					<div class="card mb-4 border-danger">
 						<div class="card-body">
 							<h4 class="my-0 mb-5 font-weight-light">Delete Previous Faculty</h4>
+							{% with messages = get_flashed_messages() %}
+								{% if messages %}
+								{% for message in messages %}
+								<div class="alert alert-danger alert-dismissible" role="alert">
+									<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+									{{message}}
+								</div>
+								{% endfor %}
+								{% endif %}
+								{% endwith %}
 							<form action="/deleteTeacher" method="POST">
 								<div class="container">
 									<div class="form-group row">
 										<div class="col-12">
-											<input type="email" class="form-control" name="teacher_username" placeholder="Mentor's email address">
+											<input type="email" class="form-control" name="teacher_username" placeholder="Mentor's email address" required>
 										</div>
 									</div>
 									<div class="form-group row">
@@ -540,10 +560,10 @@
 						<h4 class="card-header bg-primary text-white">Compute Results</h4>
 						<div class="card-body">
 							<form action="/computeResult" method="POST">
-								{% with messages = get_flashed_messages() %}
+								{% with messages = get_flashed_messages(with_categories=true) %}
 								{% if messages %}
-								{% for message in messages %}
-								<div class="alert alert-danger alert-dismissible" role="alert">
+								{% for category,message in messages %}
+								<div class="alert alert-{{category}} alert-dismissible" role="alert">
 									<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
 									{{message}}
 								</div>
@@ -561,7 +581,7 @@
 									</div>
 									<div class="form-group row">
 										<div class="col-md-12">
-											<input type="hidden" name="wasAt" value="result">
+											<input type="hidden" name="wasAt" value="controls">
 											<button type="submit" class="btn btn-primary btn-lg btn-block float-right float-right" id="resultButton">Compute</button>
 										</div>
 									</div>
@@ -623,7 +643,7 @@
 						<h4 class="card-header bg-primary text-white">Result</h4>
 						{% if DB_result_declared == true %}
 						<div class="card-body p-0">
-							<table class="table table-bordered m-0">
+							<table id="printThis" class="table table-bordered m-0">
 								<thead class="thead-dark">
 									<th>Grp#</th>
 									<th>Name</td>
@@ -668,11 +688,13 @@
 							<blockquote class="blockquote text-center text-muted">Not Computed</blockquote>
 						</div>
 						{% endif %}
+						{% if DB_result_declared == true %}
 						<div class="row justify-content-center align-content-center">
 							<div class="mt-5 mb-5" style="align-content: center">
 								<button class="btn btn-primary" onclick="printDiv('printThis')" style="align-self: center">Print</button>
 							</div>
 						</div>
+						{% endif %}
 					</div>
 				</div>
 			</div>
@@ -707,6 +729,17 @@ $(document).ready(function(){
 	$("#manageUsers").removeClass("fade")
 	{% endif %}
 });
+</script>
+
+
+<script>
+	function printDiv(divName){
+		var printContents = document.getElementById(divName).innerHTML;
+		var originalContents = document.body.innerHTML;
+		document.body.innerHTML = printContents;
+		window.print();
+		document.body.innerHTML = originalContents;
+	}
 </script>
 
 </html>

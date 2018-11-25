@@ -26,8 +26,8 @@
 ## TO DO
 <!-- 1. result page for admin -->
 2. remove set project list option -> remove all users
-3. result page for professor
-4. break admin page into multiple pages
+<!-- 3. result page for professor -->
+<!-- 4. break admin page into multiple pages -->
 5. fix navbar for responsive behaviour
 6. find pdf api
 7. confirmation modals for teacher pages
