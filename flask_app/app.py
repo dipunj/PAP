@@ -24,8 +24,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# destroyDB(app)
-# db = initializeDB(db)
+destroyDB(app)
+db = initializeDB(db)
 
 
 
@@ -130,7 +130,6 @@ def home():
                         my__result = usrObj.getYearStudents()
                         # my__result.remove(('',))
 
-                        print(my__result)
                         for i in my__result:
                             reg_no,proj_name = i
                             this_leader = User.query.get(reg_no)
@@ -673,7 +672,9 @@ def confirmIt():
     preview = []
 
     for pr_id in pref_order:
-        preview.append(project_list[pr_id])
+        mentor = project_list[pr_id].split("__")[0]
+        prj = project_list[pr_id].split("__")[1]
+        preview.append((Teacher.query.get(mentor).name,prj))
 
     if pref_order == ['']:
         return home()

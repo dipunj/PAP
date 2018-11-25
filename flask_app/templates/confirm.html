@@ -94,13 +94,24 @@
                 </div>
                 <div class="col-6">
                     <div class="container">
-                        <div class="row" style="border:1px solid #0004ff; border-radius: 10px 10px">
+                        <div class="row">
                             <div class="col-12">
-                                <ol class="notsortable">
-                                    {% for project_name in confirm_list %}
-                                    <li style="margin: 10px 0">{{project_name}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
-                                    {% endfor %}
-                                </ol>
+                                <table class="table table-active border-dark">
+                                    <thead class="thead-dark">
+                                        <th>#Pref No</th>
+                                        <th>Project Name</th>
+                                        <th>Mentor Name</th>
+                                    </thead>
+                                    <tbody>
+                                        {% for project_name in confirm_list %}
+                                        <tr>
+                                            <td>{{loop.index}}</td>
+                                            <td>{{project_name[1]}}</td>
+                                            <td>{{project_name[0]}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         <div class="row mt-4 mb-5 justify-content-between">

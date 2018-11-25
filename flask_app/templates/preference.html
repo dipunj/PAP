@@ -100,7 +100,7 @@
                                 <div class="col-12">
                                     <ol id="sortable">
                                         {% for idx, project_name in project_list.items() %}
-                                        <li id="r_{{idx}}" class="ui-state-default">{{project_name}}<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+                                        <li id="r_{{idx}}" class="ui-state-default">{{project_name[1]}} ({{project_name[0]}})<span class="float-right justify-self-center ui-icon ui-icon-arrowthick-2-n-s"></span></li>
                                         {% endfor %}
                                     </ol>
                                 </div>
