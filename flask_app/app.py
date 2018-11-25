@@ -154,11 +154,13 @@ def home():
                                             project_list  = reference_prj_dict,
                                             DB_deadline=deadline)
                 else:
-                    return render_template("done.html",
+
+                    return render_template("studentresult.html",
                                             name=usrObj.name,
                                             my_proj_list=usrObj.getPrefList(),
                                             my_group_members=usrObj.getMembers(),
                                             DB_deadline=deadline,
+                                            usrObj=usrObj,
                                             DB_result_declared = isDeclared)
 
 
@@ -266,11 +268,8 @@ def autoCompute():
     myresult = stable(student_pref,teacher_pref)
     
     ###########################################
-    print("############################")
-    print("after computation")
-    print(myresult)
-    print("############################")
 
+    # initialise with empty string, on every computation
     for teacher in Teacher.query.all():
         teacher.myYearStudents = ""
     
@@ -281,20 +280,11 @@ def autoCompute():
         teacher_key = prj_name.split('__')[0]
         only_project_name = prj_name.split('__')[1]
 
-        print("############################")
-        print("after computation")
-        print(teacher_key)    
-        print("registeration num")
-        print(reg_no)
-    
-
         teacher = Teacher.query.get(teacher_key)
         userObj = User.query.get(reg_no)
 
         userObj.Mentor = teacher.name+"__"+only_project_name
         teacher.addYearStudents(reg_no,only_project_name)
-        print("teacher student list :")
-        print(teacher.getYearStudents())
     
     portal_conf.resultDeclared = True
     db.session.commit()

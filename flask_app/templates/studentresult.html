@@ -140,16 +140,33 @@
                 </div>
             </div>
             <div class="row">
-                <div class="card-deck col-12">
+                <div class="col-12">
+                    {% if DB_result_declared == true %}
                     <div class="card border-primary">
                         <div class="card-header bg-primary text-white">
-                            <h4>Result</h4>
+                            <h2>Result</h2>
+                            <p class="card-title pl-3"> Your Mentor is </p>
                         </div>
-                        <div class="card-body p-0">
+                        <div class="card-body">
+                            <div class="col-12">
+                                <h2 class="card-title">{{usrObj.Mentor.split('__')[0]}}</h2>
+                            </div>
+                            <div class="col-12 text-right">
+                                <h4 class="card-subtitle text-muted">Project : {{usrObj.Mentor.split('__')[1]}}</h4>
+                            </div>
                         </div>
                         <div class="card-footer">
-                            <blockquote class="blockquote text-center text-muted">Not Declared</blockquote>
+                            <p class="text-success mb-0">Declared</p>
                         </div>
+                    {% else %}
+                    <div class="card border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h2>Result</h2>
+                        </div>
+                        <div class="card-footer">
+                            <p class="text-danger">Not Declared</p>
+                        </div>
+                    {% endif %}
                     </div>
                 </div>
             </div>
