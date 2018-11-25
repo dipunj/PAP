@@ -120,7 +120,7 @@
                             <h4>Result</h4>
                         </div>
                         {% if DB_result_declared == true %}
-                        <div class="card-body p-0">
+                        <div class="card-body">
                             {% for group in result %}
                             <div class="col-sm-12 col-md-4">
                                 <div class="card shadow-lg border-dark">
@@ -164,6 +164,13 @@
                         </div>
                         {% endif %}
                     </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-right">
+                    <form action="/getSheet" method="POST">          
+                        <button type="submit" class="btn btn-success">Download XLS</button>
+                    </form>
                 </div>
             </div>
         </div>

@@ -23,8 +23,6 @@ class User(db.Model):
     # set to true after user has entered details of all group members
     isGroupFinal = db.Column(db.Boolean,default=False)
 
-    # login permission
-    permission = db.Column(db.Boolean,nullable=False,default=True)
     # group size including 1st slotter
     group_size = db.Column(db.Integer,default=2)
 

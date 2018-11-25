@@ -1,6 +1,7 @@
 import os, json
-from flask import Flask, request, render_template, session, flash
+from flask import Flask, request, render_template, session, flash,send_file
 from datetime import datetime
+import xlwt
 
 
 from config import Config
@@ -23,8 +24,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-destroyDB(app)
-db = initializeDB(db)
+# destroyDB(app)
+# db = initializeDB(db)
 
 
 
@@ -777,6 +778,34 @@ def finalStudentSubmit():
     
     return home()
 
+
+@app.route('/getSheet',methods=['POST'])
+def sendExcelSheet():
+
+    teacher = Teacher.query.get(session['username'])
+    workbook = xlwt.Workbook()
+    sheets = {}
+    bold = xlwt.easyxf('font: bold 1')
+
+    for reg_no,prj in teacher.getYearStudents():
+        xl = workbook.add_sheet(prj)
+
+        # xl.write_merge(0,0,0,4,prj)
+
+        xl.write(0,0,'S.No',bold)
+        xl.write(0,1,'Reg.No',bold)
+        xl.write(0,2,'NAME',bold)
+        xl.write(0,3,'CGPA',bold)
+        xl.write(0,4,'Grade',bold)
+        
+        members = User.query.get(reg_no).getMembers()
+        for row,mem in enumerate(members,start=1):
+            for i in range(4):
+                xl.write(row,i,mem[i])
+
+    workbook.save(os.path.join(app.config['UPLOAD_FOLDER'],teacher.username+".xls"))
+
+    return send_file(os.path.join(app.config['UPLOAD_FOLDER'],teacher.username+".xls"),as_attachment=True,attachment_filename=teacher.name+".xls")
 
 
 
