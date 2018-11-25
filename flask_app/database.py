@@ -34,6 +34,8 @@ class User(db.Model):
     # seperator is $#@!
     pref_order = db.Column(db.String)
 
+    Mentor = db.Column(db.String)
+
 
 
 
@@ -87,6 +89,7 @@ class portalConfig(db.Model):
 
     # 20154061$#@!20154015$#@!......
     reference_student_list = db.Column(db.String,default="")
+    resultDeclared = db.Column(db.Boolean,default=False,nullable=False)
 
     def __init__(self,mode):
         self.mode = mode
@@ -152,10 +155,10 @@ class Teacher(db.Model):
     username = db.Column(db.String,primary_key=True,nullable=False)
     password = db.Column(db.String,nullable=False)
     name  = db.Column(db.String)
-    isPrefFinal = db.Column(db.Boolean,default=False)
     myprojects = db.Column(db.String,default="")
     pref_order = db.Column(db.String)
     myYearStudents = db.Column(db.String,default="")
+    isPrefFinal = db.Column(db.Boolean,default=False,nullable=False)
 
     def __init__(self, username, password, name,**kwargs): 
         super(Teacher, self).__init__(**kwargs)
@@ -191,7 +194,7 @@ class Teacher(db.Model):
 
     def addYearStudents(self, reg_no, project_name):
         curr = self.myYearStudents.split("$#@!")
-        curr.append([reg_no+"__"+project_name])
+        curr.append(reg_no+"__"+project_name)
         self.myYearStudents = "$#@!".join(curr)
 
 

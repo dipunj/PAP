@@ -46,10 +46,13 @@ def home():
     """
 
     admin = User.query.filter_by(username='admin').first()
-    deadline = portalConfig.query.get(1).getDeadline()
+    portal_conf = portalConfig.query.get(1)
+
+    deadline = portal_conf.getDeadline()
+    isDeclared = portal_conf.resultDeclared
 
     reference_prj_dict = {}
-    project_list = portalConfig.query.get(1).getcurrentProjectList()
+    project_list = portal_conf.getcurrentProjectList()
 
     for idx,project in project_list.items():
         teacher_project = project.split("__")
@@ -60,7 +63,7 @@ def home():
         reference_prj_dict = {"" : ("No Projects Added","No faculty Added")}
 
     reference_student_list = {}
-    student_list = portalConfig.query.get(1).getcurrentStudentList()
+    student_list = portal_conf.getcurrentStudentList()
 
     for idx,reg_no in student_list.items():
         reference_student_list[idx] = User.query.filter_by(username=reg_no).first()
@@ -92,7 +95,8 @@ def home():
                                     DB_user_list        = users,
                                     DB_teacher_list     = teachers,
                                     DB_current_projects = reference_prj_dict,
-                                    curr_deadline       = deadline)
+                                    curr_deadline       = deadline,
+                                    DB_result_declared  = isDeclared)
         else:
 
             # teacher
@@ -101,7 +105,7 @@ def home():
                     return render_template("teacherpreference.html",
                                             name          = usrObj.name,
                                             student_list  = reference_student_list,
-                                            DB_deadline=deadline)
+                                            DB_deadline   = deadline)
                 else:
 
                     mystudent_list = {}
@@ -110,9 +114,10 @@ def home():
                         mystudent_list[idx] = User.query.filter_by(username=reg_no).first()
 
                     return render_template("teacherresult.html",
-                                            name=usrObj.name,
+                                            usrObj=usrObj,
                                             student_list=mystudent_list,
-                                            DB_deadline=deadline)
+                                            DB_deadline=deadline,
+                                            DB_result_declared = isDeclared)
 
             # student
             else:
@@ -129,10 +134,11 @@ def home():
                                             DB_deadline=deadline)
                 else:
                     return render_template("done.html",
-                                            name=usrObj.name,
+                                            usrObj=usrObj,
                                             my_proj_list=usrObj.getPrefList(),
                                             my_group_members=usrObj.getMembers(),
-                                            DB_deadline=deadline)
+                                            DB_deadline=deadline,
+                                            DB_result_declared = isDeclared)
 
 
 @app.route('/login',methods=["POST"])
@@ -200,6 +206,8 @@ def do_logout():
 @app.route('/computeResult', methods=['POST'])
 def autoCompute():
 
+    global db
+
     student_pref = {}
     teacher_pref = {}
     portal_conf = portalConfig.query.get(1)
@@ -229,22 +237,31 @@ def autoCompute():
         for prj_underProf in prof.getProjectList():
             teacher_pref[prof.username+"__"+prj_underProf] = list(prof.getPrefList().values())
         
+
+
+    ###########################################
+    # MAIN APPLICATION LOGIC
+
     myresult = stable(student_pref,teacher_pref)
+    
+    ###########################################
+
 
     for (reg_no,prj_name) in myresult:
-        userObj = User.query.filter_by(username=reg_no).first()
         
         teacher_key = prj_name.split('__')[0]
         only_project_name = prj_name.split('__')[1]
-        teacher = Teacher.query.filter_by(username=teacher_key)
 
-        userObj.Mentor = prj_name
+        teacher = Teacher.query.filter_by(username=teacher_key).first()
+        userObj = User.query.filter_by(username=reg_no).first()
+
+        userObj.Mentor = teacher.name+"__"+only_project_name
         teacher.addYearStudents(reg_no,only_project_name)
     
     portal_conf.resultDeclared = True
     db.session.commit()
     
-    return render_template('result.html', result=myresult)
+    return home()
 
 @app.route('/submit', methods=['POST'])
 def doComputation():

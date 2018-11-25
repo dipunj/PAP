@@ -42,7 +42,7 @@
 					<li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#home">Home</a></li>
 					<li class="nav-item mr-5"><a class="nav-link" data-toggle="pill" href="#manageUsers">Manage Users</a></li>
 					<li class="nav-item mr-5"><a class="nav-link" data-toggle="pill" href="#portControls">Controls</a></li>
-					<li class="nav-item mr-5"><a class="nav-link disabled" style="cursor: not-allowed;" data-toggle="pill" href="#result">Result</a></li>
+					<li class="nav-item mr-5"><a class="nav-link" data-toggle="pill" href="#result">Result</a></li>
 				</ul>
 			</div>
 
@@ -599,35 +599,70 @@
 			<div class="row justify-content-center">
 				<div class="col-12">
 					<div class="card">
-						<h4 class="card-header">Result</h4>
-						<div class="card-body">
-							<table class="table table-hover table-bordered table-light">
+						<h4 class="card-header bg-primary text-white">Result</h4>
+						{% if DB_result_declared == true %}
+						<div class="card-body p-0">
+							<table class="table table-bordered m-0">
 								<thead class="thead-dark">
-									<tr>
-										<th scope="col">Group</th>
-										<th scope="col">Project Assigned</th>
-									</tr>
+									<th>Grp#</th>
+									<th>Name</td>
+									<th>Reg. No. </th>
+									<th>members </th>
+									<th>Mentor</th>
 								</thead>
 								<tbody>
-									
+									{% for usr in DB_user_list %}
+									<tr>
+										<td>{{loop.index}}</td>
+										<td>{{usr.username}}</td>
+										<td>{{usr.name}}</td>
+										<td class="p-0">
+											<table class="table table-borderless m-0" style="width: 100%">
+												{% for mem_tuple in usr.getMembers()%}
+												<tr>
+													<td width="10%" style="border-top: 1pt solid lightgray">{{mem_tuple[0]}}</td>
+													<td width="40%" style="border-top: 1pt solid lightgray">{{mem_tuple[1]}}</td>
+													<td width="50%" style="border-top: 1pt solid lightgray">{{mem_tuple[2]}}</td>
+												</tr>
+												{% endfor %}
+											</table>
+
+										</td>
+										<td>
+											<p class="text-dark">
+												{{usr.Mentor.split('__')[0]}}
+											</p>
+											<p class="text-primary text-muted">
+												{{usr.Mentor.split('__')[1]}}
+											</p>
+
+										</td>
+									</tr>
+									{% endfor %}
 								</tbody>
 							</table>
-							<div class="row justify-content-center align-content-center">
-								<div class="mt-5 mb-5" style="align-content: center">
-									<button class="btn btn-primary" onclick="printDiv('printThis')" style="align-self: center">Print</button>
-								</div>
+						</div>
+						{% else %}
+						<div class="card-footer">
+							<blockquote class="blockquote text-center text-muted">Not Computed</blockquote>
+						</div>
+						{% endif %}
+						<div class="row justify-content-center align-content-center">
+							<div class="mt-5 mb-5" style="align-content: center">
+								<button class="btn btn-primary" onclick="printDiv('printThis')" style="align-self: center">Print</button>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-
 		</div>
 
-		<!-- MAIN CONTENT ENDS -->
-		<!-- MAIN CONTENT ENDS -->
-		<!-- MAIN CONTENT ENDS -->
-		<!-- MAIN CONTENT ENDS -->
+	</div>
+
+	<!-- MAIN CONTENT ENDS -->
+	<!-- MAIN CONTENT ENDS -->
+	<!-- MAIN CONTENT ENDS -->
+	<!-- MAIN CONTENT ENDS -->
 
 </body>
 
