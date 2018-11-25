@@ -77,7 +77,8 @@ def home():
     
     
     # unauthenticated -> take to login page
-    if 'authenticated' not in session or session['authenticated'] == False:
+    if 'authenticated' not in session or session['authenticated'] == False or portal_conf.switch == False:
+        session['authenticated'] = False
         return render_template('login.html')
     else:
 
@@ -98,7 +99,8 @@ def home():
                                     DB_current_projects = reference_prj_dict,
                                     curr_deadline       = deadline,
                                     DB_result_declared  = isDeclared,
-                                    WAS_AT              = session['wasAt'])
+                                    WAS_AT              = session['wasAt'],
+                                    login_status        = portal_conf.switch)
         else:
 
             # teacher
@@ -497,7 +499,7 @@ def deleteTeacher_and_projects():
         this_teacher = Teacher.query.filter_by(username=teacher_email).first()
         
         if this_teacher is None:
-            flash('Teacher does not exist in database')
+            flash('Teacher does not exist in database','teacher')
             return home()
 
         for prj in this_teacher.getProjectList():
@@ -538,12 +540,10 @@ def togglePortal():
     global db
 
     if request.form['portalSwitch'] == 'off':
-        User.query.update({User.permission: False}) 
+        portalConfig.query.get(1).switch == False
     else:
-        User.query.update({User.permission: True}) 
+        portalConfig.query.get(1).switch == False
 
-    admin = User.query.filter_by(username='admin').first()
-    admin.permission = True
     db.session.commit()
 
     return home()

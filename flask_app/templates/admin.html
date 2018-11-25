@@ -171,13 +171,15 @@
 					<div class="card mb-4 border-danger">
 						<div class="card-body">
 							<h4 class="my-0 mb-5 font-weight-light">Delete Old User</h4>
-							{% with messages = get_flashed_messages() %}
+							{% with messages = get_flashed_messages(with_categories=true) %}
 								{% if messages %}
-								{% for message in messages %}
+								{% for category,message in messages %}
+								{% if category == "user" %}
 								<div class="alert alert-danger alert-dismissible" role="alert">
 									<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
 									{{message}}
 								</div>
+								{% endif %}
 								{% endfor %}
 								{% endif %}
 								{% endwith %}
@@ -334,13 +336,15 @@
 					<div class="card mb-4 border-danger">
 						<div class="card-body">
 							<h4 class="my-0 mb-5 font-weight-light">Delete Previous Faculty</h4>
-							{% with messages = get_flashed_messages() %}
+							{% with messages = get_flashed_messages(with_categories=true) %}
 								{% if messages %}
-								{% for message in messages %}
+								{% for category,message in messages %}
+								{% if category  == "teacher"%}
 								<div class="alert alert-danger alert-dismissible" role="alert">
 									<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
 									{{message}}
 								</div>
+								{% endif %}
 								{% endfor %}
 								{% endif %}
 								{% endwith %}
@@ -388,7 +392,11 @@
 										<div class="col-4 align-self-center">
 											<label class="switch">
 												<input type='hidden' id="toggle-switch-off" value='off' name='portalSwitch'>
-												<input type="checkbox" id="toggle-switch-on" name="portalSwitch">
+												{% if login_status == true %}
+												<input type="checkbox" id="toggle-switch-on" name="portalSwitch" checked>
+												{% else %}
+												<input type="checkbox" id="toggle-switch-on" name="portalSwitch" checked>
+												{% endif %}
 												<div class="slider round">
 													<span class="on">ON</span>
 													<span class="off">OFF</span>
