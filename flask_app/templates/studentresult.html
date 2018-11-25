@@ -123,14 +123,16 @@
                                 <thead class="thead-default">
                                     <tr>
                                         <th scope="col" width="10%">#</th>
-                                        <th scope="col" width="90%">Project </th>
+                                        <th scope="col" width="45%">Project </th>
+                                        <th scope="col" width="45%">Mentor </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for project_name in my_proj_list.values() %}
+                                    {% for project_name in my_proj_list %}
                                     <tr>
-                                        <td> {{loop.index}} </td>
-                                        <td> {{project_name}} </td>
+                                        <td> {{project_name[0]}} </td>
+                                        <td> {{project_name[2]}} </td>
+                                        <td> {{project_name[1]}} </td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>

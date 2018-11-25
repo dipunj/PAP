@@ -162,10 +162,17 @@ def home():
                                             project_list  = reference_prj_dict,
                                             DB_deadline=deadline)
                 else:
+                    myproj_pref = []
+
+                    for num,this_prj in usrObj.getPrefList().items():
+                        print(this_prj)
+                        mentor = this_prj.split("__")[0]
+                        prj = this_prj.split("__")[1]
+                        myproj_pref.append((num,Teacher.query.get(mentor).name,prj))
 
                     return render_template("studentresult.html",
                                             name=usrObj.name,
-                                            my_proj_list=usrObj.getPrefList(),
+                                            my_proj_list=myproj_pref,
                                             my_group_members=usrObj.getMembers(),
                                             DB_deadline=deadline,
                                             usrObj=usrObj,
