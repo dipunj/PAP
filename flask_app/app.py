@@ -50,7 +50,7 @@ def home():
 
     reference_prj_dict = {}
     project_list = portalConfig.query.get(1).getcurrentProjectList()
-    print("project_list",project_list)
+
     for idx,project in project_list.items():
         teacher_project = project.split("__")
         # convert from email to name with teacher query
@@ -209,7 +209,7 @@ def autoCompute():
 
     all_projects = portal_conf.getcurrentProjectList()
     all_students = portal_conf.getcurrentStudentList()
-    
+
     num_projects = len(all_projects)
     num_students = len(all_students)
     
@@ -218,6 +218,7 @@ def autoCompute():
             flash('Please add more projects! There are not enough projects for all students')
         else:
             flash('Please add more group leaders, extra projects found')
+        return home()
     
     # step 1 : generate dict containing student's preference
     for usrObj in all_usrObj:
@@ -229,7 +230,10 @@ def autoCompute():
             teacher_pref[prof.username+"__"+prj_underProf] = list(prof.getPrefList().values())
         
     myresult = stable(student_pref,teacher_pref)
-
+    portal_conf.resultDeclared = True
+    
+    db.session.commit()
+    
     return render_template('result.html', result=myresult)
 
 @app.route('/submit', methods=['POST'])
@@ -415,23 +419,14 @@ def deleteFrm_ProjectList(project_name):
     portal_config = portalConfig.query.get(1)
 
     project_dict = portal_config.getcurrentProjectList()
-    print("=======================================")
-    print("project_name",project_name)
-    print("before ::",project_dict.values())
-
     project_dict = list(project_dict.values())
     project_dict.remove(project_name)
     new_dict = dict(enumerate(project_dict,start=1))
     new_dict = {str(k):str(v) for k,v in new_dict.items()}
-    
-    print("after ::",project_dict)
 
     rank_list = []
     for i in range(1,len(new_dict)+1):
         rank_list.append(str(i))
-    print("NEW_DICT",new_dict)    
-    print("RANK_LIST",rank_list)
-    print("=======================================")
     portal_config.setProjectList(rank_list,new_dict)
     db.session.commit()
 
@@ -487,7 +482,7 @@ def setAdminPassword():
 def setDeadline():
 
     config = portalConfig.query.get(1)
-    print(request.form)
+
     config.deadline = datetime.strptime(request.form['new_deadline'], '%Y-%m-%dT%H:%M')
     db.session.commit()
     return home()
@@ -616,7 +611,6 @@ def selectMembers():
 
     user_grp_size = usrObj.group_size
 
-    print(request.form)
     for i in range(2,user_grp_size+1):
         mem_name = request.form[str(i)+"_fullname"]
         mem_reg = request.form[str(i)+"_regno"]
