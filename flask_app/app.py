@@ -77,7 +77,7 @@ def home():
     
     
     # unauthenticated -> take to login page
-    if 'authenticated' not in session or session['authenticated'] == False or portal_conf.switch == False:
+    if 'authenticated' not in session or session['authenticated'] == False:
         session['authenticated'] = False
         return render_template('login.html')
     else:
@@ -87,6 +87,10 @@ def home():
         else:
             usrObj = User.query.filter_by(username=session['username']).first()
 
+        if portal_conf.switch == False and usrObj.username != "admin":
+            session['authenticated'] = False
+            flash('login disabled by admin')
+            return render_template('login.html')
         # admin
         if usrObj.username == "admin":
             users = User.query.order_by(User.username).filter(User.username !="admin").all()
@@ -540,9 +544,9 @@ def togglePortal():
     global db
 
     if request.form['portalSwitch'] == 'off':
-        portalConfig.query.get(1).switch == False
+        portalConfig.query.get(1).switch = False
     else:
-        portalConfig.query.get(1).switch == False
+        portalConfig.query.get(1).switch = True
 
     db.session.commit()
 
