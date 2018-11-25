@@ -23,8 +23,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# destroyDB(app)
-# db = initializeDB(db)
+destroyDB(app)
+db = initializeDB(db)
 
 
 
@@ -90,13 +90,15 @@ def home():
         if usrObj.username == "admin":
             users = User.query.order_by(User.username).filter(User.username !="admin").all()
             teachers = Teacher.query.all()
+
             return render_template("admin.html",
                                     DB_group_size       = usrObj.group_size,
                                     DB_user_list        = users,
                                     DB_teacher_list     = teachers,
                                     DB_current_projects = reference_prj_dict,
                                     curr_deadline       = deadline,
-                                    DB_result_declared  = isDeclared)
+                                    DB_result_declared  = isDeclared,
+                                    WAS_AT              = session['wasAt'])
         else:
 
             # teacher
@@ -186,6 +188,8 @@ def do_login():
             session['username'] = this_user.username
             session['name'] = this_user.name
             session['isTeacher'] = isTeacher
+            if session['username'] == "admin":
+                 session['wasAt'] = "manageusers"
             try:
                 session['cpi'] = this_user.cpi
                 session['grp_size'] = this_user.group_size
@@ -228,6 +232,8 @@ def do_logout():
 
 @app.route('/computeResult', methods=['POST'])
 def autoCompute():
+
+    session['wasAt'] = request.form['wasAt']
 
     global db
 
@@ -331,6 +337,8 @@ def addUserToDB():
     """Adds the user from the form to database
     """
 
+    session['wasAt'] = request.form['wasAt']
+
     global db
     
     name = request.form['newUserFullName']
@@ -370,6 +378,8 @@ def addTo_StudentRefList(user_regno):
 
 @app.route('/deleteUser', methods=['POST'])
 def delUserfromDB():
+
+    session['wasAt'] = request.form['wasAt']
     
     global db
 
@@ -408,6 +418,8 @@ def deleteFrm_StudentRefList(user_regno):
 
 @app.route('/createTeacher', methods=['POST'])
 def createTeacher_and_projects():
+
+    session['wasAt'] = request.form['wasAt']
 
     global db
     
@@ -451,6 +463,8 @@ def addTo_ProjRefList(project_name):
 
 @app.route('/deleteTeacher',methods=['POST'])
 def deleteTeacher_and_projects():
+
+    session['wasAt'] = request.form['wasAt']
     
     global db
 
@@ -491,6 +505,8 @@ def deleteFrm_ProjectList(project_name):
 @app.route('/togglePortal', methods=['POST'])
 def togglePortal():
 
+    session['wasAt'] = request.form['wasAt']
+
     global db
 
     if request.form['portalSwitch'] == 'off':
@@ -508,6 +524,8 @@ def togglePortal():
 @app.route('/setGroupSize', methods=['POST'])
 def setGroupSize():
 
+    session['wasAt'] = request.form['wasAt']
+
     global db
 
     admin=User.query.filter_by(username='admin').first()
@@ -520,6 +538,8 @@ def setGroupSize():
 
 @app.route('/setAdminPassword', methods=['POST'])
 def setAdminPassword():
+
+    session['wasAt'] = request.form['wasAt']
 
     global db
 
@@ -536,6 +556,8 @@ def setAdminPassword():
 @app.route('/setDeadline', methods=['POST'])
 def setDeadline():
 
+    session['wasAt'] = request.form['wasAt']
+
     config = portalConfig.query.get(1)
 
     config.deadline = datetime.strptime(request.form['new_deadline'], '%Y-%m-%dT%H:%M')
@@ -545,6 +567,8 @@ def setDeadline():
 
 @app.route('/resetPortal',methods=['POST'])
 def reset():
+
+    session['wasAt'] = request.form['wasAt']
 
     global db
     global app
@@ -559,32 +583,26 @@ def reset():
     return do_logout()
 
 
-@app.route('/setProjectList', methods=['POST'])
-def setProjects():
+@app.route('/resetStudentList', methods=['POST'])
+def resetStudentList():
+
+    session['wasAt'] = request.form['wasAt']
 
     global db
-    if request.form['projectList']:
-        
-        projects = request.form['projectList'].strip().split("\r\n")
 
-        ref_dict = {}
-        linear_keys = []
-
-        for idx,name in enumerate(projects,start=1):
-            ref_dict.update({str(idx):name})
-            linear_keys.append(str(idx))
-
-        admin = User.query.filter_by(username="admin").first()
-        
-        admin.addPrefList(linear_keys,ref_dict)
-
-        db.session.commit()
+    User.query.filter(User.username !="admin").delete()
+    portalConfig.query.get(1).reference_student_list = ""
+    db.session.commit()
 
     return home()
 
 
+
+
 @app.route('/resetProjectList', methods=['POST'])
 def resetProjectList():
+
+    session['wasAt'] = request.form['wasAt']
 
     global db
 

@@ -196,10 +196,7 @@ class Teacher(db.Model):
         curr = self.myYearStudents.split("$#@!")
         if curr == ['']:
             curr = []
-        print("recieved args",reg_no,project_name)
-        print("ADDYEAR---before append",curr)
         curr.append(reg_no+"__"+project_name)
-        print("ADDYEAR---after append",curr)
         self.myYearStudents = "$#@!".join(curr)
     
     def getYearStudents(self):
