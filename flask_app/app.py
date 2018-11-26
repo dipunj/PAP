@@ -783,9 +783,24 @@ def selectMembers():
         mem_reg = request.form[str(slot_num)+"_regno"]
         this_mem = User.query.get(mem_reg)
 
-        # send request to user
-        this_mem.addRequest(leader.username)
-        leader.addToRemainingList(this_mem.username)
+        # check if this_mem has made a decision?
+        if this_mem.isGroupFinal == "req_notsent":
+            this_mem.addRequest(leader.username)
+            leader.addToRemainingList(this_mem.username)
+
+        # if not, then is his group final?
+        elif this_mem.isGroupFinal == "reqsent":
+
+            # do not commit changes or change leader's isGroupFinal status 
+            his_leader = User.query.get(this_mem.leader)
+            flash(this_mem.name+"("+this_mem.username+") is under process of group formation with "+his_leader.name+"'s ")
+            return home()
+        else:
+
+            # do not commit changes or change leader's isGroupFinal status
+            his_leader = User.query.get(this_mem.leader)
+            flash(this_mem.name+"("+this_mem.username+") Has already been finalized into"+his_leader.name+" ("+his_leader.username+")'s Group")
+            return home()
 
     leader.isGroupFinal = "reqsent"
     db.session.commit()
@@ -800,46 +815,104 @@ def acceptLeader():
     global db
 
     myleader = request.form['myleader']
+    me = User.query.get(session['username'])
 
     if myleader == "Reject All":
-        pass
+        me.isGroupFinal = "req_notsent"    
+        other_leaders = request.form['all_leaders'].split(',')
+        # step 1 : since me is rejecting all the requests, so set me's isGroupFinal status to req_notsent
+        # step 2 : reset all the leaders which sent requested me        
+        # step 3 : clear me's pending request list
+
     else:
-        leader_obj = User.query.get(myleader)
-        me = User.query.get(session['username'])
+        myleader_obj = User.query.get(myleader)
 
-        # after accept add me to leader's group list
-        leader_obj.addMember(me.slot,me.name,me.cpi,me.username)
-        # remove myself from leader's remaining request count by 1 (since me has accepted)
-        leader_obj.deleteFromRemainingList(me.username)
+        # step 1 : remove me from leader's Remaining group list
+        # step 2 : accept me to leader's group list
+        # step 3 : set me's leader
+        # step 4 : change me's isGroupFinal status to reqsent
+        # step 5 : if me is the last one to accept in myleader_obj's list ->finalise/lock the group
+        # step 6 : clear up any other requests that me has rejected by accepting myleader_obj's request
+        # step 7 : clear me's request list
+        
 
-        # reset all other leaders
-        other_leaders = me.getRequests().remove(leader_obj.username)
+        # step 1:        
+        myleader_obj.deleteFromRemainingList(me.username)
 
-        for ldr in other_leaders:
-            ldr_obj = User.query.get(ldr)
+        # step 2:
+        myleader_obj.addMember(me.slot,me.name,me.cpi,me.username)
 
-            # reset ldr
+        # step 3:
+        me.leader = myleader_obj.username
 
-            # step 1: set isGroupFinal status to not sent
-            # step 2: remove this leader from all members who had accepted his request
-            # step 3: remove this leader from all members who have recieved his request
-            # step 4 : reset his group list
-            # step 5 : reset his remaining member list
+        # step 4:
+        me.isGroupFinal = "reqsent"
 
-
-            # step 1
-            ldr_obj.isGroupFinal = "req_notsent"
-
-            # step 2
-            # me won't be here since me didn't accept his request
-            acptd_peer_members = [i[1] for i in ldr_obj.getMembers()]
-            for mem in acptd_peer_members:
-                peer_member_obj = User.query.get(mem)
-                peer_member_obj.deleteRequest(ldr_obj.username)
+        # step 5:
+        if myleader_obj.getRemainingList() == ['']:
+            # me is the last final member to accept the request
             
-            # step 3
-            # me will be present here, so remove me from this list
-            waiting_peer_members = ldr_obj.getRemainingList().remove(me)
+            # finalise this group
+            # step 5.1 : set myleader_obj's isGroupFinal to "final"
+            # step 5.2 : for all members in group list, set isGroupFinal to "final"
+
+            # step 5.1:
+            myleader_obj.isGroupFinal = "final"
+            
+            # step 5.2
+            acptd_peer_members = [i[1] for i in myleader_obj.getMembers()]
+            for mem in acptd_peer_members:
+                User.query.get(mem).isGroupFinal = "final"
+
+            # step 6
+            other_leaders = me.getRequests().remove(myleader_obj.username)
+
+
+    # step 2(if), step 6(else)
+    for other_ldr in other_leaders:
+        other_ldr_obj = User.query.get(other_ldr)
+
+        # reset other_ldr
+
+        # step 6.1: set isGroupFinal status to not sent
+        # step 6.2: remove this leader from all members who had accepted his request
+        # step 6.3: remove this leader from all members who have recieved his request but are yet to accept
+        # step 6.4 : reset this leader group list
+        # step 6.5 : reset this leader remaining member list
+
+
+        # step 6.1
+        other_ldr_obj.isGroupFinal = "req_notsent"
+
+        # step 6.2
+        # me won't be here since me didn't accept other_ldr request
+        acptd_peer_members = [i[1] for i in other_ldr_obj.getMembers()]
+        for mem in acptd_peer_members:
+            peer_member_obj = User.query.get(mem)
+            peer_member_obj.leader = None
+            peer_member_obj.isGroupFinal = "reqnot_sent"
+        
+        # step 6.3
+        # me will be present here, so remove me from this list
+        waiting_peer_members = other_ldr_obj.getRemainingList().remove(me)
+        for mem in waiting_peer_members:
+            peer_member_obj = User.query.get(mem)
+            peer_member_obj.deleteRequest(other_ldr.username)
+
+        # step 6.4
+        other_ldr_obj.resetMemberList()
+        
+        # step 6.5
+        other_ldr_obj.resetRemainingList()
+
+
+    # step 3(if),step 7(else)
+    me.resetRequests()
+
+    db.session.commit()
+    return home()
+
+
 
 
 @app.route('/setPassword', methods=['POST'])

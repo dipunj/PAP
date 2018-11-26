@@ -17,12 +17,16 @@ class User(db.Model):
     name     = db.Column(db.String,nullable=False)
     cpi      = db.Column(db.Float,nullable=False)
     requests = db.Column(db.String,default="")
+    
+    leader = db.Column(db.String)
 
     # admin's slot = 0
     myslot = db.Column(db.Integer,nullable=False)
 
     # set to  after user's group leader/members is/are final
-    # reqsent,req_notsent,final
+    # 2. req_notsent -> member : has not made a decision on any possible request, leader : has not sent any request
+    # 1. reqsent     -> member : has accepted a request, but group is not yet finalised, leader : has sent request, but group not final, because one or more of the member is yet to accept request
+    # 3. final       -> member,leader : groups are finalised
     isGroupFinal = db.Column(db.String,default="req_notsent")
 
 
@@ -35,7 +39,7 @@ class User(db.Model):
 
     # group size including 1st slotter, ensure group size,remaining_reqs is set whenever a new group leader is created
     group_size = db.Column(db.Integer)
-    remaining_reqs = db.Column(db.Integer)
+    remaining_reqs = db.Column(db.String,default="")
     # seperator is $#@!
     all_member_string = db.Column(db.String)
 
@@ -58,6 +62,12 @@ class User(db.Model):
         self.all_member_string = "1,"+username+","+name+","+str(cpi)
         pass
 
+
+    # group leader's accepted member group list
+
+
+    def resetMemberList(self):
+        self.all_member_string = "1,"+self.username+","+self.name+","+str(self.cpi)
 
     def addMember(self, slot, mem_name,mem_cpi,mem_reg_no): 
         self.all_member_string += "$#@!"+str(slot)+","+str(mem_reg_no)+","+str(mem_name)+","+str(mem_cpi)
@@ -98,6 +108,10 @@ class User(db.Model):
 
 
 
+    # group member's pending request list
+
+    def resetRequestList(self):
+        self.requests = ""
 
     def addRequest(self,leader_regno):
         curr_reqs = set(self.getRequests())
@@ -118,13 +132,17 @@ class User(db.Model):
 
 
     def getRequests(self):
-        return list(self.requests.split('$#@!'))
+        return self.requests.split('$#@!')
 
 
 
 
 
 
+    # group leader's remaining list
+
+    def resetRemaingList(self):
+        self.remaining_reqs = ""
 
     def addToRemainingList(self,mem_reg):
         curr_list = set(self.getRemainingList())
@@ -144,7 +162,7 @@ class User(db.Model):
 
 
     def getRemainingList(self):
-        return list(self.remaining_reqs.split('$#@!'))
+        return self.remaining_reqs.split('$#@!')
 
 
 
