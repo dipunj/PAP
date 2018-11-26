@@ -249,7 +249,7 @@ def uploadUsers():
     session['wasAt'] = request.form['wasAt']
     global db
 
-    num_groups = request.form['num_of_groups']
+    num_groups = int(request.form['num_of_groups'])
 
     f = request.files['upload_file']
     student_file = os.path.join(app.config['UPLOAD_FOLDER'],'students.csv')
@@ -265,20 +265,20 @@ def uploadUsers():
     print("extra_students",extra_students)
 
     group_size = num_students//num_groups
-    
+
     for slot in range(1,group_size+1):
         this_slot = data[(slot-1)*group_size:slot*group_size]
         for student in this_slot:
             # 0 -> registeration num
             # 1 -> full name
             # 2 -> CPI
-            this_user = User(username=str(student[0]),password=str(student[2]),name=str(student[1]),cpi=student[2],myslot=slot)
+            this_user = User(username=str(student[0]),password=str(student[2]),name=str(student[1]),cpi=student[2],slot=slot)
             db.session.add(this_user)
 
     db.session.commit()
 
     # set group size of each leader
-    all_first_slotter = User.query.filter_by(slot=1)
+    all_first_slotter = User.query.filter_by(myslot=1)
     for leader in all_first_slotter:
         leader.group_size = group_size
         addTo_StudentRefList(leader.username)
@@ -289,9 +289,9 @@ def uploadUsers():
     if extra_students != 0:
 
         # find (extra students) number of first_slotters and alot them these extra_students        
-        first_slotters = random.sample(User.query.filter_by(slot=1),num_students%num_groups)
+        first_slotters = random.sample(User.query.filter_by(myslot=1),num_students%num_groups)
         for leader in first_slotters:
-            leader.slot = group_size+1
+            leader.myslot = group_size+1
     
         db.session.commit()
 

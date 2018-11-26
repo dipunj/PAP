@@ -53,13 +53,13 @@ class User(db.Model):
         self.password          = password
         self.name              = name
         self.cpi               = cpi
-        self.myslot              = slot
+        self.myslot            = slot
         self.all_member_string = "1,"+username+","+name+","+str(cpi)
         pass
 
 
-    def addMember(self, group_position, mem_name,mem_cpi,mem_reg_no): 
-        self.all_member_string += "$#@!"+str(group_position)+","+str(mem_reg_no)+","+str(mem_name)+","+str(mem_cpi)
+    def addMember(self, slot, mem_name,mem_cpi,mem_reg_no): 
+        self.all_member_string += "$#@!"+str(slot)+","+str(mem_reg_no)+","+str(mem_name)+","+str(mem_cpi)
 
     def getMembers(self):
         members = self.all_member_string.split('$#@!')

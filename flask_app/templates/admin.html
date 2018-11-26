@@ -421,7 +421,7 @@
 					<div class="card">
 						<h4 class="card-header bg-dark text-white">Upload User List</h4>
 						<div class="card-body">
-							<form class="form" action="/uploadUsers" method="POST">
+							<form class="form" action="/uploadUsers" method="POST" enctype="multipart/form-data">
 								<div class="container">
 									<div class="form-group row">
 										<p class="card-subtitle">Upload the sorted csv file</p>
@@ -444,7 +444,7 @@
 									<div class="form-group row">
 										<div class="col-6">
 											<label class="btn btn-outline-dark">
-												Select <input type="file" type=".csv" name="upload_file" hidden required>
+												Select <input type="file" accept=".csv" name="upload_file" hidden required>
 											</label>
 											<!-- TODO show filename here using JS -->
 										</div>
