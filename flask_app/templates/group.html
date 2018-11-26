@@ -91,7 +91,7 @@
             <div class="row">
                 <h2>Select Your Group Members</h2>
                 <div class="col-12">
-                    <form action="/selectMembers" method="POST">
+                    <form action="/selectMembers" method="POST" onsubmit="return confirm('Do you really want to submit?. The action is irreversible');">
                         <div class="card-deck">
 
                             {% for i in range(my_group_size-1) %}
@@ -183,6 +183,20 @@
 
     </div>
 
+    <footer class="footer bg-light">
+            <div class="container">
+                <div class="row justify-content-center pt-3 pl-3 pr-3 mt-5">
+                    <div class="col-12 text-center">
+                      <p class="text-muted">Designed and Developed By Dipunj Gupta under Dr. Suneeta Agarwal's guidance</p>
+                    </div>
+                </div>
+                <div class="row justify-content-center mt-1">             
+                    <div class="col-auto">
+                        <p class="text-muted">© Copyright 2018 MNNIT Allahabad</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
 </body>
 
 

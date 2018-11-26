@@ -419,8 +419,8 @@ def delUserfromDB():
         reg_no = request.form['oldUserRegNo']
         this_user = User.query.filter_by(username=reg_no).first()
 
-        if this_user is None:
-            flash('User does not exist in database')
+        if this_user is None or this_user.username == "admin":
+            flash('User does not exist in database','user')
             return home()
         
 
