@@ -24,8 +24,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-destroyDB(app)
-db = initializeDB(db)
+# destroyDB(app)
+# db = initializeDB(db)
 
 
 
@@ -165,7 +165,6 @@ def home():
                     myproj_pref = []
 
                     for num,this_prj in usrObj.getPrefList().items():
-                        print(this_prj)
                         mentor = this_prj.split("__")[0]
                         prj = this_prj.split("__")[1]
                         myproj_pref.append((num,Teacher.query.get(mentor).name,prj))
