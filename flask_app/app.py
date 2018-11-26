@@ -3,6 +3,7 @@ from flask import Flask, request, render_template, session, flash,send_file
 from datetime import datetime
 import xlwt
 
+import csv,random
 
 from config import Config
 from main import getStableRelations
@@ -24,8 +25,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# destroyDB(app)
-# db = initializeDB(db)
+destroyDB(app)
+db = initializeDB(db)
 
 
 
@@ -242,6 +243,62 @@ def do_logout():
 
 
 
+@app.route('/uploadUsers',methods=['POST'])
+def uploadUsers():
+
+    session['wasAt'] = request.form['wasAt']
+    global db
+
+    num_groups = request.form['num_of_groups']
+
+    f = request.files['upload_file']
+    student_file = os.path.join(app.config['UPLOAD_FOLDER'],'students.csv')
+    f.save(student_file)
+
+    with open(student_file) as f:
+        data = [tuple(line) for line in csv.reader(f)]
+
+    num_students = len(data)
+    
+    # num of groups will be same as number of first slotters
+    extra_students = num_students%num_groups
+    print("extra_students",extra_students)
+
+    group_size = num_students//num_groups
+    
+    for slot in range(1,group_size+1):
+        this_slot = data[(slot-1)*group_size:slot*group_size]
+        for student in this_slot:
+            # 0 -> registeration num
+            # 1 -> full name
+            # 2 -> CPI
+            this_user = User(username=str(student[0]),password=str(student[2]),name=str(student[1]),cpi=student[2],myslot=slot)
+            db.session.add(this_user)
+
+    db.session.commit()
+
+    # set group size of each leader
+    all_first_slotter = User.query.filter_by(slot=1)
+    for leader in all_first_slotter:
+        leader.group_size = group_size
+        addTo_StudentRefList(leader.username)
+
+    db.session.commit()
+
+
+    if extra_students != 0:
+
+        # find (extra students) number of first_slotters and alot them these extra_students        
+        first_slotters = random.sample(User.query.filter_by(slot=1),num_students%num_groups)
+        for leader in first_slotters:
+            leader.slot = group_size+1
+    
+        db.session.commit()
+
+    return home()
+
+
+
 @app.route('/computeResult', methods=['POST'])
 def autoCompute():
 
@@ -264,9 +321,9 @@ def autoCompute():
     
     if num_projects != num_students:
         if num_projects < num_students:
-            flash('Please add more projects! There are not enough projects for all students','warning')
+            flash('Please add more projects! There are not enough projects for all groups','warning')
         else:
-            flash('Please add more group leaders, extra projects found','warning')
+            flash('Number of projects are more than number of groups, cannot proceed','warning')
         return home()
     
 
@@ -328,6 +385,8 @@ def ifAllSubmitted():
     
     return True
 
+
+
 @app.route('/submit', methods=['POST'])
 def doComputation():
     """main application logic
@@ -357,14 +416,9 @@ def doComputation():
     else:
         return '<script>alert("Invalid Submission, Please Try Again")</script>'
 
-@app.route('/result',methods=['POST'])
-def result():
-    if request.form['home'] == True:
-        return home()
 
-
-@app.route('/createUser', methods=['POST'])
-def addUserToDB():
+# @app.route('/createUser', methods=['POST'])
+# def addUserToDB():
     """Adds the user from the form to database
     """
 
@@ -407,47 +461,50 @@ def addTo_StudentRefList(user_regno):
 
 
 
-@app.route('/deleteUser', methods=['POST'])
-def delUserfromDB():
+# @app.route('/deleteUser', methods=['POST'])
+# def delUserfromDB():
 
-    session['wasAt'] = request.form['wasAt']
+#     session['wasAt'] = request.form['wasAt']
     
-    global db
+#     global db
 
-    if request.form['oldUserRegNo']:
-        reg_no = request.form['oldUserRegNo']
-        this_user = User.query.filter_by(username=reg_no).first()
+#     if request.form['oldUserRegNo']:
+#         reg_no = request.form['oldUserRegNo']
+#         this_user = User.query.filter_by(username=reg_no).first()
 
-        if this_user is None or this_user.username == "admin":
-            flash('User does not exist in database','user')
-            return home()
+#         if this_user is None or this_user.username == "admin":
+#             flash('User does not exist in database','user')
+#             return home()
         
 
-        deleteFrm_StudentRefList(reg_no)
-        db.session.delete(this_user)
+#         deleteFrm_StudentRefList(reg_no)
+#         db.session.delete(this_user)
             
-        db.session.commit()
+#         db.session.commit()
 
-    return home()
+#     return home()
 
-def deleteFrm_StudentRefList(user_regno):
+# def deleteFrm_StudentRefList(user_regno):
 
-    global db
+#     global db
 
-    portal_config = portalConfig.query.get(1)
+#     portal_config = portalConfig.query.get(1)
 
-    student_dict = portal_config.getcurrentStudentList()
-    student_dict = list(student_dict.values())
-    student_dict.remove(user_regno)
-    new_dict = dict(enumerate(student_dict,start=1))
-    new_dict = {str(k):str(v) for k,v in new_dict.items()}
+#     student_dict = portal_config.getcurrentStudentList()
+#     student_dict = list(student_dict.values())
+#     student_dict.remove(user_regno)
+#     new_dict = dict(enumerate(student_dict,start=1))
+#     new_dict = {str(k):str(v) for k,v in new_dict.items()}
 
-    rank_list = []
-    for i in range(1,len(new_dict)+1):
-        rank_list.append(str(i))
+#     rank_list = []
+#     for i in range(1,len(new_dict)+1):
+#         rank_list.append(str(i))
     
-    portal_config.setStudentList(rank_list,new_dict)
-    db.session.commit()
+#     portal_config.setStudentList(rank_list,new_dict)
+#     db.session.commit()
+
+
+
 
 
 
@@ -520,7 +577,6 @@ def deleteTeacher_and_projects():
 
     return home()
 
-
 def deleteFrm_ProjectList(project_name):
     
     global db
@@ -542,6 +598,9 @@ def deleteFrm_ProjectList(project_name):
 
 
 
+
+
+
 @app.route('/togglePortal', methods=['POST'])
 def togglePortal():
 
@@ -554,21 +613,6 @@ def togglePortal():
     else:
         portalConfig.query.get(1).switch = True
 
-    db.session.commit()
-
-    return home()
-
-
-@app.route('/setGroupSize', methods=['POST'])
-def setGroupSize():
-
-    session['wasAt'] = request.form['wasAt']
-
-    global db
-
-    admin=User.query.filter_by(username='admin').first()
-
-    admin.group_size=request.form['defaultGrpSize']
     db.session.commit()
 
     return home()
@@ -603,6 +647,12 @@ def setDeadline():
     return home()
 
 
+
+
+
+
+
+
 @app.route('/resetPortal',methods=['POST'])
 def reset():
 
@@ -618,7 +668,6 @@ def reset():
     
     return do_logout()
 
-
 @app.route('/resetStudentList', methods=['POST'])
 def resetStudentList():
 
@@ -631,9 +680,6 @@ def resetStudentList():
     db.session.commit()
 
     return home()
-
-
-
 
 @app.route('/resetProjectList', methods=['POST'])
 def resetProjectList():
@@ -659,7 +705,6 @@ def resetProjectList():
 
 
 """User Page Routes"""
-
 
 
 @app.route('/ConfirmSubmission', methods=['POST'])
@@ -754,6 +799,14 @@ def setUserPassword():
         db.session.commit()
 
     return home()
+
+
+
+
+
+
+
+
 
 
 

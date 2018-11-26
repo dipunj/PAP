@@ -17,11 +17,20 @@ class User(db.Model):
     name     = db.Column(db.String,nullable=False)
     cpi      = db.Column(db.Float,nullable=False)
 
+
+    # admin's slot = 0
+    myslot = db.Column(db.Integer,nullable=False)
+
+    # set to true after user's group leader/members is/are final
+    isGroupFinal = db.Column(db.Boolean,default=False)
+
+
+    ##########################################
+    # below is only for first slotter
+    ##########################################
+
     # after preferences has been submitted
     isPrefFinal = db.Column(db.Boolean,default=False)
-
-    # set to true after user has entered details of all group members
-    isGroupFinal = db.Column(db.Boolean,default=False)
 
     # group size including 1st slotter
     group_size = db.Column(db.Integer,default=2)
@@ -38,12 +47,13 @@ class User(db.Model):
 
 
 
-    def __init__(self, username, password, name, cpi, **kwargs): 
+    def __init__(self, username, password, name, cpi, slot,**kwargs): 
         super(User, self).__init__(**kwargs)
         self.username          = username
         self.password          = password
         self.name              = name
         self.cpi               = cpi
+        self.myslot              = slot
         self.all_member_string = "1,"+username+","+name+","+str(cpi)
         pass
 
@@ -208,19 +218,19 @@ def initializeDB(db):
     db.create_all()
     
     # add user admin
-    admin = User(username="admin",password="admin", name="admin",cpi=10)
+    admin = User(username="admin",password="admin", name="admin",cpi=10,slot=0)
     config = portalConfig(1)
-    demo_student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35)
-    demo_teacher = Teacher(username="suneeta@mnnit.ac.in",password="20154061",name="Prof. Suneeta Agarwal")
-    demo_teacher.setProjectList(['Image Processing'])
-    config.setStudentList(["1"],{"1":"20154061"})
-    config.setProjectList(["1"],{"1":"suneeta@mnnit.ac.in__Image Processing"})
+    # demo_student = User(username="20154061", password="20154061",name="Dipunj",cpi=8.35)
+    # demo_teacher = Teacher(username="suneeta@mnnit.ac.in",password="20154061",name="Prof. Suneeta Agarwal")
+    # demo_teacher.setProjectList(['Image Processing'])
+    # config.setStudentList(["1"],{"1":"20154061"})
+    # config.setProjectList(["1"],{"1":"suneeta@mnnit.ac.in__Image Processing"})
     
     # add to session
     db.session.add(config)
-    db.session.add(demo_teacher)
+    # db.session.add(demo_teacher)
     db.session.add(admin)
-    db.session.add(demo_student)
+    # db.session.add(demo_student)
     db.session.commit()
     return db
 
