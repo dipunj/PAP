@@ -13,9 +13,9 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" href="/static/css/toggle.css">
 	<!-- for debugging css / ghost code -->
-	<!-- <style>
+	<style>
 		* { background: #000 !important; color: #0f0 !important; outline: solid #f00 1px !important; }
-	</style> -->
+	</style>
 
 
 </head>
@@ -304,8 +304,8 @@
 									</div>
 									<div class="form-group row">
 										<div class="col-12">
-											<label for="projectList" class="col-form-label">Enter <strong>one project per line</strong> under this faculty
-												member</label>
+											<label for="projectList" class="col-form-label">Enter <strong>one project per line</strong> under this
+												faculty member</label>
 											<textarea class="form-control" rows="3" name="projectList" class="form-control-plaintext" placeholder="number of projects also represents number of groups under this faculty"
 											 required></textarea>
 										</div>
@@ -338,7 +338,7 @@
 							{% with messages = get_flashed_messages(with_categories=true) %}
 								{% if messages %}
 								{% for category,message in messages %}
-								{% if category  == "teacher"%}
+							{% if category == "teacher"%}
 								<div class="alert alert-danger alert-dismissible" role="alert">
 									<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
 									{{message}}
@@ -351,7 +351,8 @@
 								<div class="container">
 									<div class="form-group row">
 										<div class="col-12">
-											<input type="email" class="form-control" name="teacher_username" placeholder="Mentor's email address" required>
+											<input type="email" class="form-control" name="teacher_username" placeholder="Mentor's email address"
+											 required>
 										</div>
 									</div>
 									<div class="form-group row">
@@ -412,22 +413,39 @@
 						</div>
 					</div>
 
-					<!-- group size -->
+					<!-- upload user list -->
 					<div class="card">
-						<h4 class="card-header">Default Group Size</h4>
+						<h4 class="card-header bg-dark text-white">Upload User List</h4>
 						<div class="card-body">
-							<form class="form" action="/setGroupSize" method="POST">
+							<form class="form" action="/uploadUsers" id="toggle-form" method="POST">
 								<div class="container">
-									<div class="form-group row justify-content-between">
-										<div class="col-8 col-md-4 align-self-center">
-											<label for="groupSize" class="col-form-label">Enter Group Size</label>
+									<div class="form-group row">
+										<p class="card-subtitle">Upload the sorted csv file</p>
+										<table class="table">
+											<thead class="thead-default">
+												<th>Reg. No</th>
+												<th>Full Name</th>
+												<th>CGPA</th>
+											</thead>
+										</table>
 										</div>
-										<div class="col-4 col-md-4 align-self-center">
-											<input type="number" min="1" id="groupSize" name="defaultGrpSize" class="form-control" value={{DB_group_size}}
-											 required>
+									<div class="form-group row">
+										<div class="col-10 text-right">
+											<label class="col-form-label">Enter Number of Groups :</label>
 										</div>
-										<div class="col-12 col-md-4 align-self-center">
-											<button type="submit" class="btn btn-outline-secondary float-right mt-4 mb-4">Save</button>
+										<div class="col-2">
+											<input class="form-control" type="number" name="num_of_groups" value="5">
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="col-6">
+											<label class="btn btn-outline-dark">
+												Select <input type="file" type=".csv" name="upload_file" hidden>
+											</label>
+											<!-- TODO show filename here using JS -->
+										</div>
+										<div class="col-6 text-right">
+											<button type="submit" class="btn btn-outline-dark">Upload</button>
 										</div>
 									</div>
 								</div>
@@ -467,30 +485,6 @@
 
 			<div class="row">
 				<div class="card-deck col-12">
-					<!-- set project list -->
-					<!-- <div class="card border-dark">
-						<h4 class="card-header bg-dark text-white">Set Project List</h4>
-						<div class="card-body">
-							<form action="/setProjectList" method="POST">
-								<div class="container">
-									<div class="form-group row">
-										<div class="col-12">
-											<label for="projectList" class="col-form-label">Enter <em>one project per line</em>, this shall overwrite
-												the existing list</label>
-											<textarea class="form-control" rows="4" name="projectList" class="form-control-plaintext" placeholder="Project name(Mentor Name) ...."></textarea>
-										</div>
-									</div>
-									<div class="form-group row">
-										<div class="col-12">
-											<input type="hidden" name="wasAt" value="controls">
-											<button type="submit" class="btn btn-outline-dark btn-block float-right">Set</button>
-										</div>
-									</div>
-								</div>
-							</form>
-						</div>
-					</div> -->
-
 					<!-- current project list -->
 					<div class="card border-warning">
 						<h4 class="card-header bg-warning text-white">Current Project List</h4>
@@ -527,6 +521,8 @@
 							</div>
 						</div>
 					</div>
+
+					<!-- todo - current student list -->
 				</div>
 			</div>
 
