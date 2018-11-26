@@ -16,13 +16,14 @@ class User(db.Model):
     password = db.Column(db.String(80))
     name     = db.Column(db.String,nullable=False)
     cpi      = db.Column(db.Float,nullable=False)
-
+    requests = db.Column(db.String,default="")
 
     # admin's slot = 0
     myslot = db.Column(db.Integer,nullable=False)
 
-    # set to true after user's group leader/members is/are final
-    isGroupFinal = db.Column(db.Boolean,default=False)
+    # set to  after user's group leader/members is/are final
+    # reqsent,req_notsent,final
+    isGroupFinal = db.Column(db.String,default="req_notsent")
 
 
     ##########################################
@@ -30,11 +31,11 @@ class User(db.Model):
     ##########################################
 
     # after preferences has been submitted
-    isPrefFinal = db.Column(db.Boolean,default=False)
+    isPrefFinal = db.Column(db.Boolean)
 
-    # group size including 1st slotter
-    group_size = db.Column(db.Integer,default=2)
-
+    # group size including 1st slotter, ensure group size,remaining_reqs is set whenever a new group leader is created
+    group_size = db.Column(db.Integer)
+    remaining_reqs = db.Column(db.Integer)
     # seperator is $#@!
     all_member_string = db.Column(db.String)
 
@@ -61,6 +62,14 @@ class User(db.Model):
     def addMember(self, slot, mem_name,mem_cpi,mem_reg_no): 
         self.all_member_string += "$#@!"+str(slot)+","+str(mem_reg_no)+","+str(mem_name)+","+str(mem_cpi)
 
+    def deleteMember(self,mem_reg_no):
+        mymembers = self.getMembers()
+
+        mems_reg = [i[1] for i in mymembers]
+        if mem_reg_no in mems_reg:
+            self.all_member_string = "$#@!".join([",".join(i) for i in mymembers if i[1] != mem_reg_no])
+
+
     def getMembers(self):
         members = self.all_member_string.split('$#@!')
         printable_details = []
@@ -86,6 +95,58 @@ class User(db.Model):
         pref_dict = {str(k):str(v) for k,v in pref_dict.items()}
         
         return pref_dict
+
+
+
+
+    def addRequest(self,leader_regno):
+        curr_reqs = set(self.getRequests())
+        if curr_reqs == {''}:
+            curr_reqs = set([leader_regno])
+        else:
+            curr_reqs.add(leader_regno)
+        
+        self.requests = '$#@!'.join(curr_reqs)
+    
+    def deleteRequest(self,leader_regno):
+        curr_reqs = set(self.getRequests())
+        if curr_reqs != {''}:
+            curr_reqs = set(curr_reqs)
+            curr_reqs.remove(leader_regno)
+
+            self.requests = '$#@!'.join(curr_reqs)
+
+
+    def getRequests(self):
+        return list(self.requests.split('$#@!'))
+
+
+
+
+
+
+
+    def addToRemainingList(self,mem_reg):
+        curr_list = set(self.getRemainingList())
+        if curr_list == {''}:
+            curr_list = set([mem_reg])
+        else:
+            curr_list.add(mem_reg)
+
+        self.remaining_reqs = '$#@!'.join(curr_list)
+
+    def deleteFromRemainingList(self,mem_reg):
+        curr_list = set(self.getRemainingList())
+        if curr_list != {''}:
+            curr_list = set(curr_list)
+            curr_list.remove(mem_reg)
+            self.remaining_reqs = '$#@!'.join(curr_list)
+
+
+    def getRemainingList(self):
+        return list(self.remaining_reqs.split('$#@!'))
+
+
 
 
 
@@ -236,6 +297,11 @@ def initializeDB(db):
 
 
 def destroyDB(app):
+    try:
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'students.csv'))
+    except:
+        pass
+
     try:
         os.remove(app.config['SQLALCHEMY_DATABASE_URI'].split(':///')[1])
     except:

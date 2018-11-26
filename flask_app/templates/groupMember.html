@@ -32,7 +32,7 @@
             </button>
 
             <a href="#" class="navbar-brand __title mr-auto">
-                <strong>Welcome</strong>, {{ usrObj.name }}
+                <strong>Welcome</strong>, {{ name }}
             </a>
 
             <!-- navbar buttons -->
@@ -83,7 +83,7 @@
             <div class="row justify-content-end mr-3">
                 <h6 class="text-secondary text-right mt-0 pt-0">{{DB_deadline[1]}}</h5>
             </div>
-    </div>
+        </div>
 
 
 
@@ -91,99 +91,36 @@
 
         <div id="groupMem" class="container mt-5 tab-pane active">
             <div class="row">
-                <h2>Your Group</h2>
+                <h2>Select Your Group Leader</h2>
                 <div class="col-12">
-                    {% if usrObj.isGroupFinal == "req_sent" %}
-                    <p>Awaiting confirmation from your members</p>
-                    <div class="card-deck col-12">
-                        <div class="card border-danger">
-                                <div class="card-header bg-danger text-white">
-                                    <h4>Your Group Preferences</h4>
+                    <form action="/acceptLeader" method="POST" onsubmit="confirm('This action is irreversible, please make sure that you understand this.')">
+                        <div class="col-sm-12 col-md-4">
+                            <div class="card shadow-lg border-dark">
+                                <div class="card-header">
+                                    <h2>My Requests</h2>
                                 </div>
-                                <div class="card-body p-0">
-                                    <table class="table table-bordered m-0">
-                                        <thead class="thead-default">
-                                            <tr>
-                                                <th scope="col" width="10%">#</th>
-                                                <th scope="col" width="40%">Reg. No.</th>
-                                                <th scope="col" width="50%">Name</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for (slot,reg_no,name,_) in my_group_members %}
-                                            <tr>
-                                                <td> {{slot}} </td>
-                                                <td> {{reg_no}} </td>
-                                                <td> {{name}} </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                        </div>
-                    </div>
-                    {% elif usrObj.isGroupFinal == "req_notsent" %}
-                    <form action="/selectMembers" method="POST" onsubmit="return confirm('Do you really want to submit?. The action is irreversible');">
-                        <div class="card-deck">
-                            <div class="col-sm-12 col-md-4">
-                                <div class="card shadow-lg border-dark">
-                                    <div class="card-body">
-                                        <h2 class="card-title">Slotter #1</h2>
-                                        <div class="form-group">
-                                            <div class="col-12">
-                                                <label>Full Name : </label>
-                                            </div>
-                                            <div class="col-12">
-                                                <p class="text-black">{{usrObj.name}}</p>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-12">
-                                                <label>Reg. No : </label>
-                                            </div>
-                                            <div class="col-12">
-                                                <p class="text-black">{{usrObj.username}}</p>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-12">
-                                                <label for="cpi">CGPA* :</label>
-                                            </div>
-                                            <div class="col-12">
-                                                <p class="text-black">{{usrObj.cpi}}</p>
-                                            </div>
-                                        </div>
+                                <div class="card-body">
+                                    {% if requests is not none %}
+                                    <h4 class="card-title">Select Your Group Leader</h4>
+                                    <div class="form-group row">
+                                        {% for usrObj in requests %}
+                                        <input class="form-control" id="{{usrObj.username}}_opt" type="radio" name="myleader" value="{{usrObj.username}}" required>
+                                        <label for="{{usrObj.username}}_opt">{{usrObj.name}} ({{usrObj.username}})</label>
+                                        {% endfor %}
+                                        <input class="form-control" type="radio" name="myleader" value="Reject All" required>
                                     </div>
-                                </div>
-                            </div>
-                            {% for i in range(my_group_size-1) %}
-                            <div class="col-sm-12 col-md-4">
-                                <div class="card shadow-lg border-dark">
-                                    <div class="card-body">
-                                        <h2 class="card-title">Slotter #{{i+2}}</h2>
-                                        <div class="form-group row">
-                                            <div class="col-12">
-                                                <label for="{{i+2}}_RegNo">Enter Reg. No : </label>
-                                            </div>
-                                            <div class="col-12">
-                                                <input type="text" class="form-control" name="{{i+2}}_regno" id="{{i+2}}_regno" required>
-                                            </div>
-                                        </div>
+                                    <div class="form-group row">
+                                        <button type="submit">Lock Leader</button>
                                     </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-
-                        </div>
-                        <div class="container">
-                            <div class="row mb-5 mt-5">
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-outline-dark btn-lg float-right shadow-lg" id="#finalisebtn">Send To All</button>
+                                    {% else %}
+                                    <div class="card-footer">
+                                        <p class="text-danger">No Requests Recieved</p>
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </form>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -240,8 +177,7 @@
                     </div>
                 </div>
             </div>
-    </footer>
-
+        </footer>
 </body>
 
 

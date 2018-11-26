@@ -47,7 +47,6 @@ def home():
         template according to session cookie, usertype (admin or normal)
     """
 
-    admin = User.query.filter_by(username='admin').first()
     portal_conf = portalConfig.query.get(1)
 
     deadline = portal_conf.getDeadline()
@@ -151,34 +150,44 @@ def home():
 
             # student
             else:
-                if usrObj.isGroupFinal == False:
-                    return render_template("group.html",
-                                            name=usrObj.name,
-                                            my_group_size=usrObj.group_size,
-                                            DB_deadline=deadline)
 
-                elif usrObj.isPrefFinal == False:
-                    return render_template("preference.html",
-                                            name          = usrObj.name,
-                                            project_list  = reference_prj_dict,
-                                            DB_deadline=deadline)
+                # normal member
+                if usrObj.myslot != 1:
+                    myrequests = User.query.filter_by(username=usrObj.getRequests())
+                    return render_template("groupMember.html",
+                                                name=usrObj.name,
+                                                requests=myrequests,
+                                                DB_deadline=deadline)
+                # group leader
                 else:
-                    myproj_pref = []
+                    if usrObj.isGroupFinal == False:
+                        return render_template("group.html",
+                                                usrObj=usrObj,
+                                                my_group_size=usrObj.group_size,
+                                                DB_deadline=deadline)
 
-                    for num,this_prj in usrObj.getPrefList().items():
-                        mentor = this_prj.split("__")[0]
-                        prj = this_prj.split("__")[1]
-                        myproj_pref.append((num,Teacher.query.get(mentor).name,prj))
+                    elif usrObj.isPrefFinal == False:
+                        return render_template("preference.html",
+                                                name          = usrObj.name,
+                                                project_list  = reference_prj_dict,
+                                                DB_deadline=deadline)
+                    else:
+                        myproj_pref = []
 
-                    return render_template("studentresult.html",
-                                            name=usrObj.name,
-                                            my_proj_list=myproj_pref,
-                                            my_group_members=usrObj.getMembers(),
-                                            DB_deadline=deadline,
-                                            usrObj=usrObj,
-                                            DB_result_declared = isDeclared)
+                        for num,this_prj in usrObj.getPrefList().items():
+                            mentor = this_prj.split("__")[0]
+                            prj = this_prj.split("__")[1]
+                            myproj_pref.append((num,Teacher.query.get(mentor).name,prj))
 
+                        return render_template("studentresult.html",
+                                                name=usrObj.name,
+                                                my_proj_list=myproj_pref,
+                                                my_group_members=usrObj.getMembers(),
+                                                DB_deadline=deadline,
+                                                usrObj=usrObj,
+                                                DB_result_declared = isDeclared)
 
+                        
 @app.route('/login',methods=["POST"])
 def do_login():
     """facilitates login from the login.html login page    
@@ -246,6 +255,7 @@ def do_logout():
 @app.route('/uploadUsers',methods=['POST'])
 def uploadUsers():
 
+    
     session['wasAt'] = request.form['wasAt']
     global db
 
@@ -253,6 +263,11 @@ def uploadUsers():
 
     f = request.files['upload_file']
     student_file = os.path.join(app.config['UPLOAD_FOLDER'],'students.csv')
+    try:
+        os.remove(student_file)
+    except:
+        pass
+
     f.save(student_file)
 
     with open(student_file) as f:
@@ -262,12 +277,11 @@ def uploadUsers():
     
     # num of groups will be same as number of first slotters
     extra_students = num_students%num_groups
-    print("extra_students",extra_students)
 
     group_size = num_students//num_groups
 
     for slot in range(1,group_size+1):
-        this_slot = data[(slot-1)*group_size:slot*group_size]
+        this_slot = data[(slot-1)*num_groups:slot*num_groups]
         for student in this_slot:
             # 0 -> registeration num
             # 1 -> full name
@@ -289,9 +303,9 @@ def uploadUsers():
     if extra_students != 0:
 
         # find (extra students) number of first_slotters and alot them these extra_students        
-        first_slotters = random.sample(User.query.filter_by(myslot=1),num_students%num_groups)
+        first_slotters = random.sample(User.query.filter_by(myslot=1), extra_students)
         for leader in first_slotters:
-            leader.myslot = group_size+1
+            leader.group_size = group_size+1
     
         db.session.commit()
 
@@ -761,21 +775,72 @@ def selectMembers():
 
     global db
     
-    usrObj = User.query.filter_by(username=session['username']).first()
-    admin = User.query.filter_by(username="admin").first()
+    leader = User.query.get(session['username'])
 
-    user_grp_size = usrObj.group_size
+    user_grp_size = leader.group_size
 
-    for i in range(2,user_grp_size+1):
-        mem_name = request.form[str(i)+"_fullname"]
-        mem_reg = request.form[str(i)+"_regno"]
-        mem_cgpa = request.form[str(i)+"_cgpa"]
-        usrObj.addMember(str(i),mem_name,mem_cgpa,mem_reg)
-    
-    usrObj.isGroupFinal = True
+    for slot_num in range(2,user_grp_size+1):
+        mem_reg = request.form[str(slot_num)+"_regno"]
+        this_mem = User.query.get(mem_reg)
+
+        # send request to user
+        this_mem.addRequest(leader.username)
+        leader.addToRemainingList(this_mem.username)
+
+    leader.isGroupFinal = "reqsent"
     db.session.commit()
 
     return home()
+
+
+
+@app.route('/acceptLeader',methods=['POST'])
+def acceptLeader():
+    
+    global db
+
+    myleader = request.form['myleader']
+
+    if myleader == "Reject All":
+        pass
+    else:
+        leader_obj = User.query.get(myleader)
+        me = User.query.get(session['username'])
+
+        # after accept add me to leader's group list
+        leader_obj.addMember(me.slot,me.name,me.cpi,me.username)
+        # remove myself from leader's remaining request count by 1 (since me has accepted)
+        leader_obj.deleteFromRemainingList(me.username)
+
+        # reset all other leaders
+        other_leaders = me.getRequests().remove(leader_obj.username)
+
+        for ldr in other_leaders:
+            ldr_obj = User.query.get(ldr)
+
+            # reset ldr
+
+            # step 1: set isGroupFinal status to not sent
+            # step 2: remove this leader from all members who had accepted his request
+            # step 3: remove this leader from all members who have recieved his request
+            # step 4 : reset his group list
+            # step 5 : reset his remaining member list
+
+
+            # step 1
+            ldr_obj.isGroupFinal = "req_notsent"
+
+            # step 2
+            # me won't be here since me didn't accept his request
+            acptd_peer_members = [i[1] for i in ldr_obj.getMembers()]
+            for mem in acptd_peer_members:
+                peer_member_obj = User.query.get(mem)
+                peer_member_obj.deleteRequest(ldr_obj.username)
+            
+            # step 3
+            # me will be present here, so remove me from this list
+            waiting_peer_members = ldr_obj.getRemainingList().remove(me)
+
 
 @app.route('/setPassword', methods=['POST'])
 def setUserPassword():
