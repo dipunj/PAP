@@ -21,3 +21,10 @@ python app.py
 ```bash
 deactivate
 ```
+
+## System Requirements
+
+- OS : linux based(preferably CentOS/Ubuntu Server)
+- bash terminal
+- python3 environment
+- pip3 package installer
