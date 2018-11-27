@@ -125,9 +125,9 @@
 		<div id="all_students" class="container mt-5 tab-pane fade">
 			<div class="card-deck justify-content-center">
 				{% if num_of_slots == 0 %}
-				<div class="card bg-danger text-white text-center">
-					<div class="card-body bg-danger text-white p-5">
-						<h3>No users in Database</h3>
+				<div class="card text-center shadow-lg">
+					<div class="card-body p-2 bg-danger">
+						<h3 class="p-5 text-white m-0">No users in Database</h3>
 					</div>
 				</div>
 				{% endif %}
@@ -143,7 +143,7 @@
 												<th scope="col" width="10%">#</th>
 												<th scope="col" width="20%">Reg. No.</th>
 												<th scope="col" width="30%">Name</th>
-												<th scope="col" width="30%">Leader</th>
+												<th scope="col" width="30%">Leader Reg</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -164,7 +164,7 @@
 												<td>{{usrObj.name}}</td>
 												<td>
 													{% if usrObj.isGroupFinal != "req_notsent" %}
-													{{ User.query.get(usrObj.leader)(usrObj.leader) }}
+													{{ usrObj.leader }}
 													{% endif %}
 												</td>
 											</tr>
@@ -185,90 +185,44 @@
 		<div id="manageUsers" class="container tab-pane fade">
 
 			<div class="row">
-				<h2>User Membership</h2>
-			</div>
-
-			<div class="row justify-content-between">
-				<!-- view user list -->
-
-				
-				<div class="accordion col-12" id="userAccordion">
-					<div class="card-deck col-12">
-							<div class="col-12 col-md-6">
-								<div class="card">
-							<h4 class="card-header" id="mentorHeading">
-								Participating Faculty
-								<button class="btn btn-primary collapsed float-right" type="button" data-toggle="collapse" data-target="#collapseMentors"
-								 aria-expanded="false" aria-controls="collapseMentors">View</button>
-							</h4>
-							<div id="collapseMentors" class="collapse" aria-labelledby="mentorHeading" data-parent="#userAccordion">
-								<div class="card-body p-0">
-									<table class="table m-0">
-										<thead class="thead-dark">
-											<tr>
-												<th scope="col">#</th>
-												<th scope="col">Email</th>
-												<th scope="col">Name</th>
-											</tr>
-										</thead>
-										<tbody>
-											{% for teacher in DB_teacher_list %}
-											{% if teacher.isPrefFinal == true %}
-											<tr class="bg-success">
-												{% else %}
-											<tr class="bg-danger">
-												{% endif %}
-												<td> {{loop.index}} </td>
-												<td> {{teacher.username}} </td>
-												<td> {{teacher.name}} </td>
-											</tr>
-											{% endfor %}
-										</tbody>
-									</table>
-								</div>
-							</div>
-								</div>
-							</div>
-					</div>
-				</div>
-
+				<h2>Faculty Registeration</h2>
 			</div>
 
 			<div class="row">
 				<div class="card-deck col-12">
 
 					<!-- create teacher -->
-					<div class="card mb-4 border-success">
+					<div class="card mb-4 border-success shadow-lg">
 						<div class="card-body">
 							<h4 class="my-0 mb-5 font-weight-light">Add New Faculty</h4>
 							<form action="/createTeacher" method="POST">
 								<div class="container">
 									<div class="form-group row">
 										<div class="col-12">
-											<input type="text" class="form-control" name="teacher_fullname" placeholder="Prof. First Last name" required>
+											<input type="text" class="form-control shadow-sm" name="teacher_fullname" placeholder="Prof. First Last name" required>
 										</div>
 									</div>
 									<div class="form-group row">
 										<div class="col-12">
-											<input type="email" class="form-control" name="teacher_username" placeholder="Email Address" required>
+											<input type="email" class="form-control shadow-sm" name="teacher_username" placeholder="Email Address" required>
 										</div>
 									</div>
 									<div class="form-group row">
 										<div class="col-12">
 											<label for="projectList" class="col-form-label">Enter <strong>one project per line</strong> under this
 												faculty member</label>
-											<textarea class="form-control" rows="3" name="projectList" class="form-control-plaintext" placeholder="number of projects also represents number of groups under this faculty"
+											<textarea class="form-control shadow-sm" rows="3" name="projectList" class="form-control-plaintext" placeholder="number of projects also represents number of groups under this faculty"
 											 required></textarea>
 										</div>
 									</div>
 									<div class="form-group row">
 										<div class="col-12">
-											<input type="password" class="form-control" name="teacher_password" placeholder="New Password" required>
+											<input type="password" class="form-control shadow-sm" name="teacher_password" placeholder="New Password" required>
 										</div>
 									</div>
 									<div class="form-group row">
 										<div class="col-12">
-											<input type="password" class="form-control" name="re_password" placeholder="Retype Password" required>
+											<input type="password" class="form-control shadow-sm" name="re_password" placeholder="Retype Password" required>
 										</div>
 									</div>
 									<div class="form-group row">
@@ -283,7 +237,7 @@
 					</div>
 
 					<!-- delete Teacher -->
-					<div class="card mb-4 border-danger">
+					<div class="card mb-4 border-danger shadow-lg">
 						<div class="card-body">
 							<h4 class="my-0 mb-5 font-weight-light">Delete Previous Faculty</h4>
 							{% with messages = get_flashed_messages(with_categories=true) %}
@@ -319,6 +273,38 @@
 				</div>
 			</div>
 
+			<div class="row justify-content-between">
+				<div class="card-deck col-12">
+					<div class="card">
+						<h4 class="card-header">Registered Faculty</h4>
+						<div class="card-body p-0">
+							<table class="table m-0">
+										<thead class="thead-light">
+											<tr>
+												<th scope="col">#</th>
+												<th scope="col">Email</th>
+												<th scope="col">Name</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for teacher in DB_teacher_list %}
+											{% if teacher.isPrefFinal == true %}
+											<tr class="bg-success">
+												{% else %}
+											<tr class="bg-danger">
+												{% endif %}
+												<td> {{loop.index}} </td>
+												<td> {{teacher.username}} </td>
+												<td> {{teacher.name}} </td>
+											</tr>
+											{% endfor %}
+										</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+	
 		</div>
 		
 		<!-- portal controls page -->
@@ -416,11 +402,11 @@
 								<div class="form-group row justify-content-between m-0">
 									<div class="container">
 										<div class="form-group row justify-content-between m-0">
-											<div class="col-8 col-md-4 align-self-center">
+											<div class="col-8  col-md-4 align-self-center">
 												<label for="deadline" class="col-form-label">Enter Deadline for current session :</label>
 											</div>
 											<div class="col-4 col-md-4 align-self-center">
-												<input type="datetime-local" id="deadline" name="new_deadline" class="form-control" required>
+												<input type="datetime-local" id="deadline" name="new_deadline" class="form-control" class="form-control shadow-sm" required>
 											</div>
 											<div class="col-12 col-md-4 align-self-center">
 												<input type="hidden" name="wasAt" value="controls">

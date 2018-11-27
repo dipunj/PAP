@@ -25,8 +25,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-destroyDB(app)
-db = initializeDB(db)
+# destroyDB(app)
+# db = initializeDB(db)
 
 
 
@@ -176,9 +176,25 @@ def home():
                 else:
                     non_group_leaders = User.query.filter((User.myslot > 1) & (User.myslot < usrObj.group_size+1)).all()
                     if usrObj.isGroupFinal != "final":
+
+                        slot_wise_members = {}
+
+                        for slot in range(2,usrObj.group_size+1):
+                            slot_wise_members[slot] = User.query.filter((User.username != "admin") & (User.myslot == slot) & (User.isGroupFinal != "final")).all()
+
+                        my_pending_members = []
+                        if usrObj.isGroupFinal == "reqsent":
+                            reg_tentative_members = usrObj.getRemainingList() + [ member[1] for member in usrObj.getMembers() ]
+                            for reg in reg_tentative_members:
+                                my_pending_members.append(User.query.get(reg))
+
+                            my_pending_members.sort(key=lambda x: x.myslot)
+
                         return render_template("group.html",
                                                 usrObj=usrObj,
+                                                prospective_members=my_pending_members,
                                                 all_students=non_group_leaders,
+                                                this_slot_not_final=slot_wise_members,
                                                 DB_deadline=deadline)
 
                     elif usrObj.isPrefFinal == False:
@@ -804,7 +820,7 @@ def selectMembers():
     user_grp_size = leader.group_size
 
     for slot_num in range(2,user_grp_size+1):
-        mem_reg = request.form[str(slot_num)+"_regno"]
+        mem_reg = request.form[str(slot_num)+"_regno"].split(" - ")[0]
         this_mem = User.query.get(mem_reg)
 
         # check if this_mem has made a decision?

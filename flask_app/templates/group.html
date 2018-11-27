@@ -92,82 +92,106 @@
 
         <div id="groupMem" class="container mt-5 tab-pane active">
             <div class="row">
-                <h2>Your Group</h2>
+                <div class="col-12">
+                    <h2>My Group</h2>
+                </div>
                 <div class="col-12">
                     {% if usrObj.isGroupFinal == "reqsent" %}
-                    <p>Awaiting confirmation from your members</p>
-                    <div class="card-deck col-12">
-                        <div class="card border-danger">
-                                <div class="card-header bg-danger text-white">
-                                    <h4>Your Group Preferences</h4>
+                    <p class="card-subtitle">Awaiting confirmation from your members</p>
+                    <p class="card-subtitle text-danger">Please note that all members must accept your request for the group formation to be final. If any member rejects your request. You will need to refill the group preferences</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="card-deck col-12">
+                        <div class="card border-warning">
+                                <div class="card-header bg-warning text-white">
+                                    <h4>My Group Preferences</h4>
                                 </div>
                                 <div class="card-body p-0">
-                                    <table class="table table-bordered m-0">
-                                        <thead class="thead-default">
+                                    <table class="table table-bordered m-0 table-responsive">
+                                        <thead class="thead-light">
                                             <tr>
                                                 <th scope="col" width="10%">#</th>
-                                                <th scope="col" width="40%">Reg. No.</th>
-                                                <th scope="col" width="50%">Name</th>
+                                                <th scope="col" width="20%">Reg. No.</th>
+                                                <th scope="col" width="40%">Name</th>
+                                                <th scope="col" width="30%">Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for (slot,reg_no,name,_) in my_group_members %}
-                                            <tr>
-                                                <td> {{slot}} </td>
-                                                <td> {{reg_no}} </td>
-                                                <td> {{name}} </td>
+                                            {% for member in prospective_members %}
+
+                                            {% if member.isGroupFinal == "reqsent" %}
+                                                {% set clas_name = "table-danger" %}
+                                                {% set mem_status = "Waiting" %}
+                                            {% else %}
+                                                {% set clas_name = "table-success" %}
+                                                {% set mem_status = "accepted" %}
+                                            {% endif %}
+
+                                            <tr class="{{clas_name}} ">
+                                                <td> {{member.myslot}} </td>
+                                                <td> {{member.username}} </td>
+                                                <td> {{member.name}} </td>
+                                                <td> {{mem_status}} </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
                                     </table>
                                 </div>
                         </div>
-                    </div>
-                    {% elif usrObj.isGroupFinal == "req_notsent" %}
-                    <form action="/selectMembers" method="POST" onsubmit="return confirm('Do you really want to submit?. The action is irreversible');">
+                </div>
+            </div>
+            {% elif usrObj.isGroupFinal == "req_notsent" %}
+            <div class="row">
+                <form action="/selectMembers" method="POST" onsubmit="return confirm('Do you really want to submit?. The action is irreversible');">
                         <div class="card-deck">
                             <div class="col-sm-12 col-md-4">
-                                <div class="card shadow-lg border-dark">
+                                <div class="card bg-dark shadow-lg border-dark" style="cursor: not-allowed;">
                                     <div class="card-body">
-                                        <h2 class="card-title">Slotter #1</h2>
+                                        <h2 class="card-title text-white">Slotter #1 (You)</h2>
                                         <div class="form-group">
                                             <div class="col-12">
-                                                <label>Full Name : </label>
+                                                <label class="col-form-label text-muted">Full Name : </label>
                                             </div>
                                             <div class="col-12">
-                                                <p class="text-black">{{usrObj.name}}</p>
+                                                <p class="text-right">{{usrObj.name}}</p>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="col-12">
-                                                <label>Reg. No : </label>
+                                                <label class="col-form-label text-muted">Reg. No : </label>
                                             </div>
                                             <div class="col-12">
-                                                <p class="text-black">{{usrObj.username}}</p>
+                                                <p class="text-right">{{usrObj.username}}</p>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="col-12">
-                                                <label for="cpi">CGPA* :</label>
+                                                <label for="cpi" class="col-form-label text-muted">CGPA* :</label>
                                             </div>
                                             <div class="col-12">
-                                                <p class="text-black">{{usrObj.cpi}}</p>
+                                                <p class="text-right">{{usrObj.cpi}}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            {% for i in range(usrObj.group_size-1) %}
+                            {% for slot in range(2,usrObj.group_size+1) %}
                             <div class="col-sm-12 col-md-4">
                                 <div class="card shadow-lg border-dark">
                                     <div class="card-body">
-                                        <h2 class="card-title">Slotter #{{i+2}}</h2>
+                                        <h2 class="card-title">Slotter #{{slot}}</h2>
                                         <div class="form-group row">
                                             <div class="col-12">
-                                                <label for="{{i+2}}_RegNo">Enter Reg. No : </label>
+                                                <label for="{{slot}}_RegNo">Select your member #{{slot}}: </label>
                                             </div>
                                             <div class="col-12">
-                                                <input type="text" class="form-control" name="{{i+2}}_regno" id="{{i+2}}_regno" required>
+                                                <select class="form-control" id="{{slot}}_regno" name="{{slot}}_regno">
+                                                    {% for mem in this_slot_not_final[slot] %}
+                                                    <option>{{mem.username}} - {{mem.name}} </option>
+                                                    {% endfor %}
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -183,10 +207,9 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
-                    {% endif %}
-                </div>
+                </form>
             </div>
+            {% endif %}
         </div>
 
         <div id="chpasswd" class="container mt-5 tab-pane fade">
@@ -234,7 +257,7 @@
             </div>
             <div class="card-deck justify-content-center">
                 {% for slot_num in range(2,usrObj.group_size+1)%}
-                <div class="col-12 col-md-4 col-lg-4">
+                <div class="col-12 col-md-6">
                     <div class="card mb-4 shadow-lg border-dark">
                         <div class="card-body p-0">
                             <h3 class="card-title m-3 text-right">Slotter #{{slot_num}}</h3>
@@ -245,7 +268,7 @@
                                             <th scope="col" width="10%">#</th>
                                             <th scope="col" width="20%">Reg. No.</th>
                                             <th scope="col" width="30%">Name</th>
-                                            <th scope="col" width="30%">Leader</th>
+                                            <th scope="col" width="30%">Leader Reg.</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -266,7 +289,7 @@
                                             <td>{{usrObj.name}}</td>
                                             <td>
                                                 {% if usrObj.isGroupFinal != "req_notsent" %}
-                                                {{ User.query.get(usrObj.leader)(usrObj.leader) }}
+                                                {{ usrObj.leader }}
                                                 {% endif %}
                                             </td>
                                         </tr>
