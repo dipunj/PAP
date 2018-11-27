@@ -36,6 +36,8 @@
 9. add check for primary key in userlist file upload
 10. why send to all? -> group members should be satisfied with each other, not just with the leader
 11. why did you randomly choose extra_student number of first slotters and increased their group size ->wouln't those extra_students want to be open to all group leaders?.....no leader would want to have a larger group.
+12. show student list on user/teacher pages
+13. show slot number on admin page view users
 <!-- 8. front end checks, DB checks if user/teacher already exists -->
 <!-- 2. add route for teacher finalsubmission -->
 <!-- 1. add route for teacher confirmation -->

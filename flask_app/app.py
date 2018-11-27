@@ -163,10 +163,12 @@ def home():
                                                 DB_deadline=deadline)
                 # group leader
                 else:
+                    non_group_leaders = User.query.filter((User.myslot > 1) & (User.myslot <= usrObj.group_size)).all()
                     if usrObj.isGroupFinal != "final":
                         return render_template("group.html",
                                                 usrObj=usrObj,
                                                 my_group_size=usrObj.group_size,
+                                                all_students=non_group_leaders,
                                                 DB_deadline=deadline)
 
                     elif usrObj.isPrefFinal == False:

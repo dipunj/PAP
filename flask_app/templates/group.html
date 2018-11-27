@@ -38,10 +38,11 @@
             <!-- navbar buttons -->
             <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
                 <ul class="nav nav-pills row">
-                    <li class="nav-item mr-5"><a class="nav-link" data-toggle="pill" href="#chpasswd">Change Password</a></li>
-                    <li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#groupMem">Group Members</a></li>
-                    <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">Preference</a></li>
-                    <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">Result</a></li>
+                    <li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#chpasswd">Change Password</a></li>
+                    <li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#all_students">List of All Slotters</a></li>
+                    <li class="nav-item mr-3"><a class="nav-link active" data-toggle="pill" href="#groupMem">Group Members</a></li>
+                    <li class="nav-item mr-3"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">Preference</a></li>
+                    <li class="nav-item mr-3"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">Result</a></li>
                 </ul>
             </div>
 
@@ -221,6 +222,46 @@
                         </form>
                     </div>
                 </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="all_students" class="container mt-5 tab-pane fade">
+            <div class="row justify-content-center">
+                <div class="card border-info">
+                <h4 class="card-header bg-info text-white">Student List</h4>
+                <div class="card-body p-0">
+                    <table class="table table-bordered m-0">
+                        <thead class="thead-default">
+                            <tr>
+                                <th scope="col" width="10%">#</th>
+                                <th scope="col" width="10%">Slot</th>
+                                <th scope="col" width="40%">Reg. No.</th>
+                                <th scope="col" width="40%">Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for usrObj in all_students %}
+                            {% if usrObj.isGroupFinal == "final" %}
+                            <tr class="bg-danger">
+                            {% elif usrObj.isGroupFinal == "req_sent" %}
+                            <tr class="bg-warning">
+                            {% else %}
+                            <tr class="bg-success"></tr>
+                            {% endif %}
+                                <td> {{loop.index}}</td>
+                                <td> {{usrObj.myslot}} </td>
+                                <td> {{usrObj.username}} </td>
+                                <td>
+                                    {{usrObj.name}} 
+                                    {% if usrObj.isGroupFinal == "final" %}
+                                        (leader reg.no.: {{ usrObj.leader }})
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
