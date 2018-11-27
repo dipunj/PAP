@@ -94,7 +94,7 @@ def home():
             return render_template('login.html')
         # admin
         if usrObj.username == "admin":
-            users = User.query.order_by(User.username).filter(User.username !="admin").all()
+            users = User.query.order_by(User.username).filter((User.username !="admin") & (User.myslot == 1)).all()
             teachers = Teacher.query.all()
 
             return render_template("admin.html",
@@ -337,7 +337,7 @@ def autoCompute():
     teacher_pref = {}
     portal_conf = portalConfig.query.get(1)
 
-    all_usrObj = User.query.order_by(User.username).filter(User.username !="admin").all()
+    all_usrObj = User.query.order_by(User.username).filter((User.username !="admin") & (User.myslot == 1)).all()
     all_profs = Teacher.query.order_by(Teacher.username).all()
 
     all_projects = portal_conf.getcurrentProjectList()
@@ -403,7 +403,7 @@ def autoCompute():
 
 def ifAllSubmitted():
 
-    candidates = User.query.filter(User.username != "admin").all()
+    candidates = User.query.order_by(User.username).filter((User.username !="admin") & (User.myslot == 1)).all()
     candidates += Teacher.query.all()
 
     for obj in candidates:
@@ -873,7 +873,7 @@ def acceptLeader():
 
             # step 5.1:
             myleader_obj.isGroupFinal = "final"
-            
+            myleader_obj.isPrefFinal = False
             # step 5.2
             acptd_peer_members = [i[1] for i in myleader_obj.getMembers()]
             for mem in acptd_peer_members:
