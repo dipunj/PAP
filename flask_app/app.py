@@ -168,15 +168,32 @@ def home():
                     except:
                         myrequests = None
 
-                    if usrObj.leader is None:
-                        leader = None
-                    else:
-                        leader = User.query.get(usrObj.leader)
+                    if isDeclared == True:
 
+                        leader = User.query.get(usrObj.leader)
+                        myproj_pref = []
+
+                        try:
+                            for num,this_prj in leader.getPrefList().items():
+                                mentor = this_prj.split("__")[0]
+                                prj = this_prj.split("__")[1]
+                                myproj_pref.append((num,Teacher.query.get(mentor).name,prj))
+                        except:
+                            pass
+
+                        render_template("studentresult.html",
+                                                name=usrObj.name,
+                                                my_proj_list=myproj_pref,
+                                                my_group_members=leader.getMembers(),
+                                                DB_deadline=deadline,
+                                                usrObj=leader,
+                                                DB_result_declared = isDeclared)
+                    if usrObj.isGroupFinal == "final":
+                        leader = User.query.get(usrObj.leader)
+                    
                     return render_template("groupMember.html",
-                                                DB_result_declared=isDeclared,
-                                                leader=leader,
                                                 usrObj=usrObj,
+                                                leader=leader,
                                                 requests=myrequests,
                                                 DB_deadline=deadline)
                 # group leader

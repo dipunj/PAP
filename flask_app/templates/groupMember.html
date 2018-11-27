@@ -91,6 +91,43 @@
 
     <div class="tab-content">
 
+        <div id="chpasswd" class="container mt-5 tab-pane fade">
+                <div class="row justify-content-center">
+                    <div class="card border-success">
+                    <h4 class="card-header bg-success text-white">Set Password</h4>
+                    <div class="card-body">
+                        <div class="container">
+                            <form action="/setPassword" method="POST">
+                                <div class="form-group row">
+                                    <div class="col-12 align-self-center">
+                                        <label for="oldPass" class="col-form-label text-secondary">Old Password</label>
+                                        <input type="password" name="oldPass" id="oldPass" class="form-control" required>
+                                    </div>
+                                    <div class="col-12 align-self-center">
+                                        <label for="newPass" class="col-form-label text-secondary">New Password</label>
+                                        <input type="password" name="newPass" id="newPass" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-12 align-self-center">
+                                        <label for="confNewPass" class="col-form-label text-secondary">Confirm Password</label>
+                                        <input type="password" name="confNewPass" id="confNewPass" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row align-content-end">
+                                    <div class="col-12">
+                                        <span id='passMatch'></span>
+                                        <input type="hidden" name="wasAt" value="controls">
+                                        <button type="submit" class="btn btn-outline-success btn-block">Change</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+        </div>
+
         <div id="groupMem" class="container mt-5 tab-pane active">
             <div class="row">
                 <div class="col-12">
@@ -101,88 +138,57 @@
                 <div class="col-12 col-md-6 align-self-center">
                     <form action="/acceptLeader" method="POST" onsubmit="confirm('This action is irreversible, please make sure that you understand this.')">
                         <div class="card shadow-lg border-dark">
-                                <div class="card-header">
-                                    <h2>My Requests</h2>
-                                </div>
-                                {% if requests is not none %}
-                                <div class="card-body">
-                                    <h4 class="card-title">Select Your Leader</h4>
-                                    <div class="container">
-                                    {% set all_leaders = "" %}
-                                    {% for usrObj in requests %}
-                                        <div class="form-check">
-                                            <label for="{{usrObj.username}}_opt">
-                                                <input class="form-check-input" id="{{usrObj.username}}_opt" type="radio" name="myleader" value="{{usrObj.username}}" required>
-                                                {{usrObj.name}} ({{usrObj.username}})
-                                            </label>
-                                        </div>
-                                    {% set all_leaders = all_leaders +","+usrObj.username %}
-                                    {% endfor %}
-                                        <div class="form-check">
-                                            <input type="hidden" value="{{all_leaders}}" name="all_leaders">
-                                            <label class="form-check-label">
-                                                <input class="form-check-input" type="radio" name="myleader" value="Reject All" required>
-                                                    Reject All
-                                            </label>
-                                        </div>
-                                        <div class="form-group row justify-content-end">
-                                            <div class="col text-right">
-                                                <button type="submit" class="btn btn-outline-dark">Submit</button>
-                                            </div>
+                            <div class="card-header">
+                                <h2>My Requests</h2>
+                            </div>
+                            {% if requests is not none %}
+                            <div class="card-body">
+                                <h4 class="card-title">Select Your Leader</h4>
+                                <div class="container">
+                                {% set all_leaders = "" %}
+                                {% for usrObj in requests %}
+                                    <div class="form-check">
+                                        <label for="{{usrObj.username}}_opt">
+                                            <input class="form-check-input" id="{{usrObj.username}}_opt" type="radio" name="myleader" value="{{usrObj.username}}" required>
+                                            {{usrObj.name}} ({{usrObj.username}})
+                                        </label>
+                                    </div>
+                                {% set all_leaders = all_leaders +","+usrObj.username %}
+                                {% endfor %}
+                                    <div class="form-check">
+                                        <input type="hidden" value="{{all_leaders}}" name="all_leaders">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="radio" name="myleader" value="Reject All" required>
+                                                Reject All
+                                        </label>
+                                    </div>
+                                    <div class="form-group row justify-content-end">
+                                        <div class="col text-right">
+                                            <button type="submit" class="btn btn-outline-dark">Submit</button>
                                         </div>
                                     </div>
                                 </div>
-                                {% elif usrObj.isGroupFinal == "reqsent" %}
-                                <div class="card-footer">
-                                    <p class="text-success">You have started group formation with your prospective leader : {{usrObj.leader}}</p>
-                                </div>
-                                {% else %}
-                                <div class="card-footer">
-                                    <p class="text-danger">No Requests Recieved</p>
-                                </div>
-                                {% endif %}    
+                            </div>
+                            {% elif usrObj.isGroupFinal == "reqsent" %}
+                            <div class="card-footer">
+                                <p class="text-warning">You have started group formation with your prospective leader : {{usrObj.leader}}</p>
+                            </div>
+                            {% elif usrObj.isGroupFinal == "final"%}
+                            <div class="card-footer">
+                                <p class="text-success">Congratulations! Your group is final. Please discuss the project preferences with your group leader</p>
+                                <p class="text-black ">Group Leader : {{leader.name}} ({{leader.username}})</p>
+                            </div>    
+                            {% else %}
+                            <div class="card-footer">
+                                <p class="text-danger">No Requests Recieved</p>
+                            </div>    
+                            {% endif %}    
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <div id="chpasswd" class="container mt-5 tab-pane fade">
-            <div class="row justify-content-center">
-                <div class="card border-success">
-                <h4 class="card-header bg-success text-white">Set Password</h4>
-                <div class="card-body">
-                    <div class="container">
-                        <form action="/setPassword" method="POST">
-                            <div class="form-group row">
-                                <div class="col-12 align-self-center">
-                                    <label for="oldPass" class="col-form-label text-secondary">Old Password</label>
-                                    <input type="password" name="oldPass" id="oldPass" class="form-control" required>
-                                </div>
-                                <div class="col-12 align-self-center">
-                                    <label for="newPass" class="col-form-label text-secondary">New Password</label>
-                                    <input type="password" name="newPass" id="newPass" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-12 align-self-center">
-                                    <label for="confNewPass" class="col-form-label text-secondary">Confirm Password</label>
-                                    <input type="password" name="confNewPass" id="confNewPass" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="form-group row align-content-end">
-                                <div class="col-12">
-                                    <span id='passMatch'></span>
-                                    <input type="hidden" name="wasAt" value="controls">
-                                    <button type="submit" class="btn btn-outline-success btn-block">Change</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <footer class="footer bg-light">
