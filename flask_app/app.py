@@ -181,16 +181,19 @@ def home():
                         except:
                             pass
 
-                        render_template("studentresult.html",
+                        return render_template("studentresult.html",
                                                 name=usrObj.name,
                                                 my_proj_list=myproj_pref,
                                                 my_group_members=leader.getMembers(),
                                                 DB_deadline=deadline,
                                                 usrObj=leader,
                                                 DB_result_declared = isDeclared)
-                    if usrObj.isGroupFinal == "final":
-                        leader = User.query.get(usrObj.leader)
                     
+                    if usrObj.isGroupFinal != "req_notsent":
+                        leader = User.query.get(usrObj.leader)
+                    else:
+                        leader=None
+
                     return render_template("groupMember.html",
                                                 usrObj=usrObj,
                                                 leader=leader,
@@ -828,7 +831,9 @@ def confirmIt():
     if pref_order == ['']:
         return home()
     else:
+        usrObj = User.query.get(session['username'])
         return render_template("confirm.html",
+                                usrObj=usrObj,
                                 name=session['name'],
                                 confirm_list=preview,
                                 prefOrder="-".join(pref_order),

@@ -478,7 +478,7 @@
 									</thead>
 									<tbody>
 										{% for user in DB_leader_list %}
-										{% if user.isGroupFinal == true and user.isPrefFinal == true%}
+										{% if user.isGroupFinal == "final" and user.isPrefFinal == true%}
 										<tr class="table-success">
 											{% else %}
 										<tr class="table-danger">

@@ -171,12 +171,13 @@
                             </div>
                             {% elif usrObj.isGroupFinal == "reqsent" %}
                             <div class="card-footer">
-                                <p class="text-warning">You have started group formation with your prospective leader : {{usrObj.leader}}</p>
+                                <p class="text-warning">You have started group formation with your prospective leader</p>
+                                <p class="text-black">{{leader.name}} ({{leader.username}}) </p>
                             </div>
                             {% elif usrObj.isGroupFinal == "final"%}
                             <div class="card-footer">
                                 <p class="text-success">Congratulations! Your group is final. Please discuss the project preferences with your group leader</p>
-                                <p class="text-black ">Group Leader : {{leader.name}} ({{leader.username}})</p>
+                                <p class="text-black">Group Leader : {{leader.name}} ({{leader.username}})</p>
                             </div>    
                             {% else %}
                             <div class="card-footer">
