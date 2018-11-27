@@ -245,7 +245,7 @@
                             {% for usrObj in all_students %}
                             {% if usrObj.isGroupFinal == "final" %}
                                 {% set clas_name = "bg-danger" %}
-                            {% elif usrObj.isGroupFinal == "req_sent" %}
+                            {% elif usrObj.isGroupFinal == "reqsent" %}
                                 {% set clas_name = "bg-warning" %}
                             {% else %}
                                 {% set clas_name = "bg-success" %}
@@ -256,7 +256,7 @@
                                 <td> {{usrObj.username}} </td>
                                 <td>
                                     {{usrObj.name}} 
-                                    {% if usrObj.isGroupFinal == "final" %}
+                                    {% if usrObj.isGroupFinal != "req_notsent" %}
                                         (leader reg.no.: {{ usrObj.leader }})
                                     {% endif %}
                                 </td>

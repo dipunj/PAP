@@ -25,8 +25,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-destroyDB(app)
-db = initializeDB(db)
+# destroyDB(app)
+# db = initializeDB(db)
 
 
 
@@ -153,10 +153,18 @@ def home():
 
                 # normal member
                 if usrObj.myslot != 1:
+                    myrequests = []
                     try:
-                        myrequests = User.query.filter_by(username=usrObj.getRequests()).all()
+                        here_ldrs = usrObj.getRequests()
+                        if here_ldrs != ['']:
+                            for ldr_reg in here_ldrs:
+                                ldr_obj = User.query.get(ldr_reg)
+                                myrequests.append(ldr_obj)
+                        else:
+                            myrequests = None
                     except:
                         myrequests = None
+
                     return render_template("groupMember.html",
                                                 name=usrObj.name,
                                                 requests=myrequests,
@@ -285,6 +293,8 @@ def uploadUsers():
 
     group_size = num_students//num_groups
 
+    # TODO : Put a check here if num_Groups > num_students
+
     for slot in range(1,group_size+1):
         this_slot = data[(slot-1)*num_groups:slot*num_groups]
         for student in this_slot:
@@ -304,9 +314,7 @@ def uploadUsers():
 
     db.session.commit()
 
-
     if extra_students != 0:
-
         # find (extra students) number of first_slotters and alot them these extra_students        
         first_slotters = random.sample(User.query.filter_by(myslot=1), extra_students)
         for leader in first_slotters:
@@ -792,7 +800,6 @@ def selectMembers():
         if this_mem.isGroupFinal == "req_notsent":
             this_mem.addRequest(leader.username)
             leader.addToRemainingList(this_mem.username)
-
         # if not, then is his group final?
         elif this_mem.isGroupFinal == "reqsent":
 
@@ -822,7 +829,10 @@ def acceptLeader():
     myleader = request.form['myleader']
     me = User.query.get(session['username'])
 
+    other_leaders = []
+
     if myleader == "Reject All":
+
         me.isGroupFinal = "req_notsent"    
         other_leaders = request.form['all_leaders'].split(',')
         # step 1 : since me is rejecting all the requests, so set me's isGroupFinal status to req_notsent
@@ -845,7 +855,7 @@ def acceptLeader():
         myleader_obj.deleteFromRemainingList(me.username)
 
         # step 2:
-        myleader_obj.addMember(me.slot,me.name,me.cpi,me.username)
+        myleader_obj.addMember(me.myslot,me.name,me.cpi,me.username)
 
         # step 3:
         me.leader = myleader_obj.username
@@ -869,8 +879,14 @@ def acceptLeader():
             for mem in acptd_peer_members:
                 User.query.get(mem).isGroupFinal = "final"
 
-            # step 6
-            other_leaders = me.getRequests().remove(myleader_obj.username)
+        # step 6
+        other_leaders = me.getRequests()
+        try:
+            other_leaders.remove(myleader_obj.username)
+        except:
+            pass
+        if other_leaders is None:
+            other_leaders = []
 
 
     # step 2(if), step 6(else)
@@ -895,24 +911,30 @@ def acceptLeader():
         for mem in acptd_peer_members:
             peer_member_obj = User.query.get(mem)
             peer_member_obj.leader = None
-            peer_member_obj.isGroupFinal = "reqnot_sent"
+            peer_member_obj.isGroupFinal = "req_notsent"
         
         # step 6.3
         # me will be present here, so remove me from this list
-        waiting_peer_members = other_ldr_obj.getRemainingList().remove(me)
+        waiting_peer_members = other_ldr_obj.getRemainingList()
+        try:
+            waiting_peer_members.remove(me)
+        except:
+            pass
         for mem in waiting_peer_members:
             peer_member_obj = User.query.get(mem)
-            peer_member_obj.deleteRequest(other_ldr.username)
+            peer_member_obj.deleteRequest(other_ldr_obj.username)
+            
 
         # step 6.4
         other_ldr_obj.resetMemberList()
         
         # step 6.5
         other_ldr_obj.resetRemainingList()
+        db.session.commit()
 
 
     # step 3(if),step 7(else)
-    me.resetRequests()
+    me.resetRequestList()
 
     db.session.commit()
     return home()

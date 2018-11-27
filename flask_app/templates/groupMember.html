@@ -99,8 +99,8 @@
                                 <div class="card-header">
                                     <h2>My Requests</h2>
                                 </div>
+                                {% if requests is not none %}
                                 <div class="card-body">
-                                    {% if requests is not none %}
                                     <h4 class="card-title">Select Your Group Leader</h4>
                                     <div class="form-group row">
                                         {% set all_leaders = "" %}
@@ -115,12 +115,12 @@
                                     <div class="form-group row">
                                         <button type="submit">Lock Leader</button>
                                     </div>
-                                    {% else %}
-                                    <div class="card-footer">
-                                        <p class="text-danger">No Requests Recieved</p>
-                                    </div>
-                                    {% endif %}
                                 </div>
+                                {% else %}
+                                <div class="card-footer">
+                                    <p class="text-danger">No Requests Recieved</p>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     </form>

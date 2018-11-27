@@ -141,7 +141,7 @@ class User(db.Model):
 
     # group leader's remaining list
 
-    def resetRemaingList(self):
+    def resetRemainingList(self):
         self.remaining_reqs = ""
 
     def addToRemainingList(self,mem_reg):
