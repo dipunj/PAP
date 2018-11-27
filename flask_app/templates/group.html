@@ -39,7 +39,7 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
                 <ul class="nav nav-pills row">
                     <li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#chpasswd">Change Password</a></li>
-                    <li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#all_students">List of All Slotters</a></li>
+                    <li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#all_students">Members</a></li>
                     <li class="nav-item mr-3"><a class="nav-link active" data-toggle="pill" href="#groupMem">Group Members</a></li>
                     <li class="nav-item mr-3"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">Preference</a></li>
                     <li class="nav-item mr-3"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">Result</a></li>
@@ -257,7 +257,7 @@
                                 <td>
                                     {{usrObj.name}} 
                                     {% if usrObj.isGroupFinal != "req_notsent" %}
-                                        (leader reg.no.: {{ usrObj.leader }})
+                                        (leader reg.no : {{ usrObj.leader }})
                                     {% endif %}
                                 </td>
                             </tr>

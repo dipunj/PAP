@@ -3,7 +3,7 @@ from flask import Flask, request, render_template, session, flash,send_file
 from datetime import datetime
 import xlwt
 
-import csv,random
+import csv,random,operator
 
 from config import Config
 from main import getStableRelations
@@ -25,8 +25,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# destroyDB(app)
-# db = initializeDB(db)
+destroyDB(app)
+db = initializeDB(db)
 
 
 
@@ -171,7 +171,7 @@ def home():
                                                 DB_deadline=deadline)
                 # group leader
                 else:
-                    non_group_leaders = User.query.filter((User.myslot > 1) & (User.myslot <= usrObj.group_size)).all()
+                    non_group_leaders = User.query.filter((User.myslot > 1) & (User.myslot < usrObj.group_size+1)).all()
                     if usrObj.isGroupFinal != "final":
                         return render_template("group.html",
                                                 usrObj=usrObj,
@@ -276,15 +276,18 @@ def uploadUsers():
 
     f = request.files['upload_file']
     student_file = os.path.join(app.config['UPLOAD_FOLDER'],'students.csv')
+    
     try:
         os.remove(student_file)
     except:
-        pass
+        f.save(student_file)
 
-    f.save(student_file)
 
-    with open(student_file) as f:
-        data = [tuple(line) for line in csv.reader(f)]
+    reader = csv.reader(open(student_file), delimiter=",")
+    data = sorted(reader, key=operator.itemgetter(2), reverse=True)
+
+    # with open(student_file) as f:
+        # data = [tuple(line) for line in csv.reader(f)]
 
     num_students = len(data)
     
@@ -295,7 +298,7 @@ def uploadUsers():
 
     # TODO : Put a check here if num_Groups > num_students
 
-    for slot in range(1,group_size+1):
+    for slot in range(1,group_size+(extra_students>0)+1):
         this_slot = data[(slot-1)*num_groups:slot*num_groups]
         for student in this_slot:
             # 0 -> registeration num
@@ -316,7 +319,12 @@ def uploadUsers():
 
     if extra_students != 0:
         # find (extra students) number of first_slotters and alot them these extra_students        
-        first_slotters = random.sample(User.query.filter_by(myslot=1), extra_students)
+
+        # randomly
+        first_slotters = random.sample(User.query.filter_by(myslot=1).all(), extra_students)
+
+        # top first slotters
+        first_slotters = User.query.order_by(User.cpi).filter_by(myslot=1).all()[:extra_students]
         for leader in first_slotters:
             leader.group_size = group_size+1
     

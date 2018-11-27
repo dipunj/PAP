@@ -36,8 +36,8 @@
 9. add check for primary key in userlist file upload
 10. why send to all? -> group members should be satisfied with each other, not just with the leader
 11. why did you randomly choose extra_student number of first slotters and increased their group size ->wouln't those extra_students want to be open to all group leaders?.....no leader would want to have a larger group.
-12. show student list on user/teacher pages
-13. show slot number on admin page view users
+12. show student list on teacher pages
+<!-- 13. show slot number on admin page view users -->
 <!-- 8. front end checks, DB checks if user/teacher already exists -->
 <!-- 2. add route for teacher finalsubmission -->
 <!-- 1. add route for teacher confirmation -->
@@ -46,3 +46,23 @@
 <!-- 5. Add option on admin page to add/delete a professor -->
 <!-- 7. result page for student -->
 <!-- 10. fix reset project list option -->
+
+
+
+## Frontend New TODO
+
+1. sort userlist input file before adding to database
+2. change password on every page
+3. improve all students page
+4. add all students page to admin page
+5. Reorganise divs on manage users(rename to manage faculty) page
+6. after leader sends request to a tentative group, show that group's information(improve this page)
+7. add check on delete/add faculty and current project list reset if a student has made a subject preference submission
+8. make the header image less tall
+
+
+## Advanced feature
+
+1. on compute -> find all those leaders whose groups have not yet been finalised
+2. randomly form groups
+3. and then compute
