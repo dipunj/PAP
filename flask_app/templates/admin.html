@@ -368,30 +368,30 @@
 					<div class="card">
 						<h4 class="card-header bg-dark text-white">Upload User List</h4>
 						<div class="card-body">
-							<form class="form" action="/uploadUsers" method="POST" enctype="multipart/form-data">
-								<div class="container">
+							<div class="container">
+								<div class="form-group row">
+									<p class="text-muted">*Upload the csv file with the following columns, without headers</p>
+									<table class="table pl-0 pr-0">
+										<thead class="thead-default">
+											<th>Reg. No</th>
+											<th>Full Name</th>
+											<th>CGPA</th>
+										</thead>
+									</table>
+								</div>
+								<form class="form" action="/uploadUsers" method="POST" enctype="multipart/form-data">
 									<div class="form-group row">
-										<p class="card-subtitle">Upload the sorted csv file</p>
-										<table class="table">
-											<thead class="thead-default">
-												<th>Reg. No</th>
-												<th>Full Name</th>
-												<th>CGPA</th>
-											</thead>
-										</table>
-										</div>
-									<div class="form-group row">
-										<div class="col-10 text-right">
+										<div class="col-8 text-right">
 											<label class="col-form-label">Enter Number of Groups :</label>
 										</div>
-										<div class="col-2">
+										<div class="col-4">
 											<input class="form-control" type="number" name="num_of_groups" required>
 										</div>
 									</div>
-									<div class="form-group row">
+									<div class="form-group row pt-3">
 										<div class="col-6">
 											<label class="btn btn-outline-dark">
-												Select <input type="file" accept=".csv" name="upload_file" hidden required>
+												Select File <input id="file-upload" type="file" accept=".csv" name="upload_file" hidden required>
 											</label>
 											<!-- TODO show filename here using JS -->
 										</div>
@@ -400,8 +400,8 @@
 											<button type="submit" class="btn btn-outline-dark">Upload</button>
 										</div>
 									</div>
-								</div>
-							</form>
+								</form>
+							</div>
 						</div>
 					</div>
 				</div>

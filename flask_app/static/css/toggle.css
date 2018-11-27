@@ -21,7 +21,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(255, 0, 0, 0.883);
+    background-color: #DB4437;
     -webkit-transition: .2s;
     transition: .2s;
 }
@@ -40,7 +40,7 @@
 }
 
 input:checked+.slider {
-    background-color: rgba(33, 243, 51, 0.856);
+    background-color: #0F9D58;
 }
 
 input:hover+.slider {
