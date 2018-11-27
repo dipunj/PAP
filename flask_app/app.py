@@ -153,14 +153,17 @@ def home():
 
                 # normal member
                 if usrObj.myslot != 1:
-                    myrequests = User.query.filter_by(username=usrObj.getRequests())
+                    try:
+                        myrequests = User.query.filter_by(username=usrObj.getRequests()).all()
+                    except:
+                        myrequests = None
                     return render_template("groupMember.html",
                                                 name=usrObj.name,
                                                 requests=myrequests,
                                                 DB_deadline=deadline)
                 # group leader
                 else:
-                    if usrObj.isGroupFinal == False:
+                    if usrObj.isGroupFinal != "final":
                         return render_template("group.html",
                                                 usrObj=usrObj,
                                                 my_group_size=usrObj.group_size,

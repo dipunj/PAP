@@ -59,7 +59,7 @@ class User(db.Model):
         self.name              = name
         self.cpi               = cpi
         self.myslot            = slot
-        self.all_member_string = "1,"+username+","+name+","+str(cpi)
+        self.all_member_string = str(slot)+","+username+","+name+","+str(cpi)
         pass
 
 
