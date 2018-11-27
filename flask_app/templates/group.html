@@ -228,27 +228,29 @@
 
         <div id="all_students" class="container mt-5 tab-pane fade">
             <div class="row justify-content-center">
+                <div class="col-12">
                 <div class="card border-info">
-                <h4 class="card-header bg-info text-white">Student List</h4>
-                <div class="card-body p-0">
+                    <h4 class="card-header bg-info text-white">Student List</h4>
+                    <div class="card-body p-0">
                     <table class="table table-bordered m-0">
-                        <thead class="thead-default">
+                        <thead class="thead-dark">
                             <tr>
                                 <th scope="col" width="10%">#</th>
                                 <th scope="col" width="10%">Slot</th>
-                                <th scope="col" width="40%">Reg. No.</th>
-                                <th scope="col" width="40%">Name</th>
+                                <th scope="col" width="20%">Reg. No.</th>
+                                <th scope="col" width="60%">Name</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for usrObj in all_students %}
                             {% if usrObj.isGroupFinal == "final" %}
-                            <tr class="bg-danger">
+                                {% set clas_name = "bg-danger" %}
                             {% elif usrObj.isGroupFinal == "req_sent" %}
-                            <tr class="bg-warning">
+                                {% set clas_name = "bg-warning" %}
                             {% else %}
-                            <tr class="bg-success"></tr>
+                                {% set clas_name = "bg-success" %}
                             {% endif %}
+                            <tr class="{{clas_name}}">
                                 <td> {{loop.index}}</td>
                                 <td> {{usrObj.myslot}} </td>
                                 <td> {{usrObj.username}} </td>
@@ -262,6 +264,8 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
