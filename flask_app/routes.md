@@ -56,7 +56,7 @@
 <!-- 3. improve all students page -->
 <!-- 4. add all students page to admin page -->
 <!-- 5. Reorganise divs on manage users(rename to manage faculty) page -->
-6. after leader sends request to a tentative group, show that group's information(improve this page)
+<!-- 6. after leader sends request to a tentative group, show that group's information(improve this page) -->
 7. add check on delete/add faculty and current project list reset if a student has made a subject preference submission
 8. make the header image less tall
 

@@ -55,13 +55,14 @@
 
     <!-- portal image and name -->
     <header class="jumbotron" style="background-image: url(/static/images/jumbo.jpg); background-size: 100%;">
-		<div class="container p-5">
-			<h1>MNNIT Allahabad</h1>
-			<p class="h4">Portal for Project Allotment</p>
-			<p>Using the concept behind stable marriage problem to assign projects to students, such that the assignment is
-				stable between students and faculty members</p>
-		</div>
-	</header>
+        <div class="container p-5">
+            <h1>MNNIT Allahabad</h1>
+            <p class="h4">Portal for Project Allotment</p>
+            <p>Using the concept behind stable marriage problem to assign projects to students, such that the
+                assignment is
+                stable between students and faculty members</p>
+        </div>
+    </header>
 
 
 
@@ -77,13 +78,13 @@
 
 
     <div class="container">
-            <div class="row justify-content-end mr-3">
-                <h5 class="text-monospace mb-0"> DEADLINE: </h5>
-                <h5 class="text-primary mb-0">{{DB_deadline[0]}}</h5>
-            </div>
-            <div class="row justify-content-end mr-3">
-                <h6 class="text-secondary text-right mt-0 pt-0">{{DB_deadline[1]}}</h5>
-            </div>
+        <div class="row justify-content-end mr-3">
+            <h5 class="text-monospace mb-0"> DEADLINE: </h5>
+            <h5 class="text-primary mb-0">{{DB_deadline[0]}}</h5>
+        </div>
+        <div class="row justify-content-end mr-3">
+            <h6 class="text-secondary text-right mt-0 pt-0">{{DB_deadline[1]}}</h5>
+        </div>
     </div>
 
 
@@ -95,56 +96,62 @@
                 <div class="col-12">
                     <h2>My Group</h2>
                 </div>
+        {% if usrObj.isGroupFinal == "reqsent" %}
                 <div class="col-12">
-                    {% if usrObj.isGroupFinal == "reqsent" %}
                     <p class="card-subtitle">Awaiting confirmation from your members</p>
-                    <p class="card-subtitle text-danger">Please note that all members must accept your request for the group formation to be final. If any member rejects your request. You will need to refill the group preferences</p>
+                    <p class="card-subtitle text-danger">Please note that all members must accept your request for the
+                        group formation to be final. If any member rejects your request. You will need to refill the
+                        group preferences</p>
                 </div>
+        {% endif %}
             </div>
-            
+
+        {% if usrObj.isGroupFinal == "reqsent" %}
             <div class="row">
                 <div class="card-deck col-12">
-                        <div class="card border-warning">
-                                <div class="card-header bg-warning text-white">
-                                    <h4>My Group Preferences</h4>
-                                </div>
-                                <div class="card-body p-0">
-                                    <table class="table table-bordered m-0 table-responsive">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th scope="col" width="10%">#</th>
-                                                <th scope="col" width="20%">Reg. No.</th>
-                                                <th scope="col" width="40%">Name</th>
-                                                <th scope="col" width="30%">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for member in prospective_members %}
-
-                                            {% if member.isGroupFinal == "reqsent" %}
-                                                {% set clas_name = "table-danger" %}
-                                                {% set mem_status = "Waiting" %}
-                                            {% else %}
-                                                {% set clas_name = "table-success" %}
-                                                {% set mem_status = "accepted" %}
-                                            {% endif %}
-
-                                            <tr class="{{clas_name}} ">
-                                                <td> {{member.myslot}} </td>
-                                                <td> {{member.username}} </td>
-                                                <td> {{member.name}} </td>
-                                                <td> {{mem_status}} </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                    <div class="card border-warning">
+                        <div class="card-header bg-warning text-white">
+                            <h4>My Group Preferences</h4>
                         </div>
+                        <div class="card-body p-0">
+                            <table class="table table-bordered m-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col" width="10%">#Slotter</th>
+                                        <th scope="col" width="20%">Reg. No.</th>
+                                        <th scope="col" width="40%">Name</th>
+                                        <th scope="col" width="30%">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {# 1: to not display group leader himself #}
+                                    {% for member in prospective_members[1:] %}
+
+                                    {% if member.isGroupFinal == "reqsent" %}
+                                    {% set clas_name = "table-danger" %}
+                                    {% set mem_status = "Waiting" %}
+                                    {% else %}
+                                    {% set clas_name = "table-success" %}
+                                    {% set mem_status = "accepted" %}
+                                    {% endif %}
+
+                                    <tr class="{{clas_name}} ">
+                                        <td> {{member.myslot}} </td>
+                                        <td> {{member.username}} </td>
+                                        <td> {{member.name}} </td>
+                                        <td> {{mem_status}} </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% elif usrObj.isGroupFinal == "req_notsent" %}
             <div class="row">
-                <form action="/selectMembers" method="POST" onsubmit="return confirm('Do you really want to submit?. The action is irreversible');">
+                <div class="col-12">
+                    <form action="/selectMembers" method="POST" onsubmit="return confirm('Do you really want to submit?. The action is irreversible');">
                         <div class="card-deck">
                             <div class="col-sm-12 col-md-4">
                                 <div class="card bg-dark shadow-lg border-dark" style="cursor: not-allowed;">
@@ -155,7 +162,7 @@
                                                 <label class="col-form-label text-muted">Full Name : </label>
                                             </div>
                                             <div class="col-12">
-                                                <p class="text-right">{{usrObj.name}}</p>
+                                                <p class="text-right text-white">{{usrObj.name}}</p>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -163,7 +170,7 @@
                                                 <label class="col-form-label text-muted">Reg. No : </label>
                                             </div>
                                             <div class="col-12">
-                                                <p class="text-right">{{usrObj.username}}</p>
+                                                <p class="text-right text-white">{{usrObj.username}}</p>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -171,7 +178,7 @@
                                                 <label for="cpi" class="col-form-label text-muted">CGPA* :</label>
                                             </div>
                                             <div class="col-12">
-                                                <p class="text-right">{{usrObj.cpi}}</p>
+                                                <p class="text-right text-white">{{usrObj.cpi}}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -203,11 +210,18 @@
                         <div class="container">
                             <div class="row mb-5 mt-5">
                                 <div class="col-12">
-                                    <button type="submit" class="btn btn-outline-dark btn-lg float-right shadow-lg" id="#finalisebtn">Send To All</button>
+                                    <button type="submit" class="btn btn-outline-dark btn-lg float-right shadow-lg" id="#finalisebtn">
+                                        {% if usrObj.group_size > 1%}
+                                        Send To All
+                                        {% else %}
+                                        Continue
+                                        {% endif %}
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                </form>
+                    </form>
+                </div>
             </div>
             {% endif %}
         </div>
@@ -215,46 +229,44 @@
         <div id="chpasswd" class="container mt-5 tab-pane fade">
             <div class="row justify-content-center">
                 <div class="card border-success">
-                <h4 class="card-header bg-success text-white">Set Password</h4>
-                <div class="card-body">
-                    <div class="container">
-                        <form action="/setPassword" method="POST">
-                            <div class="form-group row">
-                                <div class="col-12 align-self-center">
-                                    <label for="oldPass" class="col-form-label text-secondary">Old Password</label>
-                                    <input type="password" name="oldPass" id="oldPass" class="form-control" required>
+                    <h4 class="card-header bg-success text-white">Set Password</h4>
+                    <div class="card-body">
+                        <div class="container">
+                            <form action="/setPassword" method="POST">
+                                <div class="form-group row">
+                                    <div class="col-12 align-self-center">
+                                        <label for="oldPass" class="col-form-label text-secondary">Old Password</label>
+                                        <input type="password" name="oldPass" id="oldPass" class="form-control"
+                                            required>
+                                    </div>
+                                    <div class="col-12 align-self-center">
+                                        <label for="newPass" class="col-form-label text-secondary">New Password</label>
+                                        <input type="password" name="newPass" id="newPass" class="form-control"
+                                            required>
+                                    </div>
                                 </div>
-                                <div class="col-12 align-self-center">
-                                    <label for="newPass" class="col-form-label text-secondary">New Password</label>
-                                    <input type="password" name="newPass" id="newPass" class="form-control" required>
+                                <div class="form-group row">
+                                    <div class="col-12 align-self-center">
+                                        <label for="confNewPass" class="col-form-label text-secondary">Confirm Password</label>
+                                        <input type="password" name="confNewPass" id="confNewPass" class="form-control"
+                                            required>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-12 align-self-center">
-                                    <label for="confNewPass" class="col-form-label text-secondary">Confirm Password</label>
-                                    <input type="password" name="confNewPass" id="confNewPass" class="form-control" required>
+                                <div class="form-group row align-content-end">
+                                    <div class="col-12">
+                                        <span id='passMatch'></span>
+                                        <input type="hidden" name="wasAt" value="controls">
+                                        <button type="submit" class="btn btn-outline-success btn-block">Change</button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row align-content-end">
-                                <div class="col-12">
-                                    <span id='passMatch'></span>
-                                    <input type="hidden" name="wasAt" value="controls">
-                                    <button type="submit" class="btn btn-outline-success btn-block">Change</button>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
         </div>
 
         <div id="all_students" class="container mt-5 tab-pane fade">
-            <div class="container">
-                <div class="row">
-                    
-                </div>
-            </div>
             <div class="card-deck justify-content-center">
                 {% for slot_num in range(2,usrObj.group_size+1)%}
                 <div class="col-12 col-md-6">
@@ -273,15 +285,15 @@
                                     </thead>
                                     <tbody>
                                         {% for usrObj in all_students %}
-                                        
+
                                         {% if usrObj.isGroupFinal == "final" %}
-                                            {% set clas_name = "table-danger" %}
+                                        {% set clas_name = "table-danger" %}
                                         {% elif usrObj.isGroupFinal == "reqsent" %}
-                                            {% set clas_name = "table-warning" %}
+                                        {% set clas_name = "table-warning" %}
                                         {% else %}
-                                            {% set clas_name = "table-success" %}
+                                        {% set clas_name = "table-success" %}
                                         {% endif %}
-                                        
+
                                         {% if usrObj.myslot == slot_num %}
                                         <tr class="{{clas_name}}">
                                             <td> {{loop.index}}</td>
@@ -308,18 +320,18 @@
     </div>
 
     <footer class="footer bg-light">
-            <div class="container">
-                <div class="row justify-content-center pt-3 pl-3 pr-3 mt-5">
-                    <div class="col-12 text-center">
-                      <p class="text-muted">Designed and Developed By Dipunj Gupta under Dr. Suneeta Agarwal's guidance</p>
-                    </div>
-                </div>
-                <div class="row justify-content-center mt-1">             
-                    <div class="col-auto">
-                        <p class="text-muted">© Copyright 2018 MNNIT Allahabad</p>
-                    </div>
+        <div class="container">
+            <div class="row justify-content-center pt-3 pl-3 pr-3 mt-5">
+                <div class="col-12 text-center">
+                    <p class="text-muted">Designed and Developed By Dipunj Gupta under Dr. Suneeta Agarwal's guidance</p>
                 </div>
             </div>
+            <div class="row justify-content-center mt-1">
+                <div class="col-auto">
+                    <p class="text-muted">© Copyright 2018 MNNIT Allahabad</p>
+                </div>
+            </div>
+        </div>
     </footer>
 
 </body>

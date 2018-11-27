@@ -25,8 +25,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# destroyDB(app)
-# db = initializeDB(db)
+destroyDB(app)
+db = initializeDB(db)
 
 
 
@@ -184,10 +184,24 @@ def home():
 
                         my_pending_members = []
                         if usrObj.isGroupFinal == "reqsent":
-                            reg_tentative_members = usrObj.getRemainingList() + [ member[1] for member in usrObj.getMembers() ]
+                            current_members = usrObj.getRemainingList()
+                            pending_members = [ member[1] for member in usrObj.getMembers() ]
+                            
+                            if current_members == [''] and pending_members == [usrObj.username]:
+                                reg_tentative_members = []
+                            else:
+                                reg_tentative_members = current_members + pending_members
+                                
                             for reg in reg_tentative_members:
                                 my_pending_members.append(User.query.get(reg))
 
+                            # implies total number of students == number of groups
+                            if my_pending_members == []:
+                                usrObj.isGroupFinal = "final"
+                                usrObj.isPrefFinal = False
+                                return home()
+
+                            
                             my_pending_members.sort(key=lambda x: x.myslot)
 
                         return render_template("group.html",
@@ -205,10 +219,13 @@ def home():
                     else:
                         myproj_pref = []
 
-                        for num,this_prj in usrObj.getPrefList().items():
-                            mentor = this_prj.split("__")[0]
-                            prj = this_prj.split("__")[1]
-                            myproj_pref.append((num,Teacher.query.get(mentor).name,prj))
+                        try:
+                            for num,this_prj in usrObj.getPrefList().items():
+                                mentor = this_prj.split("__")[0]
+                                prj = this_prj.split("__")[1]
+                                myproj_pref.append((num,Teacher.query.get(mentor).name,prj))
+                        except:
+                            pass
 
                         return render_template("studentresult.html",
                                                 name=usrObj.name,
@@ -298,17 +315,16 @@ def uploadUsers():
     try:
         os.remove(student_file)
     except:
-        f.save(student_file)
+        pass
 
 
+    f.save(student_file)
     reader = csv.reader(open(student_file), delimiter=",")
     data = sorted(reader, key=operator.itemgetter(2), reverse=True)
-
-    # with open(student_file) as f:
-        # data = [tuple(line) for line in csv.reader(f)]
-
     num_students = len(data)
     
+
+
     # num of groups will be same as number of first slotters
     extra_students = num_students%num_groups
 
@@ -772,6 +788,10 @@ def confirmIt():
         project_list = {"" : "No Projects Added Yet"}
 
     pref_order = request.form['order'].split(",")
+    
+    if pref_order == ['r_']:
+        return home()
+
     pref_order = [i.split("_")[1] for i in pref_order]    
     
     preview = []

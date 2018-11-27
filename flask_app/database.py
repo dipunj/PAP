@@ -24,8 +24,8 @@ class User(db.Model):
     myslot = db.Column(db.Integer,nullable=False)
 
     # set to  after user's group leader/members is/are final
-    # 2. req_notsent -> member : has not made a decision on any possible request, leader : has not sent any request
-    # 1. reqsent     -> member : has accepted a request, but group is not yet finalised, leader : has sent request, but group not final, because one or more of the member is yet to accept request
+    # 1. req_notsent -> member : has not made a decision on any possible request, leader : has not sent any request
+    # 2. reqsent     -> member : has accepted a request, but group is not yet finalised, leader : has sent request, but group not final, because one or more of the member is yet to accept request
     # 3. final       -> member,leader : groups are finalised
     isGroupFinal = db.Column(db.String,default="req_notsent")
 
