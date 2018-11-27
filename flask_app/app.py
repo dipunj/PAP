@@ -25,8 +25,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-destroyDB(app)
-db = initializeDB(db)
+# destroyDB(app)
+# db = initializeDB(db)
 
 
 
@@ -94,12 +94,15 @@ def home():
             return render_template('login.html')
         # admin
         if usrObj.username == "admin":
-            users = User.query.order_by(User.username).filter((User.username !="admin") & (User.myslot == 1)).all()
+            first_slotters = User.query.order_by(User.cpi.desc()).filter((User.username !="admin") & (User.myslot == 1)).all()
+            users = User.query.order_by(User.cpi.desc()).filter(User.username !="admin").all()
             teachers = Teacher.query.all()
 
             return render_template("admin.html",
                                     DB_group_size       = usrObj.group_size,
                                     DB_user_list        = users,
+                                    num_of_slots        = portal_conf.max_group_size,
+                                    DB_leader_list      = first_slotters,
                                     DB_teacher_list     = teachers,
                                     DB_current_projects = reference_prj_dict,
                                     curr_deadline       = deadline,
@@ -175,7 +178,6 @@ def home():
                     if usrObj.isGroupFinal != "final":
                         return render_template("group.html",
                                                 usrObj=usrObj,
-                                                my_group_size=usrObj.group_size,
                                                 all_students=non_group_leaders,
                                                 DB_deadline=deadline)
 
@@ -295,6 +297,7 @@ def uploadUsers():
     extra_students = num_students%num_groups
 
     group_size = num_students//num_groups
+    portalConfig.query.get(1).max_group_size = group_size+(extra_students>0)
 
     # TODO : Put a check here if num_Groups > num_students
 
@@ -324,7 +327,7 @@ def uploadUsers():
         first_slotters = random.sample(User.query.filter_by(myslot=1).all(), extra_students)
 
         # top first slotters
-        first_slotters = User.query.order_by(User.cpi).filter_by(myslot=1).all()[:extra_students]
+        first_slotters = User.query.order_by(User.cpi.desc()).filter_by(myslot=1).all()[:extra_students]
         for leader in first_slotters:
             leader.group_size = group_size+1
     

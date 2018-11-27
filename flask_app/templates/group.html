@@ -39,8 +39,8 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
                 <ul class="nav nav-pills row">
                     <li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#chpasswd">Change Password</a></li>
-                    <li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#all_students">Members</a></li>
-                    <li class="nav-item mr-3"><a class="nav-link active" data-toggle="pill" href="#groupMem">Group Members</a></li>
+                    <li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#all_students">All Members</a></li>
+                    <li class="nav-item mr-3"><a class="nav-link active" data-toggle="pill" href="#groupMem">My Group</a></li>
                     <li class="nav-item mr-3"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">Preference</a></li>
                     <li class="nav-item mr-3"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">Result</a></li>
                 </ul>
@@ -94,7 +94,7 @@
             <div class="row">
                 <h2>Your Group</h2>
                 <div class="col-12">
-                    {% if usrObj.isGroupFinal == "req_sent" %}
+                    {% if usrObj.isGroupFinal == "reqsent" %}
                     <p>Awaiting confirmation from your members</p>
                     <div class="card-deck col-12">
                         <div class="card border-danger">
@@ -157,7 +157,7 @@
                                     </div>
                                 </div>
                             </div>
-                            {% for i in range(my_group_size-1) %}
+                            {% for i in range(usrObj.group_size-1) %}
                             <div class="col-sm-12 col-md-4">
                                 <div class="card shadow-lg border-dark">
                                     <div class="card-body">
@@ -227,46 +227,58 @@
         </div>
 
         <div id="all_students" class="container mt-5 tab-pane fade">
-            <div class="row justify-content-center">
-                <div class="col-12">
-                <div class="card border-info">
-                    <h4 class="card-header bg-info text-white">Student List</h4>
-                    <div class="card-body p-0">
-                    <table class="table table-bordered m-0">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col" width="10%">#</th>
-                                <th scope="col" width="10%">Slot</th>
-                                <th scope="col" width="20%">Reg. No.</th>
-                                <th scope="col" width="60%">Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for usrObj in all_students %}
-                            {% if usrObj.isGroupFinal == "final" %}
-                                {% set clas_name = "bg-danger" %}
-                            {% elif usrObj.isGroupFinal == "reqsent" %}
-                                {% set clas_name = "bg-warning" %}
-                            {% else %}
-                                {% set clas_name = "bg-success" %}
-                            {% endif %}
-                            <tr class="{{clas_name}}">
-                                <td> {{loop.index}}</td>
-                                <td> {{usrObj.myslot}} </td>
-                                <td> {{usrObj.username}} </td>
-                                <td>
-                                    {{usrObj.name}} 
-                                    {% if usrObj.isGroupFinal != "req_notsent" %}
-                                        (leader reg.no : {{ usrObj.leader }})
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <div class="container">
+                <div class="row">
+                    
+                </div>
+            </div>
+            <div class="card-deck justify-content-center">
+                {% for slot_num in range(2,usrObj.group_size+1)%}
+                <div class="col-12 col-md-4 col-lg-4">
+                    <div class="card mb-4 shadow-lg border-dark">
+                        <div class="card-body p-0">
+                            <h3 class="card-title m-3 text-right">Slotter #{{slot_num}}</h3>
+                            <div class="panel panel-default" style="border-top: 1px solid black">
+                                <table class="table table-bordered m-0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th scope="col" width="10%">#</th>
+                                            <th scope="col" width="20%">Reg. No.</th>
+                                            <th scope="col" width="30%">Name</th>
+                                            <th scope="col" width="30%">Leader</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for usrObj in all_students %}
+                                        
+                                        {% if usrObj.isGroupFinal == "final" %}
+                                            {% set clas_name = "table-danger" %}
+                                        {% elif usrObj.isGroupFinal == "reqsent" %}
+                                            {% set clas_name = "table-warning" %}
+                                        {% else %}
+                                            {% set clas_name = "table-success" %}
+                                        {% endif %}
+                                        
+                                        {% if usrObj.myslot == slot_num %}
+                                        <tr class="{{clas_name}}">
+                                            <td> {{loop.index}}</td>
+                                            <td> {{usrObj.username}} </td>
+                                            <td>{{usrObj.name}}</td>
+                                            <td>
+                                                {% if usrObj.isGroupFinal != "req_notsent" %}
+                                                {{ User.query.get(usrObj.leader)(usrObj.leader) }}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
 

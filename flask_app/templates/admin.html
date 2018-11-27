@@ -39,7 +39,7 @@
 			<!-- navbar buttons -->
 			<div class="collapse navbar-collapse justify-content-end" id="navbarContent">
 				<ul class="nav nav-pills row">
-					<!-- <li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#home">Home</a></li> -->
+						<li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#all_students">All Members</a></li>
 					{% if WAS_AT == "controls" %}
 					<li class="nav-item mr-5"><a class="nav-link" data-toggle="pill" href="#manageUsers">Manage Users</a></li>
 					<li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#portControls">Controls</a></li>
@@ -121,6 +121,58 @@
 				</div>
 			</div>
 		</div> -->
+
+		<div id="all_students" class="container mt-5 tab-pane fade">
+			<div class="card-deck justify-content-center">
+				{% for slot_num in range(1,num_of_slots+1)%}
+				<div class="col-12 col-md-4 col-lg-4">
+						<div class="card mb-4 shadow-lg border-dark">
+							<div class="card-body p-0">
+								<h3 class="card-title m-3 text-right">Slotter #{{slot_num}}</h3>
+								<div class="panel panel-default" style="border-top: 1px solid black">
+									<table class="table table-bordered m-0">
+										<thead class="thead-light">
+											<tr>
+												<th scope="col" width="10%">#</th>
+												<th scope="col" width="20%">Reg. No.</th>
+												<th scope="col" width="30%">Name</th>
+												<th scope="col" width="30%">Leader</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for usrObj in DB_user_list %}
+											
+											{% if usrObj.isGroupFinal == "final" %}
+												{% set clas_name = "table-danger" %}
+											{% elif usrObj.isGroupFinal == "reqsent" %}
+												{% set clas_name = "table-warning" %}
+											{% else %}
+												{% set clas_name = "table-success" %}
+											{% endif %}
+											
+											{% if usrObj.myslot == slot_num %}
+											<tr class="{{clas_name}}">
+												<td> {{loop.index}}</td>
+												<td> {{usrObj.username}} </td>
+												<td>{{usrObj.name}}</td>
+												<td>
+													{% if usrObj.isGroupFinal != "req_notsent" %}
+													{{ User.query.get(usrObj.leader)(usrObj.leader) }}
+													{% endif %}
+												</td>
+											</tr>
+											{% endif %}
+											{% endfor %}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	
 
 		<!-- manage users page -->
 		<div id="manageUsers" class="container tab-pane fade">
@@ -228,7 +280,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											{% for user in DB_user_list %}
+											{% for user in DB_leader_list %}
 											{% if user.isGroupFinal == true and user.isPrefFinal == true%}
 											<tr class="bg-success">
 												{% else %}
@@ -660,7 +712,7 @@
 									<th>Mentor</th>
 								</thead>
 								<tbody>
-									{% for usr in DB_user_list %}
+									{% for usr in DB_leader_list %}
 									<tr>
 										<td>{{loop.index}}</td>
 										<td>{{usr.username}}</td>

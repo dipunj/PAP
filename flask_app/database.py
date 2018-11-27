@@ -177,6 +177,7 @@ class portalConfig(db.Model):
     # 20154061$#@!20154015$#@!......
     reference_student_list = db.Column(db.String,default="")
     resultDeclared = db.Column(db.Boolean,default=False,nullable=False)
+    max_group_size = db.Column(db.Integer,default=0)
 
     def __init__(self,mode):
         self.mode = mode

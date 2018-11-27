@@ -37,7 +37,9 @@
             <!-- navbar buttons -->
             <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
                 <ul class="nav nav-pills row">
-                    <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">Group Members</a></li>
+                    <li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#chpasswd">Change Password</a></li>
+                    <li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#all_students">All Members</a></li>
+                    <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">My Group</a></li>
                     <li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#pref">Preference</a></li>
                     <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">Result</a></li>
                 </ul>
@@ -86,6 +88,43 @@
 
     <div class="tab-content">
 
+        <div id="chpasswd" class="container mt-5 tab-pane fade">
+                    <div class="row justify-content-center">
+                        <div class="card border-success">
+                        <h4 class="card-header bg-success text-white">Set Password</h4>
+                        <div class="card-body">
+                            <div class="container">
+                                <form action="/setPassword" method="POST">
+                                    <div class="form-group row">
+                                        <div class="col-12 align-self-center">
+                                            <label for="oldPass" class="col-form-label text-secondary">Old Password</label>
+                                            <input type="password" name="oldPass" id="oldPass" class="form-control" required>
+                                        </div>
+                                        <div class="col-12 align-self-center">
+                                            <label for="newPass" class="col-form-label text-secondary">New Password</label>
+                                            <input type="password" name="newPass" id="newPass" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-12 align-self-center">
+                                            <label for="confNewPass" class="col-form-label text-secondary">Confirm Password</label>
+                                            <input type="password" name="confNewPass" id="confNewPass" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-content-end">
+                                        <div class="col-12">
+                                            <span id='passMatch'></span>
+                                            <input type="hidden" name="wasAt" value="controls">
+                                            <button type="submit" class="btn btn-outline-success btn-block">Change</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+        </div>
+            
         <div id="pref" class="container mt-5 tab-pane active">
             <div class="row justify-content-center">
                 <div class="col-6 text-center">
@@ -135,49 +174,51 @@
         </div>
 
         <div id="all_students" class="container mt-5 tab-pane fade">
-                <div class="row justify-content-center">
-                    <div class="col-12">
-                    <div class="card border-info">
-                        <h4 class="card-header bg-info text-white">Student List</h4>
-                        <div class="card-body p-0">
-                        <table class="table table-bordered m-0">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th scope="col" width="10%">#</th>
-                                    <th scope="col" width="10%">Slot</th>
-                                    <th scope="col" width="20%">Reg. No.</th>
-                                    <th scope="col" width="60%">Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for usrObj in all_students %}
-                                {% if usrObj.isGroupFinal == "final" %}
-                                    {% set clas_name = "bg-danger" %}
-                                {% elif usrObj.isGroupFinal == "reqsent" %}
-                                    {% set clas_name = "bg-warning" %}
-                                {% else %}
-                                    {% set clas_name = "bg-success" %}
-                                {% endif %}
-                                <tr class="{{clas_name}}">
-                                    <td> {{loop.index}}</td>
-                                    <td> {{usrObj.myslot}} </td>
-                                    <td> {{usrObj.username}} </td>
-                                    <td>
-                                        {{usrObj.name}} 
-                                        {% if usrObj.isGroupFinal != "req_notsent" %}
-                                            (leader reg.no : {{ usrObj.leader }})
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        </div>
+                <div class="card-deck">
+                    {% for slot_num in range(2,usrObj.group_size+1)%}
+                    <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm border-info">
+                                <div class="card-body p-0">
+                                    <h3 class="card-title">Slotter #{{i}}</h4>
+                                    <table class="table table-bordered m-0">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th scope="col" width="10%">#</th>
+                                                <th scope="col" width="20%">Reg. No.</th>
+                                                <th scope="col" width="30%">Name</th>
+                                                <th scope="col" width="30%">Leader</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for usrObj in all_students %}
+                                            {% if usrObj.isGroupFinal == "final" %}
+                                            {% set clas_name = "bg-danger" %}
+                                            {% elif usrObj.isGroupFinal == "reqsent" %}
+                                            {% set clas_name = "bg-warning" %}
+                                            {% else %}
+                                            {% set clas_name = "bg-success" %}
+                                            {% endif %}
+                                            {% if usrObj.myslot == slot_num %}
+                                            <tr class="{{clas_name}}">
+                                                <td> {{loop.index}}</td>
+                                                <td> {{usrObj.username}} </td>
+                                                <td>{{usrObj.name}}</td>
+                                                <td>
+                                                    {% if usrObj.isGroupFinal != "req_notsent" %}
+                                                    {{ User.query.get(usrObj.leader)(usrObj.leader) }}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                     </div>
-                    </div>
+                    {% endfor %}
                 </div>
         </div>
-
         
     </div>
 
