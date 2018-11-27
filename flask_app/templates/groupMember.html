@@ -32,15 +32,17 @@
             </button>
 
             <a href="#" class="navbar-brand __title mr-auto">
-                <strong>Welcome</strong>, {{ name }}
+                <strong>Welcome</strong>, {{ usrObj.name }}
             </a>
 
             <!-- navbar buttons -->
             <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
                 <ul class="nav nav-pills row">
                     <li class="nav-item mr-5"><a class="nav-link" data-toggle="pill" href="#chpasswd">Change Password</a></li>
+                    {% if usrObj.myslot == 1%}
                     <li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#all_students">Members</a></li>
-                    <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">Preference</a></li>
+                    {% endif %}
+                    <li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#groupMem">Leader Requests</a></li>
                     <li class="nav-item mr-5"><a class="nav-link disabled" data-toggle="pill" href="#" style="cursor: not-allowed;">Result</a></li>
                 </ul>
             </div>
@@ -91,37 +93,54 @@
 
         <div id="groupMem" class="container mt-5 tab-pane active">
             <div class="row">
-                <h2>Select Your Group Leader</h2>
                 <div class="col-12">
+                    <h2>Group Leader Requests</h2>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-6 align-self-center">
                     <form action="/acceptLeader" method="POST" onsubmit="confirm('This action is irreversible, please make sure that you understand this.')">
-                        <div class="col-sm-12 col-md-4">
-                            <div class="card shadow-lg border-dark">
+                        <div class="card shadow-lg border-dark">
                                 <div class="card-header">
                                     <h2>My Requests</h2>
                                 </div>
                                 {% if requests is not none %}
                                 <div class="card-body">
-                                    <h4 class="card-title">Select Your Group Leader</h4>
-                                    <div class="form-group row">
-                                        {% set all_leaders = "" %}
-                                        {% for usrObj in requests %}
-                                        <input class="form-control" id="{{usrObj.username}}_opt" type="radio" name="myleader" value="{{usrObj.username}}" required>
-                                        <label for="{{usrObj.username}}_opt">{{usrObj.name}} ({{usrObj.username}})</label>
-                                        {% set all_leaders = all_leaders +","+usrObj.username %}
-                                        {% endfor %}
-                                        <input type="hidden" value="{{all_leaders}}" name="all_leaders">
-                                        <input class="form-control" type="radio" name="myleader" value="Reject All" required>
+                                    <h4 class="card-title">Select Your Leader</h4>
+                                    <div class="container">
+                                    {% set all_leaders = "" %}
+                                    {% for usrObj in requests %}
+                                        <div class="form-check">
+                                            <label for="{{usrObj.username}}_opt">
+                                                <input class="form-check-input" id="{{usrObj.username}}_opt" type="radio" name="myleader" value="{{usrObj.username}}" required>
+                                                {{usrObj.name}} ({{usrObj.username}})
+                                            </label>
+                                        </div>
+                                    {% set all_leaders = all_leaders +","+usrObj.username %}
+                                    {% endfor %}
+                                        <div class="form-check">
+                                            <input type="hidden" value="{{all_leaders}}" name="all_leaders">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="radio" name="myleader" value="Reject All" required>
+                                                    Reject All
+                                            </label>
+                                        </div>
+                                        <div class="form-group row justify-content-end">
+                                            <div class="col text-right">
+                                                <button type="submit" class="btn btn-outline-dark">Submit</button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <button type="submit">Lock Leader</button>
-                                    </div>
+                                </div>
+                                {% elif usrObj.isGroupFinal == "reqsent" %}
+                                <div class="card-footer">
+                                    <p class="text-success">You have started group formation with your prospective leader : {{usrObj.leader}}</p>
                                 </div>
                                 {% else %}
                                 <div class="card-footer">
                                     <p class="text-danger">No Requests Recieved</p>
                                 </div>
-                                {% endif %}
-                            </div>
+                                {% endif %}    
                         </div>
                     </form>
                 </div>
@@ -164,50 +183,6 @@
                 </div>
             </div>
         </div>
-
-        <div id="all_students" class="container mt-5 tab-pane fade">
-                <div class="row justify-content-center">
-                    <div class="col-12">
-                    <div class="card border-info">
-                        <h4 class="card-header bg-info text-white">Student List</h4>
-                        <div class="card-body p-0">
-                        <table class="table table-bordered m-0">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th scope="col" width="10%">#</th>
-                                    <th scope="col" width="10%">Slot</th>
-                                    <th scope="col" width="20%">Reg. No.</th>
-                                    <th scope="col" width="60%">Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for usrObj in all_students %}
-                                {% if usrObj.isGroupFinal == "final" %}
-                                    {% set clas_name = "bg-danger" %}
-                                {% elif usrObj.isGroupFinal == "reqsent" %}
-                                    {% set clas_name = "bg-warning" %}
-                                {% else %}
-                                    {% set clas_name = "bg-success" %}
-                                {% endif %}
-                                <tr class="{{clas_name}}">
-                                    <td> {{loop.index}}</td>
-                                    <td> {{usrObj.myslot}} </td>
-                                    <td> {{usrObj.username}} </td>
-                                    <td>
-                                        {{usrObj.name}} 
-                                        {% if usrObj.isGroupFinal != "req_notsent" %}
-                                            (leader reg.no : {{ usrObj.leader }})
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            </div>
     </div>
 
     <footer class="footer bg-light">

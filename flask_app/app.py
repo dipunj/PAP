@@ -25,8 +25,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-destroyDB(app)
-db = initializeDB(db)
+# destroyDB(app)
+# db = initializeDB(db)
 
 
 
@@ -168,8 +168,15 @@ def home():
                     except:
                         myrequests = None
 
+                    if usrObj.leader is None:
+                        leader = None
+                    else:
+                        leader = User.query.get(usrObj.leader)
+
                     return render_template("groupMember.html",
-                                                name=usrObj.name,
+                                                DB_result_declared=isDeclared,
+                                                leader=leader,
+                                                usrObj=usrObj,
                                                 requests=myrequests,
                                                 DB_deadline=deadline)
                 # group leader
@@ -180,7 +187,7 @@ def home():
                         slot_wise_members = {}
 
                         for slot in range(2,usrObj.group_size+1):
-                            slot_wise_members[slot] = User.query.filter((User.username != "admin") & (User.myslot == slot) & (User.isGroupFinal != "final")).all()
+                            slot_wise_members[slot] = User.query.order_by(User.username).filter((User.username != "admin") & (User.myslot == slot) & (User.isGroupFinal != "final")).all()
 
                         my_pending_members = []
                         if usrObj.isGroupFinal == "reqsent":

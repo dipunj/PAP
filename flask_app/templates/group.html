@@ -127,12 +127,12 @@
                                     {# 1: to not display group leader himself #}
                                     {% for member in prospective_members[1:] %}
 
-                                    {% if member.isGroupFinal == "reqsent" %}
-                                    {% set clas_name = "table-danger" %}
-                                    {% set mem_status = "Waiting" %}
-                                    {% else %}
-                                    {% set clas_name = "table-success" %}
-                                    {% set mem_status = "accepted" %}
+                                    {% if member.isGroupFinal == "req_notsent" %}
+                                        {% set clas_name = "table-danger" %}
+                                        {% set mem_status = "Waiting" %}
+                                    {% elif member.isGroupFinal == "reqsent" %}
+                                        {% set clas_name = "table-success" %}
+                                        {% set mem_status = "accepted" %}
                                     {% endif %}
 
                                     <tr class="{{clas_name}} ">

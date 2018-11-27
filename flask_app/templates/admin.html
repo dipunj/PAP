@@ -39,7 +39,7 @@
 			<!-- navbar buttons -->
 			<div class="collapse navbar-collapse justify-content-end" id="navbarContent">
 				<ul class="nav nav-pills row">
-						<li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#all_students">All Members</a></li>
+					<li class="nav-item mr-3"><a class="nav-link" data-toggle="pill" href="#all_students">All Members</a></li>
 					{% if WAS_AT == "controls" %}
 					<li class="nav-item mr-5"><a class="nav-link" data-toggle="pill" href="#manageUsers">Manage Users</a></li>
 					<li class="nav-item mr-5"><a class="nav-link active" data-toggle="pill" href="#portControls">Controls</a></li>
@@ -140,9 +140,10 @@
 									<table class="table table-bordered m-0">
 										<thead class="thead-light">
 											<tr>
-												<th scope="col" width="10%">#</th>
+												<th scope="col" width="5%">#</th>
 												<th scope="col" width="20%">Reg. No.</th>
 												<th scope="col" width="30%">Name</th>
+												<th scope="col" width="5%">CPI</th>
 												<th scope="col" width="30%">Leader Reg</th>
 											</tr>
 										</thead>
@@ -162,6 +163,7 @@
 												<td> {{loop.index}}</td>
 												<td> {{usrObj.username}} </td>
 												<td>{{usrObj.name}}</td>
+												<td>{{usrObj.cpi}}</td>
 												<td>
 													{% if usrObj.isGroupFinal != "req_notsent" %}
 													{{ usrObj.leader }}
@@ -462,7 +464,7 @@
 
 					<!-- current first slotters list -->
 					<div class="card border-warning">
-							<h4 class="card-header bg-warning text-white" id="userHeading">Registered Users</h4>
+							<h4 class="card-header bg-warning text-white" id="userHeading">Registered Group Leaders</h4>
 							<div class="card-body p-0">
 								<table class="table m-0">
 									<thead class="thead-light">

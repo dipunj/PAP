@@ -173,7 +173,7 @@ class portalConfig(db.Model):
     mode = db.Column(db.Integer,primary_key=True)
     deadline = db.Column(db.DateTime,default=datetime(9999, 9, 9, 9, 9))
     reference_project_list = db.Column(db.String,default="")
-    switch = db.Column(db.Boolean,default=True)
+    switch = db.Column(db.Boolean,default=False)
     # 20154061$#@!20154015$#@!......
     reference_student_list = db.Column(db.String,default="")
     resultDeclared = db.Column(db.Boolean,default=False,nullable=False)
