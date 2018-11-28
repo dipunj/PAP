@@ -90,6 +90,8 @@ class User(db.Model):
         for student in members:
             printable_details.append(tuple(student.split(',')))
         
+        printable_details.sort(key=lambda x: x[0])
+        
         return printable_details
 
     def addPrefList(self, pref_order_list, academic_project_dict):
