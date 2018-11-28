@@ -191,6 +191,7 @@
 			</div>
 
 			<div class="row">
+				<div class="col-12">
 					{% with messages = get_flashed_messages(with_categories=true) %}
 					{% if messages %}
 					{% for category,message in messages %}
@@ -203,8 +204,10 @@
 					{% endfor %}
 					{% endif %}
 					{% endwith %}
+				</div>
+			</div>
+			<div class="row">
 				<div class="card-deck col-12">
-
 					<!-- create teacher -->
 					<div class="card mb-4 border-success shadow-lg">
 						<div class="card-body">
@@ -561,10 +564,12 @@
 								{% with messages = get_flashed_messages(with_categories=true) %}
 								{% if messages %}
 								{% for category,message in messages %}
+								{% if category == "warning" or category == "danger" or category == "success" %}
 								<div class="alert alert-{{category}} alert-dismissible" role="alert">
 									<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
 									{{message}}
 								</div>
+								{% endif %}
 								{% endfor %}
 								{% endif %}
 								{% endwith %}
