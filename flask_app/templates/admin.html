@@ -191,6 +191,18 @@
 			</div>
 
 			<div class="row">
+					{% with messages = get_flashed_messages(with_categories=true) %}
+					{% if messages %}
+					{% for category,message in messages %}
+				{% if category == "teacher"%}
+					<div class="alert alert-danger alert-dismissible" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+						{{message}}
+					</div>
+					{% endif %}
+					{% endfor %}
+					{% endif %}
+					{% endwith %}
 				<div class="card-deck col-12">
 
 					<!-- create teacher -->
@@ -242,18 +254,6 @@
 					<div class="card mb-4 border-danger shadow-lg">
 						<div class="card-body">
 							<h4 class="my-0 mb-5 font-weight-light">Delete Previous Faculty</h4>
-							{% with messages = get_flashed_messages(with_categories=true) %}
-								{% if messages %}
-								{% for category,message in messages %}
-							{% if category == "teacher"%}
-								<div class="alert alert-danger alert-dismissible" role="alert">
-									<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-									{{message}}
-								</div>
-								{% endif %}
-								{% endfor %}
-								{% endif %}
-								{% endwith %}
 							<form action="/deleteTeacher" method="POST">
 								<div class="container">
 									<div class="form-group row">

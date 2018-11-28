@@ -47,6 +47,8 @@ def home():
         template according to session cookie, usertype (admin or normal)
     """
 
+    global db
+    
     portal_conf = portalConfig.query.get(1)
 
     deadline = portal_conf.getDeadline()
@@ -196,7 +198,9 @@ def home():
 
                     if usrObj.isRejected == True:
                         usrObj.isRejected = False
+                        db.session.commit()
                         flash(usrObj.reject_message)
+
                     try:
                         all_leaders = ",".join([usr.username for usr in myrequests ])
                     except:
@@ -241,6 +245,7 @@ def home():
 
                         if usrObj.isRejected == True:
                             usrObj.isRejected = False
+                            db.session.commit()
                             flash(usrObj.reject_message)
 
                         return render_template("group.html",
@@ -639,7 +644,11 @@ def createTeacher_and_projects():
 
     teacher_name = request.form['teacher_fullname']
     teacher_email = request.form['teacher_username']
-    
+
+    if Teacher.query.filter_by(username=teacher_email) is not None:
+        flash('Teacher already exists!','teacher')
+        return home()
+
     new_teacher = Teacher(teacher_email,request.form['teacher_password'],teacher_name)
     
     projects = request.form['projectList'].strip().split("\r\n")
@@ -899,7 +908,6 @@ def finalSubmit():
 def selectMembers():
 
     global db
-    
     leader = User.query.get(session['username'])
 
     user_grp_size = leader.group_size
