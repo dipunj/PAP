@@ -25,8 +25,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# destroyDB(app)
-# db = initializeDB(db)
+destroyDB(app)
+db = initializeDB(db)
 
 
 
@@ -194,9 +194,17 @@ def home():
                     else:
                         leader=None
 
+                    if usrObj.isRejected == True:
+                        usrObj.isRejected = False
+                        flash(usrObj.reject_message)
+                    try:
+                        all_leaders = ",".join([usr.username for usr in myrequests ])
+                    except:
+                        all_leaders = ""
                     return render_template("groupMember.html",
                                                 usrObj=usrObj,
                                                 leader=leader,
+                                                all_leaders=all_leaders,
                                                 requests=myrequests,
                                                 DB_deadline=deadline)
                 # group leader
@@ -230,6 +238,10 @@ def home():
 
                             
                             my_pending_members.sort(key=lambda x: x.myslot)
+
+                        if usrObj.isRejected == True:
+                            usrObj.isRejected = False
+                            flash(usrObj.reject_message)
 
                         return render_template("group.html",
                                                 usrObj=usrObj,
@@ -344,6 +356,8 @@ def uploadUsers():
     except:
         pass
 
+    User.query.filter(User.username != "admin").delete()
+    db.session.commit()
 
     f.save(student_file)
     reader = csv.reader(open(student_file), delimiter=",")
@@ -359,6 +373,10 @@ def uploadUsers():
     portalConfig.query.get(1).max_group_size = group_size+(extra_students>0)
 
     # TODO : Put a check here if num_Groups > num_students
+
+    if group_size > num_students:
+        flash('Groups cannot be empty! Please reduce number of groups or increase number of students','upload_users')
+        return home()
 
     for slot in range(1,group_size+(extra_students>0)+1):
         this_slot = data[(slot-1)*num_groups:slot*num_groups]
@@ -979,9 +997,11 @@ def acceptLeader():
             other_leaders.remove(myleader_obj.username)
         except:
             pass
-        if other_leaders is None:
-            other_leaders = []
+    
+    if other_leaders is None or other_leaders == ['']:
+        other_leaders = []
 
+    print(other_leaders)
 
     # step 2(if), step 6(else)
     for other_ldr in other_leaders:
@@ -998,7 +1018,8 @@ def acceptLeader():
 
         # step 6.1
         other_ldr_obj.isGroupFinal = "req_notsent"
-
+        other_ldr_obj.reject_message = me.name+" ("+me.username+") Has Rejected Group formation under your leadership. Please reform your group, after discussing with all of your propective members. Your Group is not yet finalised"
+        other_ldr_obj.isRejected = True
         # step 6.2
         # me won't be here since me didn't accept other_ldr request
         acptd_peer_members = [i[1] for i in other_ldr_obj.getMembers()]
@@ -1006,6 +1027,8 @@ def acceptLeader():
             peer_member_obj = User.query.get(mem)
             peer_member_obj.leader = None
             peer_member_obj.isGroupFinal = "req_notsent"
+            peer_member_obj.reject_message = me.name+" ("+me.username+") Has Rejected Group formation under "+other_ldr_obj.name+" ("+other_ldr_obj.username+")' Leadership. Your Group is not yet finalised"
+            peer_member_obj.isRejected = True
         
         # step 6.3
         # me will be present here, so remove me from this list

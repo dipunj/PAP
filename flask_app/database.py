@@ -48,6 +48,10 @@ class User(db.Model):
 
     Mentor = db.Column(db.String)
 
+    isRejected = db.Column(db.Boolean,default=False)
+
+    reject_message = db.Column(db.String,default="")
+
 
 
 

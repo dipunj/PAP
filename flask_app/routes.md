@@ -26,7 +26,7 @@
 ## TO DO
 <!-- 1. result page for admin -->
 <!-- 2. remove set project list option -> remove all users - not required now -->
-1. sort the userlist file using CPI
+<!-- 1. sort the userlist file using CPI -->
 <!-- 3. result page for professor -->
 <!-- 4. break admin page into multiple pages -->
 5. fix navbar for responsive behaviour
@@ -57,7 +57,7 @@
 <!-- 4. add all students page to admin page -->
 <!-- 5. Reorganise divs on manage users(rename to manage faculty) page -->
 <!-- 6. after leader sends request to a tentative group, show that group's information(improve this page) -->
-7. add check on delete/add faculty and current project list reset if a student has made a subject preference submission
+<!-- 7. add check on delete/add faculty and current project list reset if a student has made a subject preference submission -->
 8. make the header image less tall
 
 

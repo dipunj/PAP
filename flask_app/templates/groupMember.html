@@ -145,7 +145,18 @@
                             <div class="card-body">
                                 <h4 class="card-title">Select Your Leader</h4>
                                 <div class="container">
-                                {% set all_leaders = "" %}
+
+                                        {% with messages = get_flashed_messages() %}
+                                        {% if messages %}
+                                        {% for message in messages %}
+                                        <div class="alert alert-danger alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                            {{message}}
+                                        </div>
+                                        {% endfor %}
+                                        {% endif %}
+                                        {% endwith %}
+
                                 {% for usrObj in requests %}
                                     <div class="form-check">
                                         <label for="{{usrObj.username}}_opt">
@@ -153,7 +164,6 @@
                                             {{usrObj.name}} ({{usrObj.username}})
                                         </label>
                                     </div>
-                                {% set all_leaders = all_leaders +","+usrObj.username %}
                                 {% endfor %}
                                     <div class="form-check">
                                         <input type="hidden" value="{{all_leaders}}" name="all_leaders">
