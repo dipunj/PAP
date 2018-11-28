@@ -612,7 +612,13 @@ def createTeacher_and_projects():
     session['wasAt'] = request.form['wasAt']
 
     global db
-    
+
+    submitted_members = User.query.filter((User.username != "admin")&(User.isPrefFinal == True))
+    if len(submitted_members) > 0:
+        flash('Group Leaders have made a preference submission. It is now not possible to delete faculty members. Reset DataBase First','teacher')
+        return home()
+
+
     teacher_name = request.form['teacher_fullname']
     teacher_email = request.form['teacher_username']
     
@@ -661,9 +667,15 @@ def deleteTeacher_and_projects():
     if request.form['teacher_username']:
         teacher_email = request.form['teacher_username']
         this_teacher = Teacher.query.filter_by(username=teacher_email).first()
-        
+
+        submitted_members = User.query.filter((User.username != "admin")&(User.isPrefFinal == True))
+
         if this_teacher is None:
             flash('Teacher does not exist in database','teacher')
+            return home()
+
+        if len(submitted_members) > 0:
+            flash('Group Leaders have made a preference submission. It is now not possible to delete faculty membe. Reset DataBase First','teacher')
             return home()
 
         for prj in this_teacher.getProjectList():
@@ -784,6 +796,12 @@ def resetProjectList():
     session['wasAt'] = request.form['wasAt']
 
     global db
+
+    members = User.query.filter((User.username != "admin") & (User.isPrefFinal == True)).all()
+
+    if len(members) > 0:
+        flash('Group Leaders have made a preference submission. It is not possible to delete projects now. Reset DataBase First','project_pref')
+        return home()
 
     Teacher.query.delete()
     portalConfig.query.get(1).reference_project_list = ""
