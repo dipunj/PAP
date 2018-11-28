@@ -35,7 +35,7 @@ class User(db.Model):
     ##########################################
 
     # after preferences has been submitted
-    isPrefFinal = db.Column(db.Boolean)
+    isPrefFinal = db.Column(db.Boolean,default=False)
 
     # group size including 1st slotter, ensure group size,remaining_reqs is set whenever a new group leader is created
     group_size = db.Column(db.Integer)

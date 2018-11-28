@@ -406,7 +406,7 @@ def uploadUsers():
         # find (extra students) number of first_slotters and alot them these extra_students        
 
         # randomly
-        first_slotters = random.sample(User.query.filter_by(myslot=1).all(), extra_students)
+        # first_slotters = random.sample(User.query.filter_by(myslot=1).all(), extra_students)
 
         # top first slotters
         first_slotters = User.query.order_by(User.cpi.desc()).filter_by(myslot=1).all()[:extra_students]
@@ -426,6 +426,7 @@ def autoCompute():
 
     global db
 
+    random_assgn = False
     student_pref = {}
     teacher_pref = {}
     portal_conf = portalConfig.query.get(1)
@@ -447,10 +448,8 @@ def autoCompute():
         return home()
     
 
-    if not ifAllSubmitted():
-        flash('Not all teachers and users have submitted','danger')
-        return home()
-
+    # only affects those who have not made a preference
+    random_assignment()
 
     # step 1 : generate dict containing student's preference
     for usrObj in all_usrObj:
@@ -490,8 +489,77 @@ def autoCompute():
     portal_conf.resultDeclared = True
     db.session.commit()
 
-    flash('Result compute, check result page','success')
+    if random_assgn == True:
+        flash('Teachers and users who had not submitted thier preferences are being randomly assigning ','danger')
+    else:
+        flash('Result compute, check result page','success')
     return home()
+
+
+
+
+def random_assignment():
+
+    global db
+
+    portal_conf = portalConfig.query.get(1)
+    
+    remaining_leaders = User.query.filter((User.myslot==1) & (User.isGroupFinal != "final")).all()
+
+    # Step 1: Make groups out of remaining students
+    for ldr_obj in remaining_leaders:    
+        # reset this leader
+        ldr_obj.resetMemberList()
+        ldr_obj.resetRemainingList()
+        ldr_obj.isRejected = False
+
+        print("LEADER : ",ldr_obj.username,ldr_obj.group_size)
+        for slot_num in range(2,ldr_obj.group_size+1):
+
+            remaining_slotters = User.query.filter((User.myslot==slot_num) & (User.isGroupFinal != "final")).all()
+            
+            random_mem = random.choice(remaining_slotters)
+            
+            # reset member's group preference
+            random_mem.resetRequestList()
+
+            # add him to leader's Approved group
+            ldr_obj.addMember(random_mem.myslot,random_mem.name,random_mem.cpi,random_mem.username)
+            print(slot_num," : Setting",random_mem.username,"'s leader to:",ldr_obj.username)
+            random_mem.leader = ldr_obj.username
+
+            # set group status to final
+            random_mem.isGroupFinal = "final"
+
+        ldr_obj.isGroupFinal = "final"
+        db.session.commit()
+    
+
+    # Step 2 : project preference randomly
+    careless_leaders = User.query.filter_by(isPrefFinal=False).all()
+    all_projects = portal_conf.getcurrentProjectList()
+
+    for leader in careless_leaders:
+        random_pref_order = list(all_projects.keys())
+        random.shuffle(random_pref_order)
+        leader.addPrefList(random_pref_order,all_projects)
+        leader.isPrefFinal = True
+        db.session.commit()
+
+    # step 3: student preference teachers
+    careless_teachers = Teacher.query.filter_by(isPrefFinal=False).all()
+    all_students = portal_conf.getcurrentStudentList()
+
+    for mentor in careless_teachers:
+        random_pref_order = list(all_students.keys())
+        random.shuffle(random_pref_order)
+        mentor.addPrefList(random_pref_order,all_students)
+        mentor.isPrefFinal = True
+        db.session.commit()
+
+
+
+
 
 
 def ifAllSubmitted():
@@ -537,30 +605,6 @@ def doComputation():
         return '<script>alert("Invalid Submission, Please Try Again")</script>'
 
 
-# @app.route('/createUser', methods=['POST'])
-# def addUserToDB():
-    """Adds the user from the form to database
-    """
-
-    session['wasAt'] = request.form['wasAt']
-
-    global db
-    
-    name = request.form['newUserFullName']
-    cgpa = request.form['newUserCGPA']
-    reg_n = request.form['newUserRegNo']
-    grp_size = request.form['newUserGroupSize']
-
-    leader = User(username=reg_n, password=str(cgpa),name=name,cpi=cgpa,group_size=grp_size)
-
-    db.session.add(leader)
-
-    addTo_StudentRefList(reg_n)
-    db.session.commit()
-
-
-    return home()
-
 def addTo_StudentRefList(user_regno):
     
     global db
@@ -578,51 +622,6 @@ def addTo_StudentRefList(user_regno):
 
     portal_config.setStudentList(rank_list, new_dict)
     db.session.commit()
-
-
-
-# @app.route('/deleteUser', methods=['POST'])
-# def delUserfromDB():
-
-#     session['wasAt'] = request.form['wasAt']
-    
-#     global db
-
-#     if request.form['oldUserRegNo']:
-#         reg_no = request.form['oldUserRegNo']
-#         this_user = User.query.filter_by(username=reg_no).first()
-
-#         if this_user is None or this_user.username == "admin":
-#             flash('User does not exist in database','user')
-#             return home()
-        
-
-#         deleteFrm_StudentRefList(reg_no)
-#         db.session.delete(this_user)
-            
-#         db.session.commit()
-
-#     return home()
-
-# def deleteFrm_StudentRefList(user_regno):
-
-#     global db
-
-#     portal_config = portalConfig.query.get(1)
-
-#     student_dict = portal_config.getcurrentStudentList()
-#     student_dict = list(student_dict.values())
-#     student_dict.remove(user_regno)
-#     new_dict = dict(enumerate(student_dict,start=1))
-#     new_dict = {str(k):str(v) for k,v in new_dict.items()}
-
-#     rank_list = []
-#     for i in range(1,len(new_dict)+1):
-#         rank_list.append(str(i))
-    
-#     portal_config.setStudentList(rank_list,new_dict)
-#     db.session.commit()
-
 
 
 
@@ -645,7 +644,7 @@ def createTeacher_and_projects():
     teacher_name = request.form['teacher_fullname']
     teacher_email = request.form['teacher_username']
 
-    if Teacher.query.filter_by(username=teacher_email) is not None:
+    if Teacher.query.filter_by(username=teacher_email).first() is not None:
         flash('Teacher already exists!','teacher')
         return home()
 
@@ -962,43 +961,11 @@ def acceptLeader():
     else:
         myleader_obj = User.query.get(myleader)
 
-        # step 1 : remove me from leader's Remaining group list
-        # step 2 : accept me to leader's group list
-        # step 3 : set me's leader
-        # step 4 : change me's isGroupFinal status to reqsent
-        # step 5 : if me is the last one to accept in myleader_obj's list ->finalise/lock the group
+        accept_my_leader(myleader_obj,me)
+
         # step 6 : clear up any other requests that me has rejected by accepting myleader_obj's request
         # step 7 : clear me's request list
-        
-
-        # step 1:        
-        myleader_obj.deleteFromRemainingList(me.username)
-
-        # step 2:
-        myleader_obj.addMember(me.myslot,me.name,me.cpi,me.username)
-
-        # step 3:
-        me.leader = myleader_obj.username
-
-        # step 4:
-        me.isGroupFinal = "reqsent"
-
-        # step 5:
-        if myleader_obj.getRemainingList() == ['']:
-            # me is the last final member to accept the request
-            
-            # finalise this group
-            # step 5.1 : set myleader_obj's isGroupFinal to "final"
-            # step 5.2 : for all members in group list, set isGroupFinal to "final"
-
-            # step 5.1:
-            myleader_obj.isGroupFinal = "final"
-            myleader_obj.isPrefFinal = False
-            # step 5.2
-            acptd_peer_members = [i[1] for i in myleader_obj.getMembers()]
-            for mem in acptd_peer_members:
-                User.query.get(mem).isGroupFinal = "final"
-
+    
         # step 6
         other_leaders = me.getRequests()
         try:
@@ -1009,9 +976,21 @@ def acceptLeader():
     if other_leaders is None or other_leaders == ['']:
         other_leaders = []
 
-    print(other_leaders)
 
     # step 2(if), step 6(else)
+    clear_other_leaders(other_leaders, me)
+
+    # step 3(if),step 7(else)
+    me.resetRequestList()
+
+    db.session.commit()
+    return home()
+
+
+def clear_other_leaders(other_leaders,me):
+
+    global db
+
     for other_ldr in other_leaders:
         other_ldr_obj = User.query.get(other_ldr)
 
@@ -1058,11 +1037,42 @@ def acceptLeader():
         db.session.commit()
 
 
-    # step 3(if),step 7(else)
-    me.resetRequestList()
+def accept_my_leader(myleader_obj,me):
 
-    db.session.commit()
-    return home()
+    # step 1 : remove me from leader's Remaining group list 
+    # step 2 : accept me to leader's group list
+    # step 3 : set me's leader
+    # step 4 : change me's isGroupFinal status to reqsent
+    # step 5 : if me is the last one to accept in myleader_obj's list ->finalise/lock the group
+    
+    # step 1:        
+    myleader_obj.deleteFromRemainingList(me.username)
+
+    # step 2:
+    myleader_obj.addMember(me.myslot,me.name,me.cpi,me.username)
+
+    # step 3:
+    me.leader = myleader_obj.username
+
+    # step 4:
+    me.isGroupFinal = "reqsent"
+
+    # step 5:
+    if myleader_obj.getRemainingList() == ['']:
+        # me is the last final member to accept the request
+        
+        # finalise this group
+        # step 5.1 : set myleader_obj's isGroupFinal to "final"
+        # step 5.2 : for all members in group list, set isGroupFinal to "final"
+
+        # step 5.1:
+        myleader_obj.isGroupFinal = "final"
+        myleader_obj.isPrefFinal = False
+        # step 5.2
+        acptd_peer_members = [i[1] for i in myleader_obj.getMembers()]
+        for mem in acptd_peer_members:
+            User.query.get(mem).isGroupFinal = "final"
+
 
 
 
