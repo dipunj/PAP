@@ -613,7 +613,7 @@ def createTeacher_and_projects():
 
     global db
 
-    submitted_members = User.query.filter((User.username != "admin")&(User.isPrefFinal == True))
+    submitted_members = User.query.filter((User.username != "admin")&(User.isPrefFinal == True)).all()
     if len(submitted_members) > 0:
         flash('Group Leaders have made a preference submission. It is now not possible to delete faculty members. Reset DataBase First','teacher')
         return home()
@@ -668,7 +668,7 @@ def deleteTeacher_and_projects():
         teacher_email = request.form['teacher_username']
         this_teacher = Teacher.query.filter_by(username=teacher_email).first()
 
-        submitted_members = User.query.filter((User.username != "admin")&(User.isPrefFinal == True))
+        submitted_members = User.query.filter((User.username != "admin")&(User.isPrefFinal == True)).all()
 
         if this_teacher is None:
             flash('Teacher does not exist in database','teacher')
