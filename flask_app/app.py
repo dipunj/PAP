@@ -392,15 +392,12 @@ def uploadUsers():
             this_user = User(username=str(student[0]),password=str(student[2]),name=str(student[1]),cpi=student[2],slot=slot)
             db.session.add(this_user)
 
-    db.session.commit()
 
     # set group size of each leader
     all_first_slotter = User.query.filter_by(myslot=1)
     for leader in all_first_slotter:
         leader.group_size = group_size
         addTo_StudentRefList(leader.username)
-
-    db.session.commit()
 
     if extra_students != 0:
         # find (extra students) number of first_slotters and alot them these extra_students        
@@ -413,7 +410,7 @@ def uploadUsers():
         for leader in first_slotters:
             leader.group_size = group_size+1
     
-        db.session.commit()
+    db.session.commit()
 
     return home()
 
@@ -505,7 +502,10 @@ def random_assignment():
     portal_conf = portalConfig.query.get(1)
     
     remaining_leaders = User.query.filter((User.myslot==1) & (User.isGroupFinal != "final")).all()
+    remaining_slotters = {}
 
+    for slot_num in range(2,portal_conf.max_group_size+1):
+        remaining_slotters[slot_num] = User.query.filter((User.myslot==slot_num) & (User.isGroupFinal != "final")).all()
     # Step 1: Make groups out of remaining students
     for ldr_obj in remaining_leaders:    
         # reset this leader
@@ -513,26 +513,25 @@ def random_assignment():
         ldr_obj.resetRemainingList()
         ldr_obj.isRejected = False
 
-        print("LEADER : ",ldr_obj.username,ldr_obj.group_size)
-        for slot_num in range(2,ldr_obj.group_size+1):
+        
+        for slot_num in range(ldr_obj.group_size,1,-1):
 
-            remaining_slotters = User.query.filter((User.myslot==slot_num) & (User.isGroupFinal != "final")).all()
+            random.shuffle(remaining_slotters[slot_num])
             
-            random_mem = random.choice(remaining_slotters)
+            random_mem = remaining_slotters[slot_num].pop()
             
             # reset member's group preference
             random_mem.resetRequestList()
 
             # add him to leader's Approved group
             ldr_obj.addMember(random_mem.myslot,random_mem.name,random_mem.cpi,random_mem.username)
-            print(slot_num," : Setting",random_mem.username,"'s leader to:",ldr_obj.username)
+            
             random_mem.leader = ldr_obj.username
 
             # set group status to final
             random_mem.isGroupFinal = "final"
 
         ldr_obj.isGroupFinal = "final"
-        db.session.commit()
     
 
     # Step 2 : project preference randomly
@@ -544,8 +543,7 @@ def random_assignment():
         random.shuffle(random_pref_order)
         leader.addPrefList(random_pref_order,all_projects)
         leader.isPrefFinal = True
-        db.session.commit()
-
+    
     # step 3: student preference teachers
     careless_teachers = Teacher.query.filter_by(isPrefFinal=False).all()
     all_students = portal_conf.getcurrentStudentList()
@@ -555,7 +553,8 @@ def random_assignment():
         random.shuffle(random_pref_order)
         mentor.addPrefList(random_pref_order,all_students)
         mentor.isPrefFinal = True
-        db.session.commit()
+    
+    db.session.commit()
 
 
 
