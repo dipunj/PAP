@@ -115,75 +115,80 @@
                 {% endif %}
                 {% endwith %}
                 <div class="col-12">
-                    <form action="/makeMyGroup" method="POST" onsubmit="return confirm('Do you really want to send request?');">
-                        <div class="card-deck">
+                    
+                    <div class="card-deck">
 
-                            <!-- first slotter's card -->
-                            <div class="col-sm-12 col-md-4">
-                                <div class="card bg-dark shadow-lg border-dark" style="cursor: not-allowed;">
-                                    <div class="card-body">
-                                        <h2 class="card-title text-white">Slotter #1 (You)</h2>
-                                        <div class="form-group">
-                                            <div class="col-12">
-                                                <label class="col-form-label text-muted">Full Name : </label>
-                                            </div>
-                                            <div class="col-12">
-                                                <p class="text-right text-white">{{usrObj.name}}</p>
-                                            </div>
+                        <!-- first slotter's card -->
+                        <div class="col-sm-12 col-md-4">
+                            <div class="card bg-dark shadow-lg border-dark" style="cursor: not-allowed;">
+                                <div class="card-body">
+                                    <h2 class="card-title text-white">Slotter #1 (You)</h2>
+                                    <div class="form-group">
+                                        <div class="col-12">
+                                            <label class="col-form-label text-muted">Full Name : </label>
                                         </div>
-                                        <div class="form-group">
-                                            <div class="col-12">
-                                                <label class="col-form-label text-muted">Reg. No : </label>
-                                            </div>
-                                            <div class="col-12">
-                                                <p class="text-right text-white">{{usrObj.username}}</p>
-                                            </div>
+                                        <div class="col-12">
+                                            <p class="text-right text-white">{{usrObj.name}}</p>
                                         </div>
-                                        <div class="form-group">
-                                            <div class="col-12">
-                                                <label for="cpi" class="col-form-label text-muted">CGPA* :</label>
-                                            </div>
-                                            <div class="col-12">
-                                                <p class="text-right text-white">{{usrObj.cpi}}</p>
-                                            </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-12">
+                                            <label class="col-form-label text-muted">Reg. No : </label>
+                                        </div>
+                                        <div class="col-12">
+                                            <p class="text-right text-white">{{usrObj.username}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-12">
+                                            <label for="cpi" class="col-form-label text-muted">CGPA* :</label>
+                                        </div>
+                                        <div class="col-12">
+                                            <p class="text-right text-white">{{usrObj.cpi}}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                           
-                            {% for slot in range(2,usrObj.group_size+1) %}
-                            <div class="col-sm-12 col-md-4">
-                                {% if slot in confirmed_members.keys() %}
-                                <div class="card shadow-lg border-success">
-                                    <div class="card-body">
-                                        <h2 class="card-title">Slotter #{{slot}}</h2>
-                                        <div class="form-group">
-                                            <div class="col-12">
-                                                <label class="col-form-label text-muted">Full Name : </label>
-                                            </div>
-                                            <div class="col-12">
-                                                <p class="text-right text-white">{{mymembers[slot].name}}</p>
-                                            </div>
+                        </div>
+                        
+                        {% for slot in range(2,usrObj.group_size+1) %}
+                        <div class="col-sm-12 col-md-4">
+
+                            <!-- confirmed students -->
+                            {% if slot in confirmed_members.keys() %}
+                            <div class="card shadow-lg border-success">
+                                <div class="card-body">
+                                    <h2 class="card-title">Slotter #{{slot}}</h2>
+                                    <div class="form-group">
+                                        <div class="col-12">
+                                            <label class="col-form-label text-muted">Full Name : </label>
                                         </div>
-                                        <div class="form-group">
-                                            <div class="col-12">
-                                                <label class="col-form-label text-muted">Reg. No : </label>
-                                            </div>
-                                            <div class="col-12">
-                                                <p class="text-right text-white">{{mymembers[slot].username}}</p>
-                                            </div>
+                                        <div class="col-12">
+                                            <p class="text-right">{{confirmed_members[slot].name}}</p>
                                         </div>
-                                        <div class="form-group">
-                                            <div class="col-12">
-                                                <label for="cpi" class="col-form-label text-muted">CGPA* :</label>
-                                            </div>
-                                            <div class="col-12">
-                                                <p class="text-right text-white">{{mymembers[slot].cpi}}</p>
-                                            </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-12">
+                                            <label class="col-form-label text-muted">Reg. No : </label>
+                                        </div>
+                                        <div class="col-12">
+                                            <p class="text-right">{{confirmed_members[slot].username}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-12">
+                                            <label for="cpi" class="col-form-label text-muted">CGPA* :</label>
+                                        </div>
+                                        <div class="col-12">
+                                            <p class="text-right">{{confirmed_members[slot].cpi}}</p>
                                         </div>
                                     </div>
                                 </div>
-                                {% elif slot in prospective_members.keys() %}
+                            </div>
+
+                            <!-- waiting for request -->
+                            {% elif slot in prospective_members.keys() %}
+                            <form action="/makeMyGroup" method="POST" onsubmit="return confirm('Do you really want to send request?');">
                                 <div class="card shadow-lg border-warning">
                                     <div class="card-body">
                                         <h2 class="card-title">Slotter #{{slot}}</h2>
@@ -213,14 +218,18 @@
                                         </div>
                                         <div class="form-group">
                                             <div class="col-12">
-                                                <input type="hidden" name="mode" value="reject_old">
+                                                <input type="hidden" name="{{slot}}_mode" value="reject_old">
                                                 <input type="hidden" name="slot_num" value="{{slot}}">
                                                 <button type="submit" class="btn btn-warning">Cancel</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                {% else %}
+                            </form>
+
+                            <!--  -->
+                            {% else %}
+                            <form action="/makeMyGroup" method="POST" onsubmit="return confirm('Do you really want to send request?');">
                                 <div class="card shadow-lg border-danger">
                                     <div class="card-body">
                                         <h2 class="card-title">Slotter #{{slot}}</h2>
@@ -245,12 +254,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                {% endif %}
-                            </div>
-                            {% endfor %}
-
+                            </form>
+                            {% endif %}
                         </div>
-                    </form>
+                        {% endfor %}
+
+                    </div>
+                
                 </div>
             </div>
         </div>

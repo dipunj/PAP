@@ -77,8 +77,8 @@ class User(db.Model):
 
     def addMember(self, slot, mem_name,mem_cpi,mem_reg_no): 
         mymembers = self.getMembers()
-        mymembers.update({str(slot):(mem_reg_no,mem_name,mem_cpi)})
-        self.all_member_string += "$#@!".join([k+"__"+",".join(v) for k,v in new_member_list.items()])
+        mymembers.update({str(slot):(str(mem_reg_no),mem_name,str(mem_cpi))})
+        self.all_member_string += "$#@!".join([k+"__"+",".join(v) for k,v in mymembers.items()])
 
     def deleteMember(self,mem_reg_no):
         new_member_list = {k:v for k,v in self.getMembers() if v[0] != mem_reg_no}

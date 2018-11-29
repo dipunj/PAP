@@ -25,8 +25,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# destroyDB(app)
-# db = initializeDB(db)
+destroyDB(app)
+db = initializeDB(db)
 
 
 
@@ -193,7 +193,7 @@ def home():
                                                 usrObj=leader,
                                                 DB_result_declared = isDeclared)
                     
-                    if usrObj.isGroupFinal != "req_notsent":
+                    if usrObj.isGroupFinal == "final":
                         leader = User.query.get(usrObj.leader)
                     else:
                         leader = None
@@ -233,14 +233,14 @@ def home():
                         mymembers = dict()
                         print(confirmed_slotters)
                         for slot,tup in confirmed_slotters.items():
-                            mymembers[slot] = User.query.get(tup[0])
+                            mymembers[int(slot)] = User.query.get(tup[0])
 
                         pending_slotters = usrObj.getRemainingList()
                         maybe_members = dict()
                         print(pending_slotters)
                         for slot,reg in pending_slotters.items():
-                            maybe_members[slot] = User.query.get(reg)
-                            print(maybe_members[slot].getRequests())
+                            maybe_members[int(slot)] = User.query.get(reg)
+                            print(maybe_members[int(slot)].getRequests())
 
                         return render_template("group.html",
                                                 usrObj=usrObj,
@@ -910,18 +910,21 @@ def groupFormation():
     if mode == "send_new":    
         member_reg = request.form[str(slot_num)+'_regno'].split(" - ")[0]
         member = User.query.get(member_reg)
+        member.isGroupFinal = "reqsent"
 
         leader.addToRemainingList(member.myslot,member.username)
         member.addRequest(leader.username)
     elif mode == "reject_old":
         to_delete_mem = leader.getRemainingList()[slot_num]
         member = User.query.get(to_delete_mem)
-
+        
         leader.deleteFromRemainingList(member.username)
         member.deleteRequest(leader.username)
+
+        if member.getRequests() == ['']:
+            member.isGroupFinal = "req_notsent"
     else:
         # safety check for malicious users
-        print("ktttt gaya")
         return home()
 
     db.session.commit()
