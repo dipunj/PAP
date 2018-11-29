@@ -230,17 +230,16 @@ def home():
                             flash(usrObj.reject_message)
                         
                         confirmed_slotters = usrObj.getMembers()
+
                         mymembers = dict()
-                        print(confirmed_slotters)
                         for slot,tup in confirmed_slotters.items():
                             mymembers[int(slot)] = User.query.get(tup[0])
 
                         pending_slotters = usrObj.getRemainingList()
+
                         maybe_members = dict()
-                        print(pending_slotters)
                         for slot,reg in pending_slotters.items():
                             maybe_members[int(slot)] = User.query.get(reg)
-                            print(maybe_members[int(slot)].getRequests())
 
                         return render_template("group.html",
                                                 usrObj=usrObj,
@@ -1031,7 +1030,8 @@ def accept_my_leader(myleader_obj,me):
     me.isGroupFinal = "final"
 
     # step 5:
-    if myleader_obj.getRemainingList() == {''}:
+    print(me.username,me.name,myleader_obj.getRemainingList())
+    if myleader_obj.getRemainingList() == {}:
         # me is the last final member to accept the request
         
         # finalise this group
@@ -1043,12 +1043,12 @@ def accept_my_leader(myleader_obj,me):
         myleader_obj.isPrefFinal = False
     
 
-        # TODO: remove the following step
+        # # TODO: remove the following step
        
-        # step 5.2
-        acptd_peer_members = [i[1] for i in myleader_obj.getMembers()]
-        for mem in acptd_peer_members:
-            User.query.get(mem).isGroupFinal = "final"
+        # # step 5.2
+        # acptd_peer_members = [i[1] for i in myleader_obj.getMembers()]
+        # for mem in acptd_peer_members:
+        #     User.query.get(mem).isGroupFinal = "final"
 
 
 

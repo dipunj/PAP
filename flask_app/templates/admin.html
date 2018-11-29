@@ -703,11 +703,11 @@
 										<td>{{usr.name}}</td>
 										<td class="p-0">
 											<table class="table table-borderless m-0" style="width: 100%">
-												{% for mem_tuple in usr.getMembers()%}
+												{% for slot,mem_tuple in usr.getMembers().items()%}
 												<tr>
-													<td width="10%" style="border-top: 1pt solid lightgray">{{mem_tuple[0]}}</td>
-													<td width="40%" style="border-top: 1pt solid lightgray">{{mem_tuple[1]}}</td>
-													<td width="50%" style="border-top: 1pt solid lightgray">{{mem_tuple[2]}}</td>
+													<td width="10%" style="border-top: 1pt solid lightgray">{{slot}}</td>
+													<td width="40%" style="border-top: 1pt solid lightgray">{{mem_tuple[0]}}</td>
+													<td width="50%" style="border-top: 1pt solid lightgray">{{mem_tuple[1]}}</td>
 												</tr>
 												{% endfor %}
 											</table>
