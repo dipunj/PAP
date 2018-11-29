@@ -130,8 +130,49 @@
 						<h3 class="p-5 text-white m-0">No users in Database</h3>
 					</div>
 				</div>
+				{% else %}
+				<div class="col-12 col-md-6">
+					<div class="card mb-4 shadow-lg border-dark">
+						<div class="card-body p-0">
+							<h3 class="card-title m-3 text-right">Slotter #1</h3>
+							<div class="panel panel-default" style="border-top: 1px solid black">
+								<table class="table table-bordered m-0">
+									<thead class="thead-light">
+										<tr>
+											<th scope="col" width="5%">#</th>
+											<th scope="col" width="20%">Reg. No.</th>
+											<th scope="col" width="30%">Name</th>
+											<th scope="col" width="5%">CPI</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for usrObj in DB_user_list %}
+										
+										{% if usrObj.isGroupFinal == "final" %}
+											{% set clas_name = "table-danger" %}
+										{% elif usrObj.isGroupFinal == "reqsent" %}
+											{% set clas_name = "table-warning" %}
+										{% else %}
+											{% set clas_name = "table-success" %}
+										{% endif %}
+										
+										{% if usrObj.myslot == 1 %}
+										<tr class="{{clas_name}}">
+											<td> {{loop.index}}</td>
+											<td> {{usrObj.username}} </td>
+											<td>{{usrObj.name}}</td>
+											<td>{{usrObj.cpi}}</td>
+										</tr>
+										{% endif %}
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
 				{% endif %}
-				{% for slot_num in range(1,num_of_slots+1)%}
+				{% for slot_num in range(2,num_of_slots+1)%}
 				<div class="col-12 col-md-6">
 						<div class="card mb-4 shadow-lg border-dark">
 							<div class="card-body p-0">

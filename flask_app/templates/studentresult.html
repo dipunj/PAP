@@ -191,7 +191,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for (slot,reg_no,name,_) in my_group_members %}
+                                    {% for slot,(reg_no,name,_) in my_group_members.items() %}
                                     <tr>
                                         <td> {{slot}} </td>
                                         <td> {{reg_no}} </td>

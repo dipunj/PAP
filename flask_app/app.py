@@ -25,8 +25,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-destroyDB(app)
-db = initializeDB(db)
+# destroyDB(app)
+# db = initializeDB(db)
 
 
 
@@ -144,7 +144,7 @@ def home():
                             dummy.username = reg_no
                             dummy.name = this_leader.name
                             dummy.cpi = this_leader.cpi
-                            dummy.members = this_leader.getMembers()
+                            dummy.members = this_leader.getMembers().values()
                             dummy.project_name = proj_name
                             my_group_result.append(dummy)
                     
@@ -403,7 +403,8 @@ def uploadUsers():
         first_slotters = User.query.order_by(User.cpi.desc()).filter_by(myslot=1).all()[:extra_students]
         for leader in first_slotters:
             leader.group_size = group_size+1
-    
+
+
     db.session.commit()
 
     return home()
@@ -1153,7 +1154,7 @@ def sendExcelSheet():
         xl.write(0,3,'CGPA',bold)
         xl.write(0,4,'Grade',bold)
         
-        members = User.query.get(reg_no).getMembers()
+        members = [([k]+list(v)) for k,v in User.query.get(reg_no).getMembers().items()]
         for row,mem in enumerate(members,start=1):
             for i in range(4):
                 xl.write(row,i,mem[i])
