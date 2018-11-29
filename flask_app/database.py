@@ -63,7 +63,7 @@ class User(db.Model):
         self.name              = name
         self.cpi               = cpi
         self.myslot            = slot
-        self.all_member_string = str(slot)+","+username+","+name+","+str(cpi)
+        self.all_member_string = str(slot)+"__"+username+","+name+","+str(cpi)
         pass
 
 
@@ -71,28 +71,20 @@ class User(db.Model):
 
 
     def resetMemberList(self):
-        self.all_member_string = "1,"+self.username+","+self.name+","+str(self.cpi)
+        self.all_member_string = "1__"+self.username+","+self.name+","+str(self.cpi)
 
     def addMember(self, slot, mem_name,mem_cpi,mem_reg_no): 
-        self.all_member_string += "$#@!"+str(slot)+","+str(mem_reg_no)+","+str(mem_name)+","+str(mem_cpi)
+        mymembers = self.getMembers()
+        mymembers.update({str(slot):(mem_reg_no,mem_name,mem_cpi)})
+        self.all_member_string += "$#@!".join([k+"__"+",".join(v) for k,v in new_member_list.items()])
 
     def deleteMember(self,mem_reg_no):
-        mymembers = self.getMembers()
-
-        mems_reg = [i[1] for i in mymembers]
-        if mem_reg_no in mems_reg:
-            self.all_member_string = "$#@!".join([",".join(i) for i in mymembers if i[1] != mem_reg_no])
+        new_member_list = {k:v for k,v in self.getMembers() if v[0] != mem_reg_no}
+        self.all_member_string = "$#@!".join([k+"__"+",".join(v) for k,v in new_member_list.items()])
 
 
     def getMembers(self):
-        members = self.all_member_string.split('$#@!')
-        printable_details = []
-        for student in members:
-            printable_details.append(tuple(student.split(',')))
-        
-        printable_details.sort(key=lambda x: x[0])
-        
-        return printable_details
+        return {i.split('__')[0]:tuple(i.split('__')[1].split(',')) for i in self.all_member_string.split('$#@!')}
 
     def addPrefList(self, pref_order_list, academic_project_dict):
         """adds the preference order of the projects in academic_project_dict
@@ -150,25 +142,28 @@ class User(db.Model):
     def resetRemainingList(self):
         self.remaining_reqs = ""
 
-    def addToRemainingList(self,mem_reg):
-        curr_list = set(self.getRemainingList())
-        if curr_list == {''}:
-            curr_list = set([mem_reg])
+    def addToRemainingList(self,slot,mem_reg):
+        curr_dict = self.getRemainingList()
+        this_member = {str(slot):mem_reg}
+        if curr_dict == {}:
+            curr_dict = this_member
         else:
-            curr_list.add(mem_reg)
+            curr_dict.update(this_member)
 
-        self.remaining_reqs = '$#@!'.join(curr_list)
+        self.remaining_reqs = '$#@!'.join([ str(slot)+"__"+reg for slot,reg in curr_dict.items()])
 
     def deleteFromRemainingList(self,mem_reg):
-        curr_list = set(self.getRemainingList())
-        if curr_list != {''}:
-            curr_list = set(curr_list)
-            curr_list.remove(mem_reg)
-            self.remaining_reqs = '$#@!'.join(curr_list)
+        curr_dict = self.getRemainingList()
+        if curr_dict != {}:
+            curr_dict = {k:v for k,v in curr_dict.items if v != mem_reg}
+            self.remaining_reqs = '$#@!'.join([ str(slot)+"__"+reg for slot,reg in curr_dict.items()])
 
 
     def getRemainingList(self):
-        return self.remaining_reqs.split('$#@!')
+        try:
+            return { i.split("__")[0]:i.split("__")[1] for i in self.remaining_reqs.split('$#@!') }
+        except:
+            return dict()
 
 
 
