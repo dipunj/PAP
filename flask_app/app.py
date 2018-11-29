@@ -25,8 +25,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-destroyDB(app)
-db = initializeDB(db)
+# destroyDB(app)
+# db = initializeDB(db)
 
 
 
@@ -94,6 +94,8 @@ def home():
             session['authenticated'] = False
             flash('login disabled by admin')
             return render_template('login.html')
+        
+        
         # admin
         if usrObj.username == "admin":
             first_slotters = User.query.order_by(User.cpi.desc()).filter((User.username !="admin") & (User.myslot == 1)).all()
@@ -156,7 +158,7 @@ def home():
             # student
             else:
 
-                # normal member
+                # normal member (not a leader)
                 if usrObj.myslot != 1:
                     myrequests = []
                     try:
@@ -194,7 +196,7 @@ def home():
                     if usrObj.isGroupFinal != "req_notsent":
                         leader = User.query.get(usrObj.leader)
                     else:
-                        leader=None
+                        leader = None
 
                     if usrObj.isRejected == True:
                         usrObj.isRejected = False
@@ -214,6 +216,7 @@ def home():
                 # group leader
                 else:
                     non_group_leaders = User.query.filter((User.myslot > 1) & (User.myslot < usrObj.group_size+1)).all()
+                    
                     if usrObj.isGroupFinal != "final":
 
                         slot_wise_members = {}
@@ -221,36 +224,28 @@ def home():
                         for slot in range(2,usrObj.group_size+1):
                             slot_wise_members[slot] = User.query.order_by(User.username).filter((User.username != "admin") & (User.myslot == slot) & (User.isGroupFinal != "final")).all()
 
-                        my_pending_members = []
-                        if usrObj.isGroupFinal == "reqsent":
-                            current_members = usrObj.getRemainingList()
-                            pending_members = [ member[1] for member in usrObj.getMembers() ]
-                            
-                            if current_members == [''] and pending_members == [usrObj.username]:
-                                reg_tentative_members = []
-                            else:
-                                reg_tentative_members = current_members + pending_members
-                                
-                            for reg in reg_tentative_members:
-                                my_pending_members.append(User.query.get(reg))
-
-                            # implies total number of students == number of groups
-                            if my_pending_members == []:
-                                usrObj.isGroupFinal = "final"
-                                usrObj.isPrefFinal = False
-                                return home()
-
-                            
-                            my_pending_members.sort(key=lambda x: x.myslot)
-
                         if usrObj.isRejected == True:
                             usrObj.isRejected = False
                             db.session.commit()
                             flash(usrObj.reject_message)
+                        
+                        confirmed_slotters = usrObj.getMembers()
+                        mymembers = dict()
+                        print(confirmed_slotters)
+                        for slot,tup in confirmed_slotters.items():
+                            mymembers[slot] = User.query.get(tup[0])
+
+                        pending_slotters = usrObj.getRemainingList()
+                        maybe_members = dict()
+                        print(pending_slotters)
+                        for slot,reg in pending_slotters.items():
+                            maybe_members[slot] = User.query.get(reg)
+                            print(maybe_members[slot].getRequests())
 
                         return render_template("group.html",
                                                 usrObj=usrObj,
-                                                prospective_members=my_pending_members,
+                                                prospective_members=maybe_members,
+                                                confirmed_members=mymembers,
                                                 all_students=non_group_leaders,
                                                 this_slot_not_final=slot_wise_members,
                                                 DB_deadline=deadline)
@@ -260,6 +255,7 @@ def home():
                                                 name          = usrObj.name,
                                                 project_list  = reference_prj_dict,
                                                 DB_deadline=deadline)
+                    
                     else:
                         myproj_pref = []
 
@@ -317,7 +313,7 @@ def do_login():
 
 
 @app.route('/logout', methods=['POST'])
-def do_logout():
+def do_logout():    
     """facilitates logout from anywhere
        sets session cookie's authenticated to false
     """
@@ -376,8 +372,6 @@ def uploadUsers():
 
     group_size = num_students//num_groups
     portalConfig.query.get(1).max_group_size = group_size+(extra_students>0)
-
-    # TODO : Put a check here if num_Groups > num_students
 
     if group_size > num_students:
         flash('Groups cannot be empty! Please reduce number of groups or increase number of students','upload_users')
@@ -491,9 +485,6 @@ def autoCompute():
     else:
         flash('Result compute, check result page','success')
     return home()
-
-
-
 
 def random_assignment():
 
@@ -681,7 +672,6 @@ def addTo_ProjRefList(project_name):
     db.session.commit()
 
 
-
 @app.route('/deleteTeacher',methods=['POST'])
 def deleteTeacher_and_projects():
 
@@ -751,7 +741,6 @@ def togglePortal():
 
     return home()
 
-
 @app.route('/setAdminPassword', methods=['POST'])
 def setAdminPassword():
 
@@ -802,6 +791,10 @@ def reset():
     
     return do_logout()
 
+
+
+# TODO: Is the following route even being used?
+
 @app.route('/resetStudentList', methods=['POST'])
 def resetStudentList():
 
@@ -846,6 +839,8 @@ def resetProjectList():
 
 """User Page Routes"""
 
+
+# for group leader
 
 @app.route('/ConfirmSubmission', methods=['POST'])
 def confirmIt():
@@ -902,42 +897,41 @@ def finalSubmit():
     return home()
 
 
-@app.route('/selectMembers',methods=['POST'])
-def selectMembers():
+@app.route('/makeMyGroup',methods=['POST'])
+def groupFormation():
 
     global db
     leader = User.query.get(session['username'])
 
-    user_grp_size = leader.group_size
+    # to identify which slotter is being queried about
+    slot_num = request.form['slot_num']
+    mode = request.form[slot_num+'_mode']
 
-    for slot_num in range(2,user_grp_size+1):
-        mem_reg = request.form[str(slot_num)+"_regno"].split(" - ")[0]
-        this_mem = User.query.get(mem_reg)
+    if mode == "send_new":    
+        member_reg = request.form[str(slot_num)+'_regno'].split(" - ")[0]
+        member = User.query.get(member_reg)
 
-        # check if this_mem has made a decision?
-        if this_mem.isGroupFinal == "req_notsent":
-            this_mem.addRequest(leader.username)
-            leader.addToRemainingList(this_mem.username)
-        # if not, then is his group final?
-        elif this_mem.isGroupFinal == "reqsent":
+        leader.addToRemainingList(member.myslot,member.username)
+        member.addRequest(leader.username)
+    elif mode == "reject_old":
+        to_delete_mem = leader.getRemainingList()[slot_num]
+        member = User.query.get(to_delete_mem)
 
-            # do not commit changes or change leader's isGroupFinal status 
-            his_leader = User.query.get(this_mem.leader)
-            flash(this_mem.name+"("+this_mem.username+") is under process of group formation with "+his_leader.name+"'s ")
-            return home()
-        else:
+        leader.deleteFromRemainingList(member.username)
+        member.deleteRequest(leader.username)
+    else:
+        # safety check for malicious users
+        print("ktttt gaya")
+        return home()
 
-            # do not commit changes or change leader's isGroupFinal status
-            his_leader = User.query.get(this_mem.leader)
-            flash(this_mem.name+"("+this_mem.username+") Has already been finalized into"+his_leader.name+" ("+his_leader.username+")'s Group")
-            return home()
-
-    leader.isGroupFinal = "reqsent"
     db.session.commit()
-
     return home()
 
 
+
+
+
+# for group members
 
 @app.route('/acceptLeader',methods=['POST'])
 def acceptLeader():
@@ -967,6 +961,8 @@ def acceptLeader():
     
         # step 6
         other_leaders = me.getRequests()
+
+        # TODO remove the following try/except block
         try:
             other_leaders.remove(myleader_obj.username)
         except:
@@ -996,44 +992,18 @@ def clear_other_leaders(other_leaders,me):
         # reset other_ldr
 
         # step 6.1: set isGroupFinal status to not sent
-        # step 6.2: remove this leader from all members who had accepted his request
-        # step 6.3: remove this leader from all members who have recieved his request but are yet to accept
-        # step 6.4 : reset this leader group list
-        # step 6.5 : reset this leader remaining member list
+        # step 6.4 : remove me from this leader remaining list
+        # step 6.5 : set this leader's isRejected to True
 
 
         # step 6.1
         other_ldr_obj.isGroupFinal = "req_notsent"
         other_ldr_obj.reject_message = me.name+" ("+me.username+") Has Rejected Group formation under your leadership. Please reform your group, after discussing with all of your propective members. Your Group is not yet finalised"
         other_ldr_obj.isRejected = True
-        # step 6.2
-        # me won't be here since me didn't accept other_ldr request
-        acptd_peer_members = [i[1] for i in other_ldr_obj.getMembers()]
-        for mem in acptd_peer_members:
-            peer_member_obj = User.query.get(mem)
-            peer_member_obj.leader = None
-            peer_member_obj.isGroupFinal = "req_notsent"
-            peer_member_obj.reject_message = me.name+" ("+me.username+") Has Rejected Group formation under "+other_ldr_obj.name+" ("+other_ldr_obj.username+")' Leadership. Your Group is not yet finalised"
-            peer_member_obj.isRejected = True
-        
-        # step 6.3
-        # me will be present here, so remove me from this list
-        waiting_peer_members = other_ldr_obj.getRemainingList()
-        try:
-            waiting_peer_members.remove(me)
-        except:
-            pass
-        for mem in waiting_peer_members:
-            peer_member_obj = User.query.get(mem)
-            peer_member_obj.deleteRequest(other_ldr_obj.username)
-            
 
-        # step 6.4
-        other_ldr_obj.resetMemberList()
-        
-        # step 6.5
-        other_ldr_obj.resetRemainingList()
-        db.session.commit()
+        other_ldr_obj.deleteFromRemainingList(me.username)        
+
+    db.session.commit()
 
 
 def accept_my_leader(myleader_obj,me):
@@ -1054,10 +1024,10 @@ def accept_my_leader(myleader_obj,me):
     me.leader = myleader_obj.username
 
     # step 4:
-    me.isGroupFinal = "reqsent"
+    me.isGroupFinal = "final"
 
     # step 5:
-    if myleader_obj.getRemainingList() == ['']:
+    if myleader_obj.getRemainingList() == {''}:
         # me is the last final member to accept the request
         
         # finalise this group
@@ -1067,6 +1037,10 @@ def accept_my_leader(myleader_obj,me):
         # step 5.1:
         myleader_obj.isGroupFinal = "final"
         myleader_obj.isPrefFinal = False
+    
+
+        # TODO: remove the following step
+       
         # step 5.2
         acptd_peer_members = [i[1] for i in myleader_obj.getMembers()]
         for mem in acptd_peer_members:
@@ -1075,6 +1049,8 @@ def accept_my_leader(myleader_obj,me):
 
 
 
+
+# for teacher, group members, group leaders
 
 @app.route('/setPassword', methods=['POST'])
 def setUserPassword():
@@ -1098,9 +1074,6 @@ def setUserPassword():
         db.session.commit()
 
     return home()
-
-
-
 
 
 
@@ -1164,7 +1137,6 @@ def sendExcelSheet():
 
     teacher = Teacher.query.get(session['username'])
     workbook = xlwt.Workbook()
-    sheets = {}
     bold = xlwt.easyxf('font: bold 1')
 
     for reg_no,prj in teacher.getYearStudents():

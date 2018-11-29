@@ -96,73 +96,29 @@
                 <div class="col-12">
                     <h2>My Group</h2>
                 </div>
-        {% if usrObj.isGroupFinal == "reqsent" %}
+                {% if usrObj.isGroupFinal != "req_notsent" %}
                 <div class="col-12">
                     <p class="card-subtitle">Awaiting confirmation from your members</p>
-                    <p class="card-subtitle text-danger">Please note that all members must accept your request for the
-                        group formation to be final. If any member rejects your request. You will need to refill the
-                        group preferences</p>
                 </div>
-        {% endif %}
+                {% endif %}
             </div>
 
-        {% if usrObj.isGroupFinal == "reqsent" %}
             <div class="row">
-                <div class="card-deck col-12">
-                    <div class="card border-warning">
-                        <div class="card-header bg-warning text-white">
-                            <h4>My Group Preferences</h4>
-                        </div>
-                        <div class="card-body p-0">
-                            <table class="table table-bordered m-0">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th scope="col" width="10%">#Slotter</th>
-                                        <th scope="col" width="20%">Reg. No.</th>
-                                        <th scope="col" width="40%">Name</th>
-                                        <th scope="col" width="30%">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {# 1: to not display group leader himself #}
-                                    {% for member in prospective_members[1:] %}
-
-                                    {% if member.isGroupFinal == "req_notsent" %}
-                                        {% set clas_name = "table-danger" %}
-                                        {% set mem_status = "Waiting" %}
-                                    {% elif member.isGroupFinal == "reqsent" %}
-                                        {% set clas_name = "table-success" %}
-                                        {% set mem_status = "accepted" %}
-                                    {% endif %}
-
-                                    <tr class="{{clas_name}} ">
-                                        <td> {{member.myslot}} </td>
-                                        <td> {{member.username}} </td>
-                                        <td> {{member.name}} </td>
-                                        <td> {{mem_status}} </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    {{message}}
                 </div>
-            </div>
-            {% elif usrObj.isGroupFinal == "req_notsent" %}
-            <div class="row">
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-danger alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-                        {{message}}
-                    </div>
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
                 <div class="col-12">
-                    <form action="/selectMembers" method="POST" onsubmit="return confirm('Do you really want to submit?. The action is irreversible');">
+                    <form action="/makeMyGroup" method="POST" onsubmit="return confirm('Do you really want to send request?');">
                         <div class="card-deck">
+
+                            <!-- first slotter's card -->
                             <div class="col-sm-12 col-md-4">
                                 <div class="card bg-dark shadow-lg border-dark" style="cursor: not-allowed;">
                                     <div class="card-body">
@@ -194,9 +150,78 @@
                                     </div>
                                 </div>
                             </div>
+                           
                             {% for slot in range(2,usrObj.group_size+1) %}
                             <div class="col-sm-12 col-md-4">
-                                <div class="card shadow-lg border-dark">
+                                {% if slot in confirmed_members.keys() %}
+                                <div class="card shadow-lg border-success">
+                                    <div class="card-body">
+                                        <h2 class="card-title">Slotter #{{slot}}</h2>
+                                        <div class="form-group">
+                                            <div class="col-12">
+                                                <label class="col-form-label text-muted">Full Name : </label>
+                                            </div>
+                                            <div class="col-12">
+                                                <p class="text-right text-white">{{mymembers[slot].name}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-12">
+                                                <label class="col-form-label text-muted">Reg. No : </label>
+                                            </div>
+                                            <div class="col-12">
+                                                <p class="text-right text-white">{{mymembers[slot].username}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-12">
+                                                <label for="cpi" class="col-form-label text-muted">CGPA* :</label>
+                                            </div>
+                                            <div class="col-12">
+                                                <p class="text-right text-white">{{mymembers[slot].cpi}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% elif slot in prospective_members.keys() %}
+                                <div class="card shadow-lg border-warning">
+                                    <div class="card-body">
+                                        <h2 class="card-title">Slotter #{{slot}}</h2>
+                                        <div class="form-group">
+                                            <div class="col-12">
+                                                <label class="col-form-label text-muted">Full Name : </label>
+                                            </div>
+                                            <div class="col-12">
+                                                <p class="text-right text-white">{{prospective_members[slot].name}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-12">
+                                                <label class="col-form-label text-muted">Reg. No : </label>
+                                            </div>
+                                            <div class="col-12">
+                                                <p class="text-right text-white">{{prospective_members[slot].username}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-12">
+                                                <label for="cpi" class="col-form-label text-muted">CGPA* :</label>
+                                            </div>
+                                            <div class="col-12">
+                                                <p class="text-right text-white">{{prospective_members[slot].cpi}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-12">
+                                                <input type="hidden" name="mode" value="reject_old">
+                                                <input type="hidden" name="slot_num" value="{{slot}}">
+                                                <button type="submit" class="btn btn-warning">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="card shadow-lg border-danger">
                                     <div class="card-body">
                                         <h2 class="card-title">Slotter #{{slot}}</h2>
                                         <div class="form-group row">
@@ -211,29 +236,23 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="form-group row">
+                                            <div class="col-12">
+                                                <input type="hidden" name="{{slot}}_mode" value="send_new">
+                                                <input type="hidden" name="slot_num" value="{{slot}}">
+                                                <button type="submit" class="btn btn-danger">Send</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                {% endif %}
                             </div>
                             {% endfor %}
 
                         </div>
-                        <div class="container">
-                            <div class="row mb-5 mt-5">
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-outline-dark btn-lg float-right shadow-lg" id="#finalisebtn">
-                                        {% if usrObj.group_size > 1%}
-                                        Send To All
-                                        {% else %}
-                                        Continue
-                                        {% endif %}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
                     </form>
                 </div>
             </div>
-            {% endif %}
         </div>
 
         <div id="chpasswd" class="container mt-5 tab-pane fade">
@@ -278,7 +297,7 @@
 
         <div id="all_students" class="container mt-5 tab-pane fade">
             <div class="card-deck justify-content-center">
-                {% for slot_num in range(2,usrObj.group_size+1)%}
+                {% for slot_num in range(2,usrObj.group_size+1) %}
                 <div class="col-12 col-md-6">
                     <div class="card mb-4 shadow-lg border-dark">
                         <div class="card-body p-0">

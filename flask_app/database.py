@@ -69,6 +69,8 @@ class User(db.Model):
 
     # group leader's accepted member group list
 
+    # {"1" : ("20151234","John appleseed","8.34"), "2" :("2014000","Steve Jobs", "10.0")......} 
+        
 
     def resetMemberList(self):
         self.all_member_string = "1__"+self.username+","+self.name+","+str(self.cpi)
@@ -139,6 +141,7 @@ class User(db.Model):
 
     # group leader's remaining list
 
+    # RML = {"1" : "20154000", "2" : "20151234".....}
     def resetRemainingList(self):
         self.remaining_reqs = ""
 
@@ -155,7 +158,7 @@ class User(db.Model):
     def deleteFromRemainingList(self,mem_reg):
         curr_dict = self.getRemainingList()
         if curr_dict != {}:
-            curr_dict = {k:v for k,v in curr_dict.items if v != mem_reg}
+            curr_dict = {k:v for k,v in curr_dict.items() if v != mem_reg}
             self.remaining_reqs = '$#@!'.join([ str(slot)+"__"+reg for slot,reg in curr_dict.items()])
 
 
