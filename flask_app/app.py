@@ -387,7 +387,7 @@ def uploadUsers():
 
 
     # set group size of each leader
-    all_first_slotter = User.query.filter_by(myslot=1)
+    all_first_slotter = User.query.filter_by(myslot=1).all()
     for leader in all_first_slotter:
         leader.group_size = group_size
         addTo_StudentRefList(leader.username)
@@ -430,6 +430,8 @@ def autoCompute():
 
     num_projects = len(all_projects)
     num_students = len(all_students)
+    
+    print(all_students)
     
     if num_projects != num_students:
         if num_projects < num_students:
