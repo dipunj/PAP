@@ -25,8 +25,8 @@ from database import db,User,Teacher,portalConfig,destroyDB,initializeDB
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# destroyDB(app)
-# db = initializeDB(db)
+destroyDB(app)
+db = initializeDB(db)
 
 
 
@@ -1031,7 +1031,7 @@ def accept_my_leader(myleader_obj,me):
 
     # step 5:
     print(me.username,me.name,myleader_obj.getRemainingList())
-    if myleader_obj.getRemainingList() == {}:
+    if len(myleader_obj.getMembers()) == myleader_obj.group_size:
         # me is the last final member to accept the request
         
         # finalise this group
