@@ -627,7 +627,7 @@ def createTeacher_and_projects():
 
     submitted_members = User.query.filter((User.username != "admin")&(User.isPrefFinal == True)).all()
     if len(submitted_members) > 0:
-        flash('Group Leaders have made a preference submission. It is now not possible to delete faculty members. Reset DataBase First','teacher')
+        flash('Group Leaders have made a preference submission. It is now not possible to add new faculty members. Reset the DataBase First','teacher')
         return home()
 
 
@@ -690,7 +690,7 @@ def deleteTeacher_and_projects():
             return home()
 
         if len(submitted_members) > 0:
-            flash('Group Leaders have made a preference submission. It is now not possible to delete faculty membe. Reset DataBase First','teacher')
+            flash('Group Leaders have made a preference submission. It is now not possible to delete faculty members. Reset the DataBase First','teacher')
             return home()
 
         for prj in this_teacher.getProjectList():
