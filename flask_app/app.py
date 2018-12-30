@@ -370,6 +370,7 @@ def uploadUsers():
     extra_students = num_students%num_groups
 
     group_size = num_students//num_groups
+    portalConfig.query.get(1).num_of_groups = group_size
     portalConfig.query.get(1).max_group_size = group_size+(extra_students>0)
 
     if group_size > num_students:
@@ -407,6 +408,69 @@ def uploadUsers():
     db.session.commit()
 
     return home()
+
+@app.route('/uploadTeachers',methods=['POST'])
+def uploadTeachers():
+    
+    session['wasAt'] = request.form['wasAt']
+    global db
+
+    num_groups = portalConfig.query.get(1).num_of_groups
+
+    f = request.files['upload_file']
+    teacher_file = os.path.join(app.config['UPLOAD_FOLDER'],'teachers.csv')
+    
+    try:
+        os.remove(teacher_file)
+    except:
+        pass
+
+    f.save(teacher_file)
+    reader = csv.reader(open(teacher_file), delimiter=",")
+    
+    # sort increasing by teacher experience
+    data = sorted(reader, key=operator.itemgetter(2), reverse=False)
+    num_teachers = len(data)
+
+    if num_groups < num_teachers:
+        flash('Number of groups are too less, every teacher cannot be assigned a group')
+        return home()
+    
+    extra_groups = num_groups%num_teachers
+    group_size = num_groups//num_teachers
+
+    for slot in range(1,group_size+(extra_groups>0)+1):
+        this_teacher = data[slot]
+        # 0 -> email_id
+        # 1 -> full name
+        # 2 -> Teaching Experience
+        random_password = "random"
+        this_teacher = Teacher(username=str(this_teacher[0]),password=random_password,name=str(this_teacher[1]))
+        db.session.add(this_teacher)
+
+
+    # set group size of each leader
+    all_first_slotter = User.query.filter_by(myslot=1).all()
+    for leader in all_first_slotter:
+        leader.group_size = group_size
+        addTo_StudentRefList(leader.username)
+
+    if extra_groups != 0:
+        # find (extra students) number of first_slotters and alot them these extra_groups        
+
+        # randomly
+        # first_slotters = random.sample(User.query.filter_by(myslot=1).all(), extra_groups)
+
+        # top first slotters
+        first_slotters = User.query.order_by(User.cpi.desc()).filter_by(myslot=1).all()[:extra_groups]
+        for leader in first_slotters:
+            leader.group_size = group_size+1
+
+
+    db.session.commit()
+
+    return home()
+
 
 
 
@@ -613,6 +677,26 @@ def addTo_StudentRefList(user_regno):
         rank_list.append(i)
 
     portal_config.setStudentList(rank_list, new_dict)
+    db.session.commit()
+
+def addTo_TeacherRefList(teacher_email,num_groups):
+    
+    global db
+
+    portal_config = portalConfig.query.get(1)
+
+    teacher_dict = portal_config.getcurrentProjectList()
+    project_list = list(teacher_dict.values())
+    for slot_num in range(1,num_groups+1):
+        project_list.append(teacher_email+"__"+slot_num)
+    
+    new_dict = dict(enumerate(project_list,start=1))
+
+    rank_list = []
+    for i in range(1,len(new_dict)+1):
+        rank_list.append(i)
+
+    portal_config.setProjectList(rank_list, new_dict)
     db.session.commit()
 
 
