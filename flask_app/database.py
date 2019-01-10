@@ -246,13 +246,16 @@ class portalConfig(db.Model):
 class Teacher(db.Model):
     
     # email id
-    username = db.Column(db.String,primary_key=True,nullable=False)
-    password = db.Column(db.String,nullable=False)
-    name  = db.Column(db.String)
-    myprojects = db.Column(db.String,default="")
-    pref_order = db.Column(db.String)
+    username       = db.Column(db.String,primary_key=True,nullable=False)
+    password       = db.Column(db.String,nullable=False)
+    name           = db.Column(db.String)
+    myprojects     = db.Column(db.String,default="")
+    pref_order     = db.Column(db.String)
     myYearStudents = db.Column(db.String,default="")
-    isPrefFinal = db.Column(db.Boolean,default=False,nullable=False)
+    isPrefFinal    = db.Column(db.Boolean,default=False,nullable=False)
+    experience     = db.Column(db.Float)
+    group_size     = db.Column(db.Integer)
+
 
     def __init__(self, username, password, name,**kwargs): 
         super(Teacher, self).__init__(**kwargs)

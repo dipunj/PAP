@@ -60,7 +60,7 @@ def home():
     for idx,project in project_list.items():
         teacher_project = project.split("__")
         # convert from email to name with teacher query
-        reference_prj_dict[idx] = (Teacher.query.get(teacher_project[0]).name,teacher_project[1])
+        reference_prj_dict[idx] = (Teacher.query.get(teacher_project[0]).name,Teacher.query.get(teacher_project[0]).group_size)
     
     if not reference_prj_dict:
         reference_prj_dict = {"" : ("No Projects Added","No faculty Added")}
@@ -370,7 +370,7 @@ def uploadUsers():
     extra_students = num_students%num_groups
 
     group_size = num_students//num_groups
-    portalConfig.query.get(1).num_of_groups = group_size
+    portalConfig.query.get(1).num_of_groups = num_groups
     portalConfig.query.get(1).max_group_size = group_size+(extra_students>0)
 
     if group_size > num_students:
@@ -433,38 +433,46 @@ def uploadTeachers():
     num_teachers = len(data)
 
     if num_groups < num_teachers:
+        print("num of groups less than teachers",num_groups,num_teachers)
         flash('Number of groups are too less, every teacher cannot be assigned a group')
         return home()
     
+    # number of groups that remain unallotted
     extra_groups = num_groups%num_teachers
+
+    # number of groups that each teacher will take
     group_size = num_groups//num_teachers
 
-    for slot in range(1,group_size+(extra_groups>0)+1):
-        this_teacher = data[slot]
+    for slot in range(0,num_teachers):
         # 0 -> email_id
         # 1 -> full name
         # 2 -> Teaching Experience
+        
+        this_teacher    = data[slot]
         random_password = "random"
-        this_teacher = Teacher(username=str(this_teacher[0]),password=random_password,name=str(this_teacher[1]))
+        this_teacher    = Teacher(username=str(this_teacher[0]),password=random_password,name=str(this_teacher[1]))
         db.session.add(this_teacher)
 
+    db.session.commit()
 
-    # set group size of each leader
-    all_first_slotter = User.query.filter_by(myslot=1).all()
-    for leader in all_first_slotter:
-        leader.group_size = group_size
-        addTo_StudentRefList(leader.username)
+    # set group size to minimum group size
+    all_teacher = Teacher.query.filter().all()
+    for mentor in all_teacher:
+        mentor.group_size = group_size
+        addTo_TeacherRefList(mentor.username,group_size)
 
+    print("extra Groups",extra_groups)
+    # adjust group size of each teacher, if there are extra groups
     if extra_groups != 0:
-        # find (extra students) number of first_slotters and alot them these extra_groups        
+        # find (extra groups) number of teachers and alot them these extra_groups        
 
         # randomly
         # first_slotters = random.sample(User.query.filter_by(myslot=1).all(), extra_groups)
 
-        # top first slotters
-        first_slotters = User.query.order_by(User.cpi.desc()).filter_by(myslot=1).all()[:extra_groups]
-        for leader in first_slotters:
-            leader.group_size = group_size+1
+        # top candidates
+        least_exp = Teacher.query.order_by(Teacher.experience).all()[:extra_groups]
+        for mentor in least_exp:
+            mentor.group_size = group_size+1
 
 
     db.session.commit()
@@ -688,7 +696,7 @@ def addTo_TeacherRefList(teacher_email,num_groups):
     teacher_dict = portal_config.getcurrentProjectList()
     project_list = list(teacher_dict.values())
     for slot_num in range(1,num_groups+1):
-        project_list.append(teacher_email+"__"+slot_num)
+        project_list.append(teacher_email+"__"+str(slot_num))
     
     new_dict = dict(enumerate(project_list,start=1))
 
