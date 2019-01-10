@@ -958,7 +958,8 @@ def confirmIt():
     for pr_id in pref_order:
         mentor = project_list[pr_id].split("__")[0]
         prj = project_list[pr_id].split("__")[1]
-        preview.append((Teacher.query.get(mentor).name,prj))
+        this_teacher = Teacher.query.get(mentor)
+        preview.append((this_teacher.name,this_teacher.group_size))
 
     if pref_order == ['']:
         return home()
