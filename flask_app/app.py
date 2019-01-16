@@ -1,4 +1,6 @@
 import os, json
+import pandas as pd
+from zipfile import ZipFile 
 from flask import Flask, request, render_template, session, flash,send_file
 from datetime import datetime
 import xlwt
@@ -447,12 +449,30 @@ def autoCompute():
     # step 1 : generate dict containing student's preference
     for usrObj in all_usrObj:
         student_pref[usrObj.username] = list(usrObj.getPrefList().values())
-    
+
     # step 2 : generate dict containing teacher's preferences
     for prof in all_profs:
         for prj_underProf in prof.getProjectList():
             teacher_pref[prof.username+"__"+prj_underProf] = list(prof.getPrefList().values())
+
+    
+
+    preference_file = os.path.join(app.config['UPLOAD_FOLDER'],'student_preference.csv')
+    pref = pd.DataFrame(index=student_pref.keys(),columns=teacher_pref.keys())
+    for usrObj in all_usrObj:
+        pref.loc[usrObj.username] = pd.Series({str(v):str(k) for k,v in usrObj.getPrefList().items()})
         
+    pref.to_csv(preference_file)
+
+
+    preference_file = os.path.join(app.config['UPLOAD_FOLDER'],'teacher_preference.csv')
+    pref = pd.DataFrame(columns=student_pref.keys(),index=teacher_pref.keys())
+    for prof in all_profs:
+        for prj_underProf in prof.getProjectList():
+            pref.loc[prof.username+"__"+prj_underProf] = pd.Series({str(v):str(k) for k,v in prof.getPrefList().items()})
+
+    pref.to_csv(preference_file)
+    
 
 
     ###########################################
@@ -483,7 +503,7 @@ def autoCompute():
     db.session.commit()
 
     if random_assgn == True:
-        flash('Teachers and users who had not submitted thier preferences are being randomly assigning ','danger')
+        flash('Teachers and users who had not submitted thier preferences are being randomly assigned','danger')
     else:
         flash('Result compute, check result page','success')
     return home()
@@ -1164,6 +1184,20 @@ def sendExcelSheet():
     workbook.save(os.path.join(app.config['UPLOAD_FOLDER'],teacher.username+".xls"))
 
     return send_file(os.path.join(app.config['UPLOAD_FOLDER'],teacher.username+".xls"),as_attachment=True,attachment_filename=teacher.name+".xls")
+
+
+
+@app.route('/getMatrix',methods=['POST'])
+def sendMatrix():
+
+    filepath = os.path.join(app.config['UPLOAD_FOLDER']+"preference.zip")
+    with ZipFile(filepath, 'w') as myzip:
+        myzip.write(os.path.join(app.config['UPLOAD_FOLDER'],'student_preference.csv'),'student_preference.csv')
+        myzip.write(os.path.join(app.config['UPLOAD_FOLDER'],'teacher_preference.csv'),'teacher_preference.csv')
+
+    return send_file(filepath,as_attachment=True)
+
+
 
 
 

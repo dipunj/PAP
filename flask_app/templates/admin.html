@@ -684,7 +684,12 @@
 			<div class="row justify-content-center">
 				<div class="col-12">
 					<div class="card">
-						<h4 class="card-header bg-primary text-white">Result</h4>
+						<h4 class="card-header bg-primary text-white">
+							Result
+							<form action="/getMatrix" method="POST">          
+								<button type="submit" class="btn btn-outline-warning float-right">Download Pref</button>
+							</form>
+						</h4>
 						{% if DB_result_declared == true %}
 						<div class="card-body p-0">
 							<table id="printThis" class="table table-bordered m-0">
