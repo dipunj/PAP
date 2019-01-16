@@ -686,9 +686,11 @@
 					<div class="card">
 						<h4 class="card-header bg-primary text-white">
 							Result
+							{% if DB_result_declared == true %}
 							<form action="/getMatrix" method="POST">          
 								<button type="submit" class="btn btn-outline-warning float-right">Download Pref</button>
 							</form>
+							{% endif %}
 						</h4>
 						{% if DB_result_declared == true %}
 						<div class="card-body p-0">
